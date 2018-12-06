@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
 public class HexEntry : System.IEquatable<HexEntry> {
 	private HexPosition position;
