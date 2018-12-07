@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -32,57 +34,62 @@ namespace Assets.Scripts
             return new Vector3 (x, 0, y);
         }
 
-        public HexPosition N {	get { return new HexPosition (U + 1,	V); } }
+        public MyHexPosition N {	get { return new MyHexPosition (U + 1,	V); } }
 
-        public HexPosition NE {	get { return new HexPosition (U + 1,	V + 1); } }
+        public MyHexPosition NE {	get { return new MyHexPosition (U + 1,	V + 1); } }
 
-        public HexPosition SE {	get { return new HexPosition (U, V + 1); } }
+        public MyHexPosition SE {	get { return new MyHexPosition (U, V + 1); } }
 
-        public HexPosition S {	get { return new HexPosition (U - 1,	V); } }
+        public MyHexPosition S {	get { return new MyHexPosition (U - 1,	V); } }
 
-        public HexPosition SW {	get { return new HexPosition (U - 1,	V - 1); } }
+        public MyHexPosition SW {	get { return new MyHexPosition (U - 1,	V - 1); } }
 
-        public HexPosition NW {	get { return new HexPosition (U, V - 1); } }
+        public MyHexPosition NW {	get { return new MyHexPosition (U, V - 1); } }
 
-        public HexPosition[] Neighbors { get { return new HexPosition[6] {
-            this.N,
-            this.NE,
-            this.SE,
-            this.S,
-            this.SW,
-            this.NW
-        }; } }
+        public List<NeighbourWithDirection> NeighboursWithDirections => new List<NeighbourWithDirection>()
+        {
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.N, NeighbourPosition = N},
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.NE, NeighbourPosition = NE},
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.SE, NeighbourPosition = SE},
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.S, NeighbourPosition = S},
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.SW, NeighbourPosition = SW},
+            new NeighbourWithDirection() {NeighbourDirection = Orientation.NW, NeighbourPosition = NW},
+        };
+
+        public MyHexPosition[] Neighbors => NeighboursWithDirections.Select(c => c.NeighbourPosition).ToArray();
+
+        public Orientation[] NeighborDirections => NeighboursWithDirections.Select(c => c.NeighbourDirection).ToArray();
 
         //Gives a hex n in a given direction. You can get to any hex in two steps.
         //This will be more understandable than trying to give coordinates.
-        public HexPosition goN (int n)
+        public MyHexPosition goN (int n)
         {
-            return new HexPosition (U + n, V);
+            return new MyHexPosition (U + n, V);
         }
 
-        public HexPosition goNE (int ne)
+        public MyHexPosition goNE (int ne)
         {
-            return new HexPosition (U + ne,	V + ne);
+            return new MyHexPosition (U + ne,	V + ne);
         }
 
-        public HexPosition goSE (int se)
+        public MyHexPosition goSE (int se)
         {
-            return new HexPosition (U, V + se);
+            return new MyHexPosition (U, V + se);
         }
 
-        public HexPosition goS (int s)
+        public MyHexPosition goS (int s)
         {
-            return new HexPosition (U - s, V);
+            return new MyHexPosition (U - s, V);
         }
 
-        public HexPosition goSW (int sw)
+        public MyHexPosition goSW (int sw)
         {
-            return new HexPosition (U - sw,	V - sw);
+            return new MyHexPosition (U - sw,	V - sw);
         }
 
-        public HexPosition goNW (int nw)
+        public MyHexPosition goNW (int nw)
         {
-            return new HexPosition (U, V - nw);
+            return new MyHexPosition (U, V - nw);
         }
 
         public override string ToString()
@@ -119,5 +126,11 @@ namespace Assets.Scripts
             var v = Mathf.FloorToInt ((xx - yy + u + 1) / 2);
             return new MyHexPosition(u,v);
         }
+    }
+
+    public class NeighbourWithDirection
+    {
+        public Orientation NeighbourDirection;
+        public MyHexPosition NeighbourPosition;
     }
 }

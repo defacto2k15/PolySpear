@@ -6,7 +6,7 @@ using Assets.Scripts;
 public class HexGrid : MonoBehaviour, IPlayerInterface
 {
 	public GameObject marker;
-	private List<Unit> units;
+	private List<LegacyUnit> units;
 	private bool waiting = false;
 
 	private enum Turn
@@ -19,9 +19,9 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 	private Turn turn = Turn.Select;
 	public int PLAYERS = 2;
 	private int player = 0;
-	private HexPosition mouse = null;
-	private HexPosition selection = null;
-	private HexPosition[] path = null;
+	private LegacyHexPosition mouse = null;
+	private LegacyHexPosition selection = null;
+	private LegacyHexPosition[] path = null;
 	private AI ai;
 	bool gameOver = false;
 	bool modeSelected = false;
@@ -42,23 +42,23 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 		//Since it currently doesn't wait for an attack, this is empty.
 	}
 
-	public void addUnit (Unit unit)
+	public void addUnit (LegacyUnit legacyUnit)
 	{
-		units.Add (unit);
-		unit.Coordinates = new HexPosition (unit.transform.position);
+		units.Add (legacyUnit);
+		legacyUnit.Coordinates = new LegacyHexPosition (legacyUnit.transform.position);
 	}
 
-	public void removeUnit (Unit unit)
+	public void removeUnit (LegacyUnit legacyUnit)
 	{
-		units.Remove (unit);
+		units.Remove (legacyUnit);
 	}
 
 	//Returns true if there are any selectable units.
 	private bool selectSelectable ()
 	{
 		bool nonempty = false;
-		foreach (Unit unit in units) {
-			if (unit.Player == player && unit.Status != Unit.State.Wait) {
+		foreach (LegacyUnit unit in units) {
+			if (unit.Player == player && unit.Status != LegacyUnit.State.Wait) {
 				unit.Coordinates.select ("Selectable");
 				nonempty = true;
 			}
@@ -67,21 +67,21 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 	}
 
 	//TODO: Move to Unit.cs
-	private bool isAttackable (Unit attacker, Unit attacked, HexPosition coordinates)
+	private bool isAttackable (LegacyUnit attacker, LegacyUnit attacked, LegacyHexPosition coordinates)
 	{
 		return attacked.Player != player && coordinates.dist (attacked.Coordinates) <= attacker.Range;
 	}
 
-	private bool isAttackable (Unit attacker, Unit attacked)
+	private bool isAttackable (LegacyUnit attacker, LegacyUnit attacked)
 	{
 		return isAttackable (attacker, attacked, attacker.Coordinates);
 	}
 
 	//Returns true if there's at least one attackable unit.
-	private bool selectAttackable (Unit attacker, HexPosition coordinates)
+	private bool selectAttackable (LegacyUnit attacker, LegacyHexPosition coordinates)
 	{
 		bool nonempty = false;
-		foreach (Unit unit in units) {
+		foreach (LegacyUnit unit in units) {
 			if (isAttackable (attacker, unit, coordinates)) {
 				unit.Coordinates.select ("Attack");
 				nonempty = true;
@@ -91,26 +91,26 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 	}
 
 	//Returns true if there's at least one attackable unit.
-	private bool selectAttackable (Unit attacker)
+	private bool selectAttackable (LegacyUnit attacker)
 	{
 		return selectAttackable (attacker, attacker.Coordinates);
 	}
 
 	void Start ()
 	{
-		HexPosition.setColor ("Path", Color.yellow, 1);
-		HexPosition.setColor ("Selection", Color.green, 2);
-		HexPosition.setColor ("Selectable", Color.green, 3);
-		HexPosition.setColor ("Attack", Color.red, 4);
-		HexPosition.setColor ("Cursor", Color.blue, 5);
-		HexPosition.Marker = marker;
+		LegacyHexPosition.setColor ("Path", Color.yellow, 1);
+		LegacyHexPosition.setColor ("Selection", Color.green, 2);
+		LegacyHexPosition.setColor ("Selectable", Color.green, 3);
+		LegacyHexPosition.setColor ("Attack", Color.red, 4);
+		LegacyHexPosition.setColor ("Cursor", Color.blue, 5);
+		LegacyHexPosition.Marker = marker;
 		foreach (GameObject child in GameObject.FindGameObjectsWithTag("Obstacle")) {
-			HexPosition position = new HexPosition (child.transform.position);
+			LegacyHexPosition position = new LegacyHexPosition (child.transform.position);
 			child.transform.position = position.getPosition ();
 			position.flag ("Obstacle");
 		}
-		units = new List<Unit> (Object.FindObjectsOfType<Unit> ());
-		foreach (Unit unit in units) {
+		units = new List<LegacyUnit> (Object.FindObjectsOfType<LegacyUnit> ());
+		foreach (LegacyUnit unit in units) {
 			unit.setPlayerInterface (this, true);
 		}
 	}
@@ -118,20 +118,20 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 	private void select ()
 	{
 		if (mouse.isSelected ("Selectable")) {
-			HexPosition.clearSelection ("Selectable");
+			LegacyHexPosition.clearSelection ("Selectable");
 			selection = mouse;
 			mouse.select ("Selection");
-			Unit unit = mouse.getUnit ();
-			selectAttackable (unit);
-			switch (unit.Status) {
-			case Unit.State.Move:
+			LegacyUnit legacyUnit = mouse.getUnit ();
+			selectAttackable (legacyUnit);
+			switch (legacyUnit.Status) {
+			case LegacyUnit.State.Move:
 				turn = Turn.Move;
 				break;
-			case Unit.State.Attack:
+			case LegacyUnit.State.Attack:
 				turn = Turn.Attack;
 				break;
 			default:
-				print ("Error: Action " + unit.Status + " not implemented.");
+				print ("Error: Action " + legacyUnit.Status + " not implemented.");
 				break;
 			}
 		}
@@ -139,8 +139,8 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 
 	public void endTurn ()
 	{
-		HexPosition.clearSelection ();
-		foreach (Unit unit in units) {	//I only need to do this with units on that team, but checking won't speed things up. I could also only do it when player overflows.
+		LegacyHexPosition.clearSelection ();
+		foreach (LegacyUnit unit in units) {	//I only need to do this with units on that team, but checking won't speed things up. I could also only do it when player overflows.
 			unit.newTurn ();
 		}
 		player = (player + 1) % PLAYERS;
@@ -151,7 +151,7 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 
 	private void unselect ()
 	{
-		HexPosition.clearSelection ();
+		LegacyHexPosition.clearSelection ();
 		selection = null;
 		mouse.select ("Cursor");
 		if (!(selectSelectable () || gameOver)) {
@@ -163,7 +163,7 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 	private void checkGameOver ()
 	{
 		gameOver = true;
-		foreach (Unit unit in units) {
+		foreach (LegacyUnit unit in units) {
 			if (unit.Player != player) {
 				gameOver = false;
 				break;
@@ -173,8 +173,8 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 
 	private void actuallyAttack ()
 	{
-		Unit unit = selection.getUnit ();
-		unit.attack (mouse, unit.getDamage ());
+		LegacyUnit legacyUnit = selection.getUnit ();
+		legacyUnit.attack (mouse, legacyUnit.getDamage ());
 		checkGameOver ();
 		unselect ();
 	}
@@ -185,23 +185,23 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 			unselect ();
 		} else if (!mouse.containsKey ("Unit")) {
 			if (path.Length > 0) {
-				Unit myUnit = selection.getUnit ();
-				myUnit.move (path);
-				HexPosition.clearSelection ();
+				LegacyUnit myLegacyUnit = selection.getUnit ();
+				myLegacyUnit.move (path);
+				LegacyHexPosition.clearSelection ();
 				selection = mouse;
 				selection.select ("Selection");
-				if (selectAttackable (myUnit)) {
+				if (selectAttackable (myLegacyUnit)) {
 					turn = Turn.Attack;
 				} else {
-					myUnit.skipAttack ();
+					myLegacyUnit.skipAttack ();
 					unselect ();
 				}
 			}
 		} else {
-			Unit enemy = mouse.getUnit ();
+			LegacyUnit enemy = mouse.getUnit ();
 			if (enemy != null) {
-				Unit myUnit = selection.getUnit ();
-				if (isAttackable (myUnit, enemy)) {
+				LegacyUnit myLegacyUnit = selection.getUnit ();
+				if (isAttackable (myLegacyUnit, enemy)) {
 					actuallyAttack ();
 				}
 			}
@@ -215,7 +215,7 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 		}
 	}
 
-	private HexPosition getMouseHex ()
+	private LegacyHexPosition getMouseHex ()
 	{
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit[] hits = Physics.RaycastAll (ray);
@@ -230,7 +230,7 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 					min = i;
 				}
 			}
-			return (new HexPosition (hits [min].point));
+			return (new LegacyHexPosition (hits [min].point));
 		}
 	}
 
@@ -249,10 +249,10 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 		if (!Input.mousePresent) {
 			mouse = null;
 		} else {
-			HexPosition newMouse = getMouseHex ();
+			LegacyHexPosition newMouse = getMouseHex ();
 			if (newMouse == null) {
-				HexPosition.clearSelection ("Path");
-				HexPosition.clearSelection ("Attack");
+				LegacyHexPosition.clearSelection ("Path");
+				LegacyHexPosition.clearSelection ("Attack");
 				path = null;
 			} else {
 				if (newMouse != mouse) {
@@ -261,8 +261,8 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 					}
 					if (newMouse.containsKey ("Obstacle")) {	//The Obstacle tag is being used to make the tile unselectable.
 						if (mouse != null && turn == Turn.Move) {
-							HexPosition.clearSelection ("Path");
-							HexPosition.clearSelection ("Attack");
+							LegacyHexPosition.clearSelection ("Path");
+							LegacyHexPosition.clearSelection ("Attack");
 							path = null;
 						}
 						mouse = null;
@@ -271,12 +271,12 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 					mouse = newMouse;
 					mouse.select ("Cursor");
 					if (turn == Turn.Move) {
-						Unit unit = selection.getUnit ();
-						HexPosition.clearSelection ("Path");
-						HexPosition.clearSelection ("Attack");
-						path = AStar.search (selection, mouse, unit.Speed);
-						HexPosition.select ("Path", path);
-						selectAttackable (unit, mouse);
+						LegacyUnit legacyUnit = selection.getUnit ();
+						LegacyHexPosition.clearSelection ("Path");
+						LegacyHexPosition.clearSelection ("Attack");
+						path = AStar.search (selection, mouse, legacyUnit.Speed);
+						LegacyHexPosition.select ("Path", path);
+						selectAttackable (legacyUnit, mouse);
 					}
 				}
 				if (Input.GetButtonDown ("Fire1")) {
@@ -345,7 +345,7 @@ public class HexGrid : MonoBehaviour, IPlayerInterface
 		case Turn.Attack:
 			GUI.Box (new Rect (10, 40, 90, 20), "Attack");
 			if (GUI.Button (new Rect (10, 70, 90, 20), "Skip Attack")) {
-				HexPosition.clearSelection ();
+				LegacyHexPosition.clearSelection ();
 				selection = null;
 				if (mouse != null) {
 					mouse.select ("Cursor");
