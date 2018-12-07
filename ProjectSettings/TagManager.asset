@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -13,7 +14,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Tiles
   - 
   - 
   - 
@@ -40,4 +41,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UnitsBase
+    uniqueID: 1289110223
+    locked: 0
+  - name: UnitsFlag
+    uniqueID: 649496663
+    locked: 0
+  - name: TileMarker
+    uniqueID: 1578523415
+    locked: 0
+  - name: TileSelector
+    uniqueID: 4016970609
+    locked: 0
+  - name: Symbols
+    uniqueID: 1002543593
     locked: 0

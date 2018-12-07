@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
 public class HexEntry : System.IEquatable<HexEntry> {
-	private HexPosition position;
+	private LegacyHexPosition position;
 	private string name;
 
-	public HexEntry (HexPosition position, string name)
+	public HexEntry (LegacyHexPosition position, string name)
 	{
 		this.position = position;
 		this.name = name;
 	}
 
-	public HexPosition Position {
+	public LegacyHexPosition Position {
 		get {
 			return this.position;
 		}

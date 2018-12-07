@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Assets.Scripts;
 
-public class Unit : MonoBehaviour
+public class LegacyUnit : MonoBehaviour
 {
-	private HexPosition position;
+	private LegacyHexPosition position;
 
 	public enum State
 	{
@@ -63,7 +64,7 @@ public class Unit : MonoBehaviour
 		grid.SendMessage ("ActionComplete");
 	}*/
 	
-	public HexPosition Coordinates {
+	public LegacyHexPosition Coordinates {
 		get {
 			return position;
 		}
@@ -81,13 +82,13 @@ public class Unit : MonoBehaviour
 		get { return state; }
 	}
 
-	public void move (HexPosition[] path)
+	public void move (LegacyHexPosition[] path)
 	{
 		if (path.Length < 2) {
 			state = State.Attack;
 			return;
 		}
-		HexPosition destination = path [path.Length - 1];
+		LegacyHexPosition destination = path [path.Length - 1];
 		this.path = new Vector3[path.Length];
 		for (int i = 0; i < path.Length; ++i) {
 			this.path [i] = path [i].getPosition ();
@@ -122,7 +123,7 @@ public class Unit : MonoBehaviour
 		return NegativeBinomialDistribution.fromMeanAndStandardDeviation (Strength - 1, Variation) + 1;
 	}
 
-	public void attack (HexPosition enemy, int damage)
+	public void attack (LegacyHexPosition enemy, int damage)
 	{
 		state = State.Wait;
 		enemy.getUnit ().defend (damage);
@@ -202,7 +203,7 @@ public class Unit : MonoBehaviour
 	{
 		hp = MaxHP;
 		if (Coordinates == null) {
-			Coordinates = new HexPosition (transform.position);
+			Coordinates = new LegacyHexPosition (transform.position);
 		}
 	}
 	

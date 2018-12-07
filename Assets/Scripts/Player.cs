@@ -2,11 +2,12 @@
 using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts;
 
 public class Player : NetworkBehaviour, IPlayerInterface
 {
 	public GameObject marker;
-	private List<Unit> units;
+	private List<LegacyUnit> units;
 
 	private bool waiting = false;
 	//private int timeout = 0;		//waiting is still false as this counts down.
@@ -21,9 +22,9 @@ public class Player : NetworkBehaviour, IPlayerInterface
 
 	private Turn turn = Turn.Select;
 	private int player;
-	private HexPosition mouse = null;
-	private HexPosition selection = null;
-	private HexPosition[] path = null;
+	private LegacyHexPosition mouse = null;
+	private LegacyHexPosition selection = null;
+	private LegacyHexPosition[] path = null;
 	bool gameOver = false;
 	private bool myTurn = false;
 
@@ -33,8 +34,8 @@ public class Player : NetworkBehaviour, IPlayerInterface
 		if (!isLocalPlayer)
 			return;
 		this.player = player;
-		units = new List<Unit> (Object.FindObjectsOfType<Unit> ());
-		foreach (Unit unit in units) {
+		units = new List<LegacyUnit> (Object.FindObjectsOfType<LegacyUnit> ());
+		foreach (LegacyUnit unit in units) {
 			unit.setPlayerInterface (this, unit.Player == player);
 		}
 	}
@@ -48,7 +49,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 		if (selectAttackable (selection.getUnit ())) {
 			turn = Turn.Attack;
 		} else {
-			CmdUnitSkipAttack (HexPosition.hexToIntPair (selection));
+			CmdUnitSkipAttack (LegacyHexPosition.hexToIntPair (selection));
 			unselect ();
 		}
 	}
@@ -64,11 +65,11 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	}
 
 	[Client]
-	public void removeUnit (Unit unit)
+	public void removeUnit (LegacyUnit legacyUnit)
 	{
 		if (!isLocalPlayer)	//Should always be local player.
 			return;
-		units.Remove (unit);
+		units.Remove (legacyUnit);
 	}
 
 	//Returns true if there are any selectable units.
@@ -76,8 +77,8 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	private bool selectSelectable ()
 	{
 		bool nonempty = false;
-		foreach (Unit otherUnit in units) {
-			if (otherUnit.Player == player && otherUnit.Status != Unit.State.Wait) {
+		foreach (LegacyUnit otherUnit in units) {
+			if (otherUnit.Player == player && otherUnit.Status != LegacyUnit.State.Wait) {
 				otherUnit.Coordinates.select ("Selectable");
 				nonempty = true;
 			}
@@ -87,22 +88,22 @@ public class Player : NetworkBehaviour, IPlayerInterface
 
 	//TODO: Move to Unit.cs
 	[Client]
-	private bool isAttackable (Unit attacker, Unit attacked, HexPosition coordinates)
+	private bool isAttackable (LegacyUnit attacker, LegacyUnit attacked, LegacyHexPosition coordinates)
 	{
 		return attacked.Player != player && coordinates.dist (attacked.Coordinates) <= attacker.Range;
 	}
 
-	private bool isAttackable (Unit attacker, Unit attacked)
+	private bool isAttackable (LegacyUnit attacker, LegacyUnit attacked)
 	{
 		return isAttackable (attacker, attacked, attacker.Coordinates);
 	}
 
 	//Returns true if there's at least one attackable unit.
 	[Client]
-	private bool selectAttackable (Unit attacker, HexPosition coordinates)
+	private bool selectAttackable (LegacyUnit attacker, LegacyHexPosition coordinates)
 	{
 		bool nonempty = false;
-		foreach (Unit otherUnit in units) {
+		foreach (LegacyUnit otherUnit in units) {
 			if (isAttackable (attacker, otherUnit, coordinates)) {
 				otherUnit.Coordinates.select ("Attack");
 				nonempty = true;
@@ -113,7 +114,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 
 	//Returns true if there's at least one attackable unit.
 	[Client]
-	private bool selectAttackable (Unit attacker)
+	private bool selectAttackable (LegacyUnit attacker)
 	{
 		return selectAttackable (attacker, attacker.Coordinates);
 	}
@@ -122,20 +123,20 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	private void select ()
 	{
 		if (mouse.isSelected ("Selectable")) {
-			HexPosition.clearSelection ("Selectable");
+			LegacyHexPosition.clearSelection ("Selectable");
 			selection = mouse;
 			mouse.select ("Selection");
-			Unit unit = mouse.getUnit ();
-			selectAttackable (unit);
-			switch (unit.Status) {
-			case Unit.State.Move:
+			LegacyUnit legacyUnit = mouse.getUnit ();
+			selectAttackable (legacyUnit);
+			switch (legacyUnit.Status) {
+			case LegacyUnit.State.Move:
 				turn = Turn.Move;
 				break;
-			case Unit.State.Attack:
+			case LegacyUnit.State.Attack:
 				turn = Turn.Attack;
 				break;
 			default:
-				Debug.LogError ("Error: Action " + unit.Status + " not implemented.");
+				Debug.LogError ("Error: Action " + legacyUnit.Status + " not implemented.");
 				break;
 			}
 		}
@@ -144,7 +145,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	[Client]
 	private void endTurn ()
 	{
-		HexPosition.clearSelection ();
+		LegacyHexPosition.clearSelection ();
 		myTurn = false;
 		CmdEndTurn ();
 	}
@@ -153,7 +154,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	public void RpcBeginTurn ()
 	{
 		if (isLocalPlayer) {
-			foreach (Unit unit in units) {
+			foreach (LegacyUnit unit in units) {
 				unit.newTurn ();
 			}
 			myTurn = true;
@@ -164,7 +165,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	[Client]
 	private void unselect ()
 	{
-		HexPosition.clearSelection ();
+		LegacyHexPosition.clearSelection ();
 		selection = null;
 		mouse.select ("Cursor");
 		if (!(selectSelectable () || gameOver)) {
@@ -177,7 +178,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	private void checkGameOver ()
 	{
 		gameOver = true;
-		foreach (Unit unit in units) {
+		foreach (LegacyUnit unit in units) {
 			if (unit.Player != player) {
 				gameOver = false;
 				break;
@@ -188,7 +189,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	[Client]
 	private void actuallyAttack ()
 	{
-		CmdUnitAttack (HexPosition.hexToIntPair (selection), HexPosition.hexToIntPair (mouse));
+		CmdUnitAttack (LegacyHexPosition.hexToIntPair (selection), LegacyHexPosition.hexToIntPair (mouse));
 		waiting = true;
 	}
 
@@ -200,15 +201,15 @@ public class Player : NetworkBehaviour, IPlayerInterface
 		} else if (!mouse.containsKey ("Unit")) {
 			if (path.Length > 0) {
 				waiting = true;
-				HexPosition.clearSelection ();
+				LegacyHexPosition.clearSelection ();
 				selection = mouse;
 				selection.select ("Selection");
-				CmdMoveUnit (HexPosition.pathToIntString (path));
+				CmdMoveUnit (LegacyHexPosition.pathToIntString (path));
 			}
 		} else {
 			object enemy = null;
 			if (mouse.tryGetValue ("Unit", out enemy)) {
-				if (isAttackable (selection.getUnit (), (Unit)enemy)) {
+				if (isAttackable (selection.getUnit (), (LegacyUnit)enemy)) {
 					actuallyAttack ();
 				}
 			}
@@ -224,7 +225,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	}
 
 	[Client]
-	private HexPosition getMouseHex ()
+	private LegacyHexPosition getMouseHex ()
 	{
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit[] hits = Physics.RaycastAll (ray);
@@ -239,7 +240,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 					min = i;
 				}
 			}
-			return (new HexPosition (hits [min].point));
+			return (new LegacyHexPosition (hits [min].point));
 		}
 	}
 
@@ -252,10 +253,10 @@ public class Player : NetworkBehaviour, IPlayerInterface
 		if (!Input.mousePresent) {
 			mouse = null;
 		} else {
-			HexPosition newMouse = getMouseHex ();
+			LegacyHexPosition newMouse = getMouseHex ();
 			if (newMouse == null) {
-				HexPosition.clearSelection ("Path");
-				HexPosition.clearSelection ("Attack");
+				LegacyHexPosition.clearSelection ("Path");
+				LegacyHexPosition.clearSelection ("Attack");
 				path = null;
 			} else {
 				if (newMouse != mouse) {
@@ -264,8 +265,8 @@ public class Player : NetworkBehaviour, IPlayerInterface
 					}
 					if (newMouse.containsKey ("Obstacle")) {	//The Obstacle tag is being used to make the tile unselectable.
 						if (mouse != null && turn == Turn.Move) {
-							HexPosition.clearSelection ("Path");
-							HexPosition.clearSelection ("Attack");
+							LegacyHexPosition.clearSelection ("Path");
+							LegacyHexPosition.clearSelection ("Attack");
 							path = null;
 						}
 						mouse = null;
@@ -274,12 +275,12 @@ public class Player : NetworkBehaviour, IPlayerInterface
 					mouse = newMouse;
 					mouse.select ("Cursor");
 					if (turn == Turn.Move) {
-						Unit unit = selection.getUnit ();
-						HexPosition.clearSelection ("Path");
-						HexPosition.clearSelection ("Attack");
-						path = AStar.search (selection, mouse, unit.Speed);
-						HexPosition.select ("Path", path);
-						selectAttackable (unit, mouse);
+						LegacyUnit legacyUnit = selection.getUnit ();
+						LegacyHexPosition.clearSelection ("Path");
+						LegacyHexPosition.clearSelection ("Attack");
+						path = AStar.search (selection, mouse, legacyUnit.Speed);
+						LegacyHexPosition.select ("Path", path);
+						selectAttackable (legacyUnit, mouse);
 					}
 				}
 				if (Input.GetButtonDown ("Fire1")) {
@@ -339,7 +340,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 		case Turn.Attack:
 			GUI.Box (new Rect (10, 40, 90, 20), "Attack");
 			if (GUI.Button (new Rect (10, 70, 90, 20), "Skip Attack")) {
-				HexPosition.clearSelection ();
+				LegacyHexPosition.clearSelection ();
 				selection = null;
 				if (mouse != null) {
 					mouse.select ("Cursor");
@@ -355,14 +356,14 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	override public void OnStartLocalPlayer ()
 	{
 		Object.Destroy (GameObject.FindGameObjectWithTag ("Network Manager HUD").GetComponents<Component> () [2]);
-		HexPosition.setColor ("Path", Color.yellow, 1);
-		HexPosition.setColor ("Selection", Color.green, 2);
-		HexPosition.setColor ("Selectable", Color.green, 3);
-		HexPosition.setColor ("Attack", Color.red, 4);
-		HexPosition.setColor ("Cursor", Color.blue, 5);
-		HexPosition.Marker = marker;
+		LegacyHexPosition.setColor ("Path", Color.yellow, 1);
+		LegacyHexPosition.setColor ("Selection", Color.green, 2);
+		LegacyHexPosition.setColor ("Selectable", Color.green, 3);
+		LegacyHexPosition.setColor ("Attack", Color.red, 4);
+		LegacyHexPosition.setColor ("Cursor", Color.blue, 5);
+		LegacyHexPosition.Marker = marker;
 		foreach (GameObject child in GameObject.FindGameObjectsWithTag("Obstacle")) {
-			HexPosition position = new HexPosition (child.transform.position);
+			LegacyHexPosition position = new LegacyHexPosition (child.transform.position);
 			child.transform.position = position.getPosition ();
 			position.flag ("Obstacle");
 		}
@@ -385,7 +386,7 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	[ClientRpc]
 	private void RpcMoveUnit (int[] intString)
 	{
-		HexPosition[] path = HexPosition.intStringToPath (intString);
+		LegacyHexPosition[] path = LegacyHexPosition.intStringToPath (intString);
 		path [0].getUnit ().move (path);
 	}
 
@@ -400,20 +401,20 @@ public class Player : NetworkBehaviour, IPlayerInterface
 	[ClientRpc]
 	private void RpcUnitAttack (int[] attacker, int[] defender, int damage)
 	{
-		Unit unit = HexPosition.intPairToHex (attacker).getUnit ();
-		unit.attack (HexPosition.intPairToHex (defender), damage);
+		LegacyUnit legacyUnit = LegacyHexPosition.intPairToHex (attacker).getUnit ();
+		legacyUnit.attack (LegacyHexPosition.intPairToHex (defender), damage);
 	}
 
 	[Command]
 	private void CmdUnitAttack (int[] attacker, int[] defender)
 	{
-		RpcUnitAttack (attacker, defender, HexPosition.intPairToHex (attacker).getUnit ().getDamage ());
+		RpcUnitAttack (attacker, defender, LegacyHexPosition.intPairToHex (attacker).getUnit ().getDamage ());
 	}
 
 	[ClientRpc]
 	private void RpcSkipAttack (int[] position)
 	{
-		HexPosition.intPairToHex (position).getUnit ().skipAttack ();
+		LegacyHexPosition.intPairToHex (position).getUnit ().skipAttack ();
 	}
 
 	[Command]
