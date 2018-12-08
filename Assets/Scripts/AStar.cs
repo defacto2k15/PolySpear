@@ -4,34 +4,34 @@ using Assets.Scripts;
 
 public class AStar {
 	
-	private static HexPosition getMin(HashSet<HexPosition> set, Dictionary<HexPosition, int> function) {
+	private static LegacyHexPosition getMin(HashSet<LegacyHexPosition> set, Dictionary<LegacyHexPosition, int> function) {
 		int min = int.MaxValue;
-		HexPosition minHex = null;
-		foreach(HexPosition hex in set) {
+		LegacyHexPosition minLegacyHex = null;
+		foreach(LegacyHexPosition hex in set) {
 			int value;
 			if(function.TryGetValue(hex, out value)) {
 				if(value <= min) {
 					min = value;
-					minHex = hex;
+					minLegacyHex = hex;
 				}
 			}
 		}
-		return minHex;
+		return minLegacyHex;
 	}
-	private static HexPosition getMin(Dictionary<HexPosition, int> function) {
+	private static LegacyHexPosition getMin(Dictionary<LegacyHexPosition, int> function) {
 		int min = int.MaxValue;
-		HexPosition minHex = null;
-		foreach(KeyValuePair<HexPosition, int> kvp in function) {
+		LegacyHexPosition minLegacyHex = null;
+		foreach(KeyValuePair<LegacyHexPosition, int> kvp in function) {
 			if(kvp.Value <= min) {
 				min = kvp.Value;
-				minHex = kvp.Key;
+				minLegacyHex = kvp.Key;
 			}
 		}
-		return minHex;
+		return minLegacyHex;
 	}
 
-	private static HexPosition[] reconstructPath(Dictionary<HexPosition,HexPosition> cameFrom, HexPosition final, int size) {
-		HexPosition[] path = new HexPosition[size];
+	private static LegacyHexPosition[] reconstructPath(Dictionary<LegacyHexPosition,LegacyHexPosition> cameFrom, LegacyHexPosition final, int size) {
+		LegacyHexPosition[] path = new LegacyHexPosition[size];
 		path [size - 1] = final;
 		for (int i = size-2; i >=0; --i) {
 			cameFrom.TryGetValue(path[i+1],out path[i]);
@@ -40,24 +40,24 @@ public class AStar {
 	}
 
 	//Start from start, move to within distance of goal within max steps.
-	public static HexPosition[] search (HexPosition start, HexPosition goal, int max, int distance=0) {
+	public static LegacyHexPosition[] search (LegacyHexPosition start, LegacyHexPosition goal, int max, int distance=0) {
 		max += distance; //Now it's the maximum distance to the goal, instead of just the maximum number of steps.
 		//HashSet<HexPosition> closedSet = new HashSet<HexPosition>();	// The set of nodes already evaluated.
 		//HashSet<HexPosition> openSet = new HashSet<HexPosition>(start);	// The set of tentative nodes to be evaluated, initially containing the start node
-		Dictionary<HexPosition, HexPosition> cameFrom = new Dictionary<HexPosition, HexPosition>();	// The map of navigated nodes.
-		Dictionary<HexPosition, int> gScore = new Dictionary<HexPosition, int> ();	// Cost from start along best known path. Domain is the open and closed sets.
-		Dictionary<HexPosition, int> fScore = new Dictionary<HexPosition, int> ();	// Estimated total cost from start to goal through y. Domain is the open set.
+		Dictionary<LegacyHexPosition, LegacyHexPosition> cameFrom = new Dictionary<LegacyHexPosition, LegacyHexPosition>();	// The map of navigated nodes.
+		Dictionary<LegacyHexPosition, int> gScore = new Dictionary<LegacyHexPosition, int> ();	// Cost from start along best known path. Domain is the open and closed sets.
+		Dictionary<LegacyHexPosition, int> fScore = new Dictionary<LegacyHexPosition, int> ();	// Estimated total cost from start to goal through y. Domain is the open set.
 		gScore.Add (start, 0);
 		fScore.Add (start, start.dist (goal));
 		while (fScore.Count > 0) {
-			HexPosition current = getMin(fScore);
+			LegacyHexPosition current = getMin(fScore);
 			if(current.dist (goal) <= distance) {
 				int length = 0;
 				gScore.TryGetValue(current, out length);
 				return reconstructPath(cameFrom, current, length+1);
 			}
 			fScore.Remove(current);
-			foreach(HexPosition neighbor in current.Neighbors) {
+			foreach(LegacyHexPosition neighbor in current.Neighbors) {
 				if(neighbor.containsKey("Obstacle") || neighbor.containsKey("Unit")) {
 					continue;	//Make this more general.
 				}
@@ -83,7 +83,7 @@ public class AStar {
 				}
 			}
 		}
-		return new HexPosition[0] {};
+		return new LegacyHexPosition[0] {};
 	}
 
 	/*function A*(start,goal)

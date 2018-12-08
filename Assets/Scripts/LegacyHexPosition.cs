@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 namespace Assets.Scripts
 {
     [SerializeField]
-    public class HexPosition : System.IEquatable<HexPosition>
+    public class LegacyHexPosition : System.IEquatable<LegacyHexPosition>
     {
         public int u;
         public int v;
@@ -19,12 +19,12 @@ namespace Assets.Scripts
         private static Dictionary<string, Pair<Color, int>> selectionTypes = new Dictionary<string, Pair<Color, int>> ();
         //Carries the color and layer of each kind of hex selector.
         //private static Dictionary<string, HashSet<HexPosition>> selectedCells = new Dictionary<string, List<HexPosition>>();
-        private static Dictionary<HexPosition, HashSet<string>>	selectedTypes = new Dictionary<HexPosition, HashSet<string>> ();
-        private static Dictionary<HexPosition, string> currentSelection = new Dictionary<HexPosition, string> ();
-        private static Dictionary<HexPosition, GameObject> markers = new Dictionary<HexPosition, GameObject> ();
+        private static Dictionary<LegacyHexPosition, HashSet<string>>	selectedTypes = new Dictionary<LegacyHexPosition, HashSet<string>> ();
+        private static Dictionary<LegacyHexPosition, string> currentSelection = new Dictionary<LegacyHexPosition, string> ();
+        private static Dictionary<LegacyHexPosition, GameObject> markers = new Dictionary<LegacyHexPosition, GameObject> ();
         //I just made this public for debugging reasons.
 
-        public static int[] pathToIntString (HexPosition[] path)
+        public static int[] pathToIntString (LegacyHexPosition[] path)
         {
             int[] intString = new int[path.Length * 2];
             for (int i = 0; i < path.Length; ++i) {
@@ -34,23 +34,23 @@ namespace Assets.Scripts
             return intString;
         }
 
-        public static HexPosition[] intStringToPath (int[] intString)
+        public static LegacyHexPosition[] intStringToPath (int[] intString)
         {
-            HexPosition[] path = new HexPosition[intString.Length / 2];
+            LegacyHexPosition[] path = new LegacyHexPosition[intString.Length / 2];
             for (int i = 0; i < path.Length; ++i) {
-                path [i] = new HexPosition (intString [2 * i], intString [2 * i + 1]);
+                path [i] = new LegacyHexPosition (intString [2 * i], intString [2 * i + 1]);
             }
             return path;
         }
 
-        public static int[] hexToIntPair (HexPosition hex)
+        public static int[] hexToIntPair (LegacyHexPosition legacyHex)
         {
-            return new int[2] { hex.u, hex.v };
+            return new int[2] { legacyHex.u, legacyHex.v };
         }
 
-        public static HexPosition intPairToHex (int[] pair)
+        public static LegacyHexPosition intPairToHex (int[] pair)
         {
-            return new HexPosition (pair [0], pair [1]);
+            return new LegacyHexPosition (pair [0], pair [1]);
         }
 
         private class Pair<S, T>
@@ -70,11 +70,11 @@ namespace Assets.Scripts
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HexPosition"/> class using the coordinates. This method is not very user-friendly.
+        /// Initializes a new instance of the <see cref="LegacyHexPosition"/> class using the coordinates. This method is not very user-friendly.
         /// </summary>
         /// <param name="u">Distance north of the origin.</param>
         /// <param name="v">Distance south-east of the origin.</param>
-        public HexPosition (int u, int v)
+        public LegacyHexPosition (int u, int v)
         {
             this.u = u;
             this.v = v;
@@ -84,7 +84,7 @@ namespace Assets.Scripts
         /// Given x and y position, finds the coordinates of the hex they're on.
         /// </summary>
         /// <param name="position">Position.</param>
-        public HexPosition (Vector3 position)
+        public LegacyHexPosition (Vector3 position)
         {
             float yy = 1 / SQRT32 * position.z / SIZE + 1;
             float xx = position.x / SIZE + yy / 2 + 0.5f;
@@ -93,9 +93,9 @@ namespace Assets.Scripts
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HexPosition"/> class at the origin.
+        /// Initializes a new instance of the <see cref="LegacyHexPosition"/> class at the origin.
         /// </summary>
-        public HexPosition ()
+        public LegacyHexPosition ()
         {
             u = 0;
             v = 0;
@@ -133,19 +133,19 @@ namespace Assets.Scripts
         }
 
         //The adjacent hexes. It's not obvious how to find the neighbors based on coordinates, so we have this.
-        public HexPosition N {	get { return new HexPosition (u + 1,	v); } }
+        public LegacyHexPosition N {	get { return new LegacyHexPosition (u + 1,	v); } }
 
-        public HexPosition NE {	get { return new HexPosition (u + 1,	v + 1); } }
+        public LegacyHexPosition NE {	get { return new LegacyHexPosition (u + 1,	v + 1); } }
 
-        public HexPosition SE {	get { return new HexPosition (u, v + 1); } }
+        public LegacyHexPosition SE {	get { return new LegacyHexPosition (u, v + 1); } }
 
-        public HexPosition S {	get { return new HexPosition (u - 1,	v); } }
+        public LegacyHexPosition S {	get { return new LegacyHexPosition (u - 1,	v); } }
 
-        public HexPosition SW {	get { return new HexPosition (u - 1,	v - 1); } }
+        public LegacyHexPosition SW {	get { return new LegacyHexPosition (u - 1,	v - 1); } }
 
-        public HexPosition NW {	get { return new HexPosition (u, v - 1); } }
+        public LegacyHexPosition NW {	get { return new LegacyHexPosition (u, v - 1); } }
 
-        public HexPosition[] Neighbors { get { return new HexPosition[6] {
+        public LegacyHexPosition[] Neighbors { get { return new LegacyHexPosition[6] {
             this.N,
             this.NE,
             this.SE,
@@ -156,34 +156,34 @@ namespace Assets.Scripts
 
         //Gives a hex n in a given direction. You can get to any hex in two steps.
         //This will be more understandable than trying to give coordinates.
-        public HexPosition goN (int n)
+        public LegacyHexPosition goN (int n)
         {
-            return new HexPosition (u + n, v);
+            return new LegacyHexPosition (u + n, v);
         }
 
-        public HexPosition goNE (int ne)
+        public LegacyHexPosition goNE (int ne)
         {
-            return new HexPosition (u + ne,	v + ne);
+            return new LegacyHexPosition (u + ne,	v + ne);
         }
 
-        public HexPosition goSE (int se)
+        public LegacyHexPosition goSE (int se)
         {
-            return new HexPosition (u, v + se);
+            return new LegacyHexPosition (u, v + se);
         }
 
-        public HexPosition goS (int s)
+        public LegacyHexPosition goS (int s)
         {
-            return new HexPosition (u - s, v);
+            return new LegacyHexPosition (u - s, v);
         }
 
-        public HexPosition goSW (int sw)
+        public LegacyHexPosition goSW (int sw)
         {
-            return new HexPosition (u - sw,	v - sw);
+            return new LegacyHexPosition (u - sw,	v - sw);
         }
 
-        public HexPosition goNW (int nw)
+        public LegacyHexPosition goNW (int nw)
         {
-            return new HexPosition (u, v - nw);
+            return new LegacyHexPosition (u, v - nw);
         }
 
         private static int max (int a, int b)
@@ -208,7 +208,7 @@ namespace Assets.Scripts
         /// Length of the minimum path from this position to p. The distance from a hex to itself is zero, the distance to a neighbor is one, etc.
         /// </summary>
         /// <param name="p">Position to find the distance to.</param>
-        public int dist (HexPosition p)
+        public int dist (LegacyHexPosition p)
         {
             int du = p.u - u;
             int dv = p.v - v;
@@ -219,32 +219,32 @@ namespace Assets.Scripts
         //This means for example that NE is closer to north, as opposed to closer to east.
         //If you wanted distance north, the best you could average NE and NW. This gives half integers.
         //Note that distance is the maximum of these.
-        public int distNE (HexPosition p)
+        public int distNE (LegacyHexPosition p)
         {
             return p.u - u;
         }
 
-        public int distE (HexPosition p)
+        public int distE (LegacyHexPosition p)
         {
             return p.u - v;
         }
 
-        public int distSE (HexPosition p)
+        public int distSE (LegacyHexPosition p)
         {
             return distE (p) - distNE (p);
         }
 
-        public int distSW (HexPosition p)
+        public int distSW (LegacyHexPosition p)
         {
             return -distNE (p);
         }
 
-        public int distW (HexPosition p)
+        public int distW (LegacyHexPosition p)
         {
             return -distE (p);
         }
 
-        public int distNW (HexPosition p)
+        public int distNW (LegacyHexPosition p)
         {
             return -distSE (p);
         }
@@ -499,9 +499,9 @@ namespace Assets.Scripts
         /// <returns><c>true</c>, if that type has been defined, <c>false</c> otherwise, indicating that the operation has failed.</returns>
         /// <param name="type">The type of selection to use.</param>
         /// <param name="set">The hexes to select.</param>
-        public static void select (string type, IEnumerable<HexPosition> set)
+        public static void select (string type, IEnumerable<LegacyHexPosition> set)
         {
-            foreach (HexPosition position in set) {
+            foreach (LegacyHexPosition position in set) {
                 position.select (type);
             }
         }
@@ -551,7 +551,7 @@ namespace Assets.Scripts
         /// <param name="type">Type of selection to remove.</param>
         public static void clearSelection (string type)
         {
-            foreach (HexPosition hex in getSelection(type)) {
+            foreach (LegacyHexPosition hex in getSelection(type)) {
                 hex.unselect (type);
             }
         }
@@ -561,10 +561,10 @@ namespace Assets.Scripts
         /// </summary>
         /// <returns>A set containing all of the positions with that type of selection.</returns>
         /// <param name="type">The type of selection to look for.</param>
-        public static HashSet<HexPosition> getSelection (string type)
+        public static HashSet<LegacyHexPosition> getSelection (string type)
         {
-            HashSet<HexPosition> selection = new HashSet<HexPosition> ();
-            foreach (KeyValuePair<HexPosition, HashSet<string>> kvp in selectedTypes) {
+            HashSet<LegacyHexPosition> selection = new HashSet<LegacyHexPosition> ();
+            foreach (KeyValuePair<LegacyHexPosition, HashSet<string>> kvp in selectedTypes) {
                 if (kvp.Value.Contains (type)) {
                     selection.Add (kvp.Key);
                 }
@@ -577,9 +577,9 @@ namespace Assets.Scripts
         /// </summary>
         /// <returns>A single hex selected in the given way, or null if there are no such hexes.</returns>
         /// <param name="type">Type of selection to search for.</param>
-        public static HexPosition getOne (string type)
+        public static LegacyHexPosition getOne (string type)
         {
-            foreach (KeyValuePair<HexPosition, HashSet<string>> kvp in selectedTypes) {
+            foreach (KeyValuePair<LegacyHexPosition, HashSet<string>> kvp in selectedTypes) {
                 if (kvp.Value.Contains (type)) {
                     return kvp.Key;
                 }
@@ -618,9 +618,9 @@ namespace Assets.Scripts
         /// </summary>
         /// <returns>The unit at the specified position.</returns>
         /// <param name="position">Position to return the unit on.</param>
-        public Unit getUnit ()
+        public LegacyUnit getUnit ()
         {
-            return (Unit)getValue ("Unit");
+            return (LegacyUnit)getValue ("Unit");
         }
 
         public override string ToString ()
@@ -637,7 +637,7 @@ namespace Assets.Scripts
 		}
 	}*/
 
-        public bool Equals (HexPosition obj)
+        public bool Equals (LegacyHexPosition obj)
         {
             return u == obj.U && v == obj.V;
         }

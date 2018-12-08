@@ -7,5 +7,5 @@ public interface IPlayerInterface
 
 	void attackComplete ();
 
-	void removeUnit (Unit unit);
+	void removeUnit (LegacyUnit legacyUnit);
 }

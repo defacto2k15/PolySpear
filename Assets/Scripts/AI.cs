@@ -4,10 +4,10 @@ using Assets.Scripts;
 
 public class AI
 {
-	private List<Unit> units;
+	private List<LegacyUnit> units;
 	private int player;
-	private Unit target;
-	private Unit unit;
+	private LegacyUnit target;
+	private LegacyUnit legacyUnit;
 
 	private enum Phase
 	{
@@ -17,17 +17,17 @@ public class AI
 
 	private Phase phase = Phase.Move;
 
-	public AI (List<Unit> units, int player)
+	public AI (List<LegacyUnit> units, int player)
 	{
 		this.units = units;
 		this.player = player;
 	}
 
-	private Unit getPreferredEnemy ()
+	private LegacyUnit getPreferredEnemy ()
 	{
-		Unit current = null;
+		LegacyUnit current = null;
 		double score = 0;
-		foreach (Unit unit in units) {
+		foreach (LegacyUnit unit in units) {
 			if (unit.Player == player) {
 				continue;
 			}
@@ -40,12 +40,12 @@ public class AI
 		return current;
 	}
 
-	private Unit getNextUnit ()
+	private LegacyUnit getNextUnit ()
 	{
-		Unit current = null;
+		LegacyUnit current = null;
 		double score = 0;
-		foreach (Unit unit in units) {
-			if (unit.Player != player || unit.Status != Unit.State.Move) {
+		foreach (LegacyUnit unit in units) {
+			if (unit.Player != player || unit.Status != LegacyUnit.State.Move) {
 				continue;
 			}
 			double new_score = unit.Strength;
@@ -57,16 +57,16 @@ public class AI
 		return current;
 	}
 
-	private HexPosition[] getPath (Unit unit, Unit enemy)
+	private LegacyHexPosition[] getPath (LegacyUnit legacyUnit, LegacyUnit enemy)
 	{
-		HexPosition[] path = AStar.search (unit.Coordinates, enemy.Coordinates, 64, unit.Range);
+		LegacyHexPosition[] path = AStar.search (legacyUnit.Coordinates, enemy.Coordinates, 64, legacyUnit.Range);
 		if (path == null) {
 			return null;
 		}
-		if (path.Length <= unit.Speed) {
+		if (path.Length <= legacyUnit.Speed) {
 			return path;
 		}
-		HexPosition[] new_path = new HexPosition[unit.Speed];
+		LegacyHexPosition[] new_path = new LegacyHexPosition[legacyUnit.Speed];
 		for (int i = 0; i < new_path.Length; ++i) {
 			new_path [i] = path [i];
 		}
@@ -79,34 +79,34 @@ public class AI
 		//If it's the move phase, move the strongest unit that hasn't moved yet towards
 		//the enemy with the highest attack to HP ratio.
 		if (phase == Phase.Move) {
-			unit = getNextUnit ();
-			if (unit == null) {
+			legacyUnit = getNextUnit ();
+			if (legacyUnit == null) {
 				return true;
 			}
 			target = getPreferredEnemy ();
 			if (target == null) {
 				return true;
 			}
-			HexPosition[] path = getPath (unit, target);
+			LegacyHexPosition[] path = getPath (legacyUnit, target);
 			//You can freeze the enemy AI by hiding the desired enemy out of reach. I should fix this eventually,
 			//and make it go on to the next target or something. Or try to clear a path to that unit.
 			if (path == null) {
-				unit.skipMove ();
+				legacyUnit.skipMove ();
 			} else {
-				unit.move (path);
+				legacyUnit.move (path);
 			}
 			phase = Phase.Attack;
 			//If it's the attack phase, attack the target, or if you haven't gotten close enough,
 			//find the best enemy in range to attack. If nobody is in range, do nothing.
 		} else {
-			if (unit.Coordinates.dist (target.Coordinates) <= unit.Range) {
-				unit.attack (target.Coordinates, unit.getDamage ());
+			if (legacyUnit.Coordinates.dist (target.Coordinates) <= legacyUnit.Range) {
+				legacyUnit.attack (target.Coordinates, legacyUnit.getDamage ());
 				phase = Phase.Move;
 			} else {
 				target = null;
 				double score = 0;
-				foreach (Unit other_unit in units) {
-					if (other_unit.Player == player || unit.Coordinates.dist (other_unit.Coordinates) > unit.Range) {
+				foreach (LegacyUnit other_unit in units) {
+					if (other_unit.Player == player || legacyUnit.Coordinates.dist (other_unit.Coordinates) > legacyUnit.Range) {
 						continue;
 					}
 					double new_score = other_unit.Strength / other_unit.HP;
@@ -116,7 +116,7 @@ public class AI
 					}
 				}
 				if (target != null) {
-					unit.attack (target.Coordinates, unit.getDamage ());
+					legacyUnit.attack (target.Coordinates, legacyUnit.getDamage ());
 				}
 				phase = Phase.Move;
 			}
