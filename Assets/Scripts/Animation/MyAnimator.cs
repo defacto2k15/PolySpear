@@ -1,4 +1,5 @@
 using System;
+using Assets.Scripts.Animation;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -10,7 +11,7 @@ namespace Assets.Scripts.Game
         private UnitModel _animationTarget;
         private Action _completedCallback;
 
-        public bool WeAreDuringAnimation()
+        public bool WeAreDuringAnimation() // remove, animator is now to use once
         {
             return _animation != null;
         }
@@ -46,6 +47,16 @@ namespace Assets.Scripts.Game
             _animationTarget = targetUnit;
             _animationTarget.GetComponent<UnitView>().enabled = false;
             _animation = new MotionAnimation(targetUnit, targetPosition);
+        }
+
+        public void StartDeathAnimation(UnitModel targetUnit, Action completedCallback)
+        {
+            Assert.IsFalse(WeAreDuringAnimation());
+            _completedCallback = completedCallback;
+            // todo, temporary solution
+            _animationTarget = targetUnit;
+            _animationTarget.GetComponent<UnitView>().enabled = false;
+            _animation = new DeathAnimation(targetUnit);
         }
     }
 }

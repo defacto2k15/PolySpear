@@ -92,6 +92,11 @@ namespace Assets.Scripts
             return new MyHexPosition (U, V - nw);
         }
 
+        public MyHexPosition GoInDirection(Orientation orientation)
+        {
+            return new MyHexPosition(U + orientation.NeighboutOffset.U, V + orientation.NeighboutOffset.V);
+        }
+
         public override string ToString()
         {
             return $"{nameof(U)}: {U}, {nameof(V)}: {V}";

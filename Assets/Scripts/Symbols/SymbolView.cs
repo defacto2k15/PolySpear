@@ -9,11 +9,11 @@ namespace Assets.Scripts.Symbols
 {
     public class SymbolView : MonoBehaviour
     {
-        private ISymbolModel _model;
+        private SymbolModel _model;
 
         public void Start()
         {
-            _model = GetComponent<ISymbolModel>();
+            _model = GetComponent<SymbolModel>();
         }
 
         public void Update()

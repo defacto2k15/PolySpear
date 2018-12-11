@@ -13,7 +13,7 @@ namespace Assets.Scripts.Units
         public MyPlayer Owner;
         public MyHexPosition Position;
         public Orientation Orientation;
-        public Dictionary<Orientation, ISymbolModel> Symbols = new Dictionary<Orientation, ISymbolModel>();  
+        public Dictionary<Orientation, SymbolModel> Symbols => GetComponentsInChildren<SymbolModel>().ToDictionary(c => c.Orientation, c => c);
 
         public List<MyHexPosition> PossibleMoveTargets => Position.Neighbors.ToList();
     }

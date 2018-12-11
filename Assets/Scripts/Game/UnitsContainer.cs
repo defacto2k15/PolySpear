@@ -9,19 +9,16 @@ namespace Assets.Scripts.Game
     public class UnitsContainer : MonoBehaviour
     {
         private Dictionary<MyHexPosition, GameObject> _units = new Dictionary<MyHexPosition, GameObject>();
-        public GameObject UnitPrefab;
-        public GameObject SpearSymbolPrefab;
+        //public GameObject UnitPrefab; //todo delete
+        //public GameObject SpearSymbolPrefab;
 
-        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
+        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
         {
-            var unit = Instantiate(UnitPrefab);
+            var unit = Instantiate(unitPrefab, transform);
             unit.GetComponent<UnitModel>().Orientation = orientation;
             unit.GetComponent<UnitModel>().Position = position;
             unit.GetComponent<UnitModel>().Owner = player;
 
-            var symbol = Instantiate(SpearSymbolPrefab);
-            symbol.transform.SetParent(unit.transform);
-            unit.GetComponent<UnitModel>().Symbols[Orientation.N] = symbol.GetComponent<ISymbolModel>();
             _units[position] = unit;
         }
 

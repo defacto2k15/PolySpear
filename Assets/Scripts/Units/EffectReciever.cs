@@ -8,12 +8,8 @@ namespace Assets.Scripts.Units
 {
     public class EffectReciever
     {
-        private bool _isAlive = true;
-        public bool WasKilled => !_isAlive;
-
-        public void Kill()
-        {
-            _isAlive = false;
-        }
+        public bool IsAlive => !WasStruck;
+        public bool WasStruck { get; set; } 
+        public bool WasPushed { get; set; }
     }
 }

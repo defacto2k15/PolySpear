@@ -31,7 +31,7 @@ namespace Assets.Scripts.Units
             }
             _flagChild.GetComponent<SpriteRenderer>().color = Constants.PlayersFlagColors[_model.Owner];
             transform.localPosition = _model.Position.GetPosition();
-            transform.eulerAngles = new Vector3(90,_model.Orientation.FlatRotation,0);
+            transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation,0);
         }
     }
 }

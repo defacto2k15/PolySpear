@@ -24,5 +24,7 @@ namespace Assets.Scripts
         public static float RotationSpeed => 0.02f;
         public static float MotionEpsilon => 0.001f;
         public static float MotionSpeed => 5f;
+        public static double DeathAnimationLength => 2f;
+        public static float DeathAnimationLoopLength => 0.5f;
     }
 }

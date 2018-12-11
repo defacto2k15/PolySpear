@@ -11,10 +11,18 @@ namespace Assets.Scripts.Game
 {
     public class GameCourseController : MonoBehaviour
     {
+        public GameObject SpearmanPrefab; 
+        public GameObject Elf1Prefab; 
+        public GameObject Elf2Prefab; 
+        public GameObject Elf3Prefab; 
+        public GameObject Orc1Prefab; 
+        public GameObject Orc2Prefab; 
+        public GameObject Orc3Prefab; 
+
         private GameCourseView _view;
         private LocomotionManager _locomotionManager;
         private GameCourseModel _courseModel;
-        private MyAnimator _animator;
+        private Stack<MyAnimator> _animations = new Stack<MyAnimator>();
         
         // UI State
         private UnitModel _selectedUnit;
@@ -24,18 +32,17 @@ namespace Assets.Scripts.Game
             _view = GetComponent<GameCourseView>();
             _locomotionManager = new LocomotionManager();
             _courseModel = GetComponent<GameCourseModel>();
-            _animator = new MyAnimator();
         }
 
         public void Update()
         {
-            if (_animator.WeAreDuringAnimation())
+            if (_animations.Any() && _animations.Peek().WeAreDuringAnimation())
             {
                 _view.MakeSelectorInvisible(); //todo: these lines vvv are repeated many times. This needs to change
                 _view.RemoveSelectedMarker();
                 _view.RemoveMoveTargets();
                 _selectedUnit = null;
-                _animator.UpdateAnimation();
+                _animations.Peek().UpdateAnimation();
                 return;
             }
             if (_locomotionManager.WeAreDuringLocomotion())
@@ -66,13 +73,17 @@ namespace Assets.Scripts.Game
                 if (_courseModel.Turn == GameTurn.FirstPlayerTurn)
                 {
                     // todo prawdziwa faza wystawiania
-                    _courseModel.AddUnit(new MyHexPosition(1, 1), MyPlayer.Player1, Orientation.N);
+                    _courseModel.AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
+                    _courseModel.AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
+                    _courseModel.AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
                     _courseModel.NextTurn(); 
                 }
                 else
                 {
                     // todo wstawianie drugiego
-                    _courseModel.AddUnit(new MyHexPosition(3, 3), MyPlayer.Player2, Orientation.S);
+                    _courseModel.AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
+                    _courseModel.AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
+                    _courseModel.AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
                     _courseModel.Phrase = Phrase.Play;
                     _courseModel.NextTurn();
                     _courseModel.NextPhrase();
@@ -97,6 +108,7 @@ namespace Assets.Scripts.Game
                     {
                         // we are moving!!!
                         _locomotionManager.StartJourney(_selectedUnit, selectorPosition);
+                        _courseModel.NextTurn();
                     }
                     else { 
                         _view.RemoveSelectedMarker();
@@ -110,31 +122,58 @@ namespace Assets.Scripts.Game
 
         private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
         {
+            // WE ARE FIGHTING
             if (step.StepType == JourneyStepType.Action)
             {
-                _courseModel.PerformBattle(locomotionTarget.Position);
-                if (!_courseModel.HasUnitAt(locomotionTarget.Position))
+                var battleResults = _courseModel.PerformBattle(locomotionTarget.Position);
+                if (battleResults.UnitsKilled.Contains(locomotionTarget))
                 {
                     //we died in battle
-                    _animator = new MyAnimator();
+                    if (_animations.Any())
+                    {
+                        _animations.Pop();
+                    }
                     _locomotionManager = new LocomotionManager();
                 }
+                battleResults.UnitsKilled.ForEach(c =>
+                {
+                    var newAnimator = new MyAnimator();
+                    newAnimator.StartDeathAnimation(c, () =>
+                    {
+                        _courseModel.FinalizeKillUnit(c);
+                    });
+                    _animations.Push(newAnimator);
+                });
+
+                battleResults.UnitsPushed.ForEach(c =>
+                {
+                    var newAnimator = new MyAnimator();
+                    newAnimator.StartMotionAnimation(c.UnitPushed, c.EndPosition, () =>
+                    {
+                        _courseModel.MoveUnit(c.UnitPushed, c.EndPosition);
+                    });
+                    _animations.Push(newAnimator);
+                });
             }
             else
             {
+                var newAnimator = new MyAnimator();
                 if (step.StepType == JourneyStepType.Director)
                 {
-                    _animator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
+                    newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
                     {
                         _courseModel.OrientUnit(locomotionTarget, step.Director.To);
+                        _animations.Pop();
                     });
                 }else if (step.StepType == JourneyStepType.Motion)
                 {
-                    _animator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
+                    newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
                     {
                         _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
+                        _animations.Pop();
                     });
                 }
+                _animations.Push(newAnimator);
             }
         }
 

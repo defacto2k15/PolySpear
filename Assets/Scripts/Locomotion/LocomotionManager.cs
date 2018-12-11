@@ -42,8 +42,8 @@ namespace Assets.Scripts.Animation
                 {
                     To = orientation
                 }));
-                _journeySteps.Enqueue(new JourneyStep());
             }
+            _journeySteps.Enqueue(new JourneyStep());
             _journeySteps.Enqueue(new JourneyStep(new JourneyMotion()
             {
                 To = target
