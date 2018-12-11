@@ -36,6 +36,8 @@ namespace Assets.Scripts
         public float FlatRotation => _rotationInDegrees;
         public Orientation Opposite => AllOrientationsClockwise[(_indexClockwise + 3) % 6];
 
+        public MyHexPosition NeighboutOffset => _neighboutOffset;
+
         public static List<Orientation> GetOrientationsToTarget(Orientation startOrientation, Orientation targetOrientation)
         {
             List<Orientation> clockwiseOrientations = new List<Orientation>();
@@ -50,25 +52,21 @@ namespace Assets.Scripts
 
             if (targetIndex > startIndex)
             {
-                return Enumerable.Range(startIndex + 1, targetIndex - startIndex).Select(i => AllOrientationsClockwise[i]).ToList();
+                clockwiseOrientations = Enumerable.Range(startIndex + 1, targetIndex - startIndex).Select(i => AllOrientationsClockwise[i]).ToList();
             }
             else
             {
-                return Enumerable.Range(startIndex + 1, AllOrientationsClockwise.Count+ targetIndex - startIndex).Select(i => AllOrientationsClockwise[i%AllOrientationsClockwise.Count]).ToList();
+                clockwiseOrientations = Enumerable.Range(startIndex + 1, AllOrientationsClockwise.Count+ targetIndex - startIndex).Select(i => AllOrientationsClockwise[i%AllOrientationsClockwise.Count]).ToList();
             }
 
-            //if (targetIndex > startIndex) TODO POTEM
-            //{
-            //    clockwiseOrientations = Enumerable.Range(startIndex+1, targetIndex - startIndex).Select(i => AllOrientationsClockwise[i]).ToList();
-            //    counterCloskwiseOrientations = Enumerable.Range(targetIndex , (AllOrientationsClockwise.Count + startIndex - targetIndex) )
-            //        .Select(i => AllOrientationsClockwise[i % AllOrientationsClockwise.Count]).Reverse().ToList();
-            //}
-            //else
-            //{
-            //    clockwiseOrientations = Enumerable.Range(targetIndex, targetIndex+AllOrientationsClockwise.Count - startIndex).Select(i => AllOrientationsClockwise[i]).ToList();
-            //    counterCloskwiseOrientations = Enumerable.Range(targetIndex, (AllOrientationsClockwise.Count + targetIndex - startIndex))
-            //        .Select(i => AllOrientationsClockwise[i % AllOrientationsClockwise.Count]).Reverse().ToList();
-            //}
+            if (startIndex > targetIndex)
+            {
+                counterCloskwiseOrientations = Enumerable.Range(targetIndex, startIndex - targetIndex).Reverse().Select(i => AllOrientationsClockwise[i]).ToList();
+            }
+            else
+            {
+                counterCloskwiseOrientations = Enumerable.Range(targetIndex, AllOrientationsClockwise.Count+ startIndex - targetIndex).Reverse().Select(i => AllOrientationsClockwise[i%AllOrientationsClockwise.Count]).ToList();
+            }
 
             if (clockwiseOrientations.Count <= counterCloskwiseOrientations.Count)
             {
@@ -79,6 +77,8 @@ namespace Assets.Scripts
                 return counterCloskwiseOrientations;
             }
         }
+
+        public string Name => _name;
 
         public override string ToString()
         {

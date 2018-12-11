@@ -2,11 +2,11 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Symbols
 {
-    public class SpearSymbolActiveEffect : IEffect
+    public class EmptyEffect : IEffect
     {
         public void Execute(EffectReciever effectReciever)
         {
-            effectReciever.Kill();
+            //do nothing
         }
     }
 }

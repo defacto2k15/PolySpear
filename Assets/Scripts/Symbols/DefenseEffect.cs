@@ -1,12 +1,12 @@
-﻿using Assets.Scripts.Units;
+using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Symbols
 {
-    public class SpearSymbolPassiveEffect : IEffect
+    public class DefenseEffect : IEffect
     {
         public void Execute(EffectReciever effectReciever)
         {
-            effectReciever.Kill();
+            effectReciever.WasStruck = false;
         }
     }
 }

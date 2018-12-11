@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Symbols
 {
-    public interface ISymbolModel
+    public interface ISymbolModelTODODELETE
     {
         Orientation LocalOrientation { get;}
         IEffect PassiveEffect { get; }
