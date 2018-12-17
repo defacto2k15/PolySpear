@@ -42,11 +42,14 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: UnitsBase
-    uniqueID: 1289110223
+  - name: UnitBackground
+    uniqueID: 2409328853
     locked: 0
   - name: UnitsFlag
     uniqueID: 649496663
+    locked: 0
+  - name: UnitsBase
+    uniqueID: 1289110223
     locked: 0
   - name: TileMarker
     uniqueID: 1578523415
@@ -56,4 +59,7 @@ TagManager:
     locked: 0
   - name: Symbols
     uniqueID: 1002543593
+    locked: 0
+  - name: UI
+    uniqueID: 1595940373
     locked: 0

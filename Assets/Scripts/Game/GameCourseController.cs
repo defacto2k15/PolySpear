@@ -11,6 +11,8 @@ namespace Assets.Scripts.Game
 {
     public class GameCourseController : MonoBehaviour
     {
+        public EndGameScreenView EndGameScreenView;
+
         public GameObject SpearmanPrefab; 
         public GameObject Elf1Prefab; 
         public GameObject Elf2Prefab; 
@@ -45,6 +47,12 @@ namespace Assets.Scripts.Game
                 _animations.Peek().UpdateAnimation();
                 return;
             }
+            if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
+            {
+                EndGameScreenView.ShowScreen(_courseModel.GetWinner());
+                return;
+            }
+
             if (_locomotionManager.WeAreDuringLocomotion())
             {
                 if (!_locomotionManager.AnyMoreSteps)
@@ -102,9 +110,10 @@ namespace Assets.Scripts.Game
                         var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.IsTileMovable(c)).ToList();
                         _view.SetMoveTargets(possibleMoveTargets);
                     }
-                    else if (clickedUnit == null &&
-                             _selectedUnit != null &&
-                             _selectedUnit.PossibleMoveTargets.Where(c => _courseModel.IsTileMovable(c)).Contains(selectorPosition))
+                    else if ((clickedUnit == null && _selectedUnit != null && _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) ||
+                             (clickedUnit != null && _selectedUnit != null && clickedUnit.Owner != _selectedUnit.Owner && _courseModel.CanMoveTo(_selectedUnit, selectorPosition))
+                             )  
+                             //_selectedUnit.PossibleMoveTargets.Where(c => _courseModel.IsTileMovable(c)).Contains(selectorPosition))
                     {
                         // we are moving!!!
                         _locomotionManager.StartJourney(_selectedUnit, selectorPosition);

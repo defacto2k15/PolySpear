@@ -13,7 +13,7 @@ namespace Assets.Scripts.Units
 
         public void Start()
         {
-            _flagChild = transform.GetChild(0).gameObject;
+            _flagChild = transform.GetChild(1).gameObject;
             _model = GetComponent<UnitModel>();
         }
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Units
         {
             if (_flagChild == null) // todo more elegant solution
             {
-                _flagChild = transform.GetChild(0).gameObject;
+                _flagChild = transform.GetChild(1).gameObject; //todo remove 1
                 _model = GetComponent<UnitModel>();
             }
             _flagChild.GetComponent<SpriteRenderer>().color = Constants.PlayersFlagColors[_model.Owner];

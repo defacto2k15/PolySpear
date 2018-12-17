@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Symbols;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -9,8 +10,6 @@ namespace Assets.Scripts.Game
     public class UnitsContainer : MonoBehaviour
     {
         private Dictionary<MyHexPosition, GameObject> _units = new Dictionary<MyHexPosition, GameObject>();
-        //public GameObject UnitPrefab; //todo delete
-        //public GameObject SpearSymbolPrefab;
 
         public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
         {
@@ -22,7 +21,7 @@ namespace Assets.Scripts.Game
             _units[position] = unit;
         }
 
-        public bool HasUnitAt(MyHexPosition position)
+        public bool IsUnitAt(MyHexPosition position)
         {
             return _units.ContainsKey(position);
         }
@@ -34,7 +33,7 @@ namespace Assets.Scripts.Game
 
         public void MoveUnit(MyHexPosition oldPosition, MyHexPosition newPosition)
         {
-            Assert.IsTrue(HasUnitAt(oldPosition));
+            Assert.IsTrue(IsUnitAt(oldPosition));
             var unit = _units[oldPosition];
             _units.Remove(oldPosition);
             _units[newPosition] = unit;
@@ -43,7 +42,7 @@ namespace Assets.Scripts.Game
 
         public void OrientUnit(MyHexPosition unitPosition, Orientation orientation)
         {
-            Assert.IsTrue(HasUnitAt(unitPosition));
+            Assert.IsTrue(IsUnitAt(unitPosition));
             var unit = _units[unitPosition];
             unit.GetComponent<UnitModel>().Orientation = orientation;
         }
@@ -53,6 +52,16 @@ namespace Assets.Scripts.Game
             Assert.IsTrue(_units.ContainsKey(position));
             GameObject.Destroy(_units[position]);
             _units.Remove(position);
+        }
+
+        public bool HasAnyUnits(MyPlayer player)
+        {
+            return _units.Values.Any(c => c.GetComponent<UnitModel>().Owner == player);
+        }
+
+        public List<UnitModel> GetUnitsOfPlayer(MyPlayer player)
+        {
+            return _units.Values.Select(c => c.GetComponent<UnitModel>()).Where(c => c.Owner == player).ToList();
         }
     }
 }
