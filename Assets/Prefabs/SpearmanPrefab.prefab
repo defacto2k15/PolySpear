@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 114541311987887962}
   - component: {fileID: 114043654656613092}
   - component: {fileID: 114328356235777162}
+  - component: {fileID: 114260058358341336}
   m_Layer: 0
   m_Name: SpearmanPrefab
   m_TagString: Untagged
@@ -39,6 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4697143972175472}
   - component: {fileID: 212922313605460392}
+  - component: {fileID: 114524433468256832}
   m_Layer: 0
   m_Name: UnitFlag
   m_TagString: Untagged
@@ -84,10 +86,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: 0
-  Position:
-    U: 0
-    V: 0
+--- !u!114 &114260058358341336
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1800704055953674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3140fd2e571f7a4694a6ee4aeb05155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114328356235777162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -104,6 +113,17 @@ MonoBehaviour:
   SwordSymbolPrefab: {fileID: 0}
   ShieldSymbolPrefab: {fileID: 0}
   PushSymbolPrefab: {fileID: 0}
+--- !u!114 &114524433468256832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970978118160154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114541311987887962
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -148,7 +168,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1289110223
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4a0affd6437e29d4ebbc44d01bac504b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

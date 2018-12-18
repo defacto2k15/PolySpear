@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
+using Assets.Scripts.Battle;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -49,7 +49,7 @@ namespace Assets.Scripts.Game
 
         public UnitModel GetUnitAt(MyHexPosition position)
         {
-            if (Units.HasUnitAt(position))
+            if (Units.IsUnitAt(position))
             {
                 return Units.GetUnitAt(position);
             }
@@ -61,7 +61,7 @@ namespace Assets.Scripts.Game
 
         public bool IsTileMovable(MyHexPosition position)
         {
-            return MapModel.HasTileAt(position) && !Units.HasUnitAt(position);
+            return MapModel.HasTileAt(position) && !Units.IsUnitAt(position);
         }
 
         public void NextTurn()
@@ -89,89 +89,13 @@ namespace Assets.Scripts.Game
 
         public bool HasUnitAt(MyHexPosition position)
         {
-            return Units.HasUnitAt(position);
+            return Units.IsUnitAt(position);
         }
 
-        public BattleResults PerformBattle(MyHexPosition battleActivatorPosition)
+        public BattleResults PerformBattleAtPlace(MyHexPosition battleActivatorPosition)
         {
-            var battleResults = new BattleResults();
-
-            //todo: maybe some kind of battle manager?
-            // need to uogólnić walkę z pasywnymi i z aktywnymi
-            // todo: way, way too complicated
-
-            var attackingUnit = Units.GetUnitAt(battleActivatorPosition);
-
-            foreach (var pair in battleActivatorPosition.NeighboursWithDirections)
-            {
-                if (MapModel.HasTileAt(pair.NeighbourPosition)) // is valid position
-                {
-                    if (Units.HasUnitAt(pair.NeighbourPosition))
-                    {
-                        // Passive effects
-                        var neighbourUnit = Units.GetUnitAt(pair.NeighbourPosition).GetComponent<UnitModel>();
-
-                        if (neighbourUnit.Owner != attackingUnit.Owner)
-                        {
-                            var passiveSymbolLocalDirection = neighbourUnit.Orientation.CalculateLocalDirection(pair.NeighbourDirection.Opposite);
-                            if (neighbourUnit.Symbols.ContainsKey(passiveSymbolLocalDirection))
-                            {
-                                var symbol = neighbourUnit.Symbols[passiveSymbolLocalDirection];
-                                var effectReciever = new EffectReciever();
-                                symbol.PassiveEffect.Execute(effectReciever);
-                                if (attackingUnit.Symbols.ContainsKey(pair.NeighbourDirection))
-                                {
-                                    attackingUnit.Symbols[pair.NeighbourDirection].ReactEffect.Execute(effectReciever);
-                                }
-
-                                if (!effectReciever.IsAlive)
-                                {
-                                    battleResults.UnitsKilled.Add(attackingUnit);
-                                    return battleResults;
-                                }
-                            }
-
-                            // active effects
-                            var attackingSymbolLocalDirection = attackingUnit.Orientation.CalculateLocalDirection(pair.NeighbourDirection);
-                            if (attackingUnit.Symbols.ContainsKey(attackingSymbolLocalDirection))
-                            {
-                                var symbol = attackingUnit.Symbols[attackingSymbolLocalDirection];
-                                var effectReciever = new EffectReciever();
-                                symbol.ActiveEffect.Execute(effectReciever);
-
-                                if (neighbourUnit.Symbols.ContainsKey(passiveSymbolLocalDirection))
-                                {
-                                    neighbourUnit.Symbols[passiveSymbolLocalDirection].ReactEffect.Execute(effectReciever);
-                                }
-
-                                if (!effectReciever.IsAlive)
-                                {
-                                    battleResults.UnitsKilled.Add(neighbourUnit);
-                                }
-
-                                if (effectReciever.WasPushed)
-                                {
-                                    var newNeighbourPosition = neighbourUnit.Position.GoInDirection(pair.NeighbourDirection);
-                                    if (!MapModel.HasTileAt(newNeighbourPosition) || Units.HasUnitAt(newNeighbourPosition))
-                                    {
-                                        battleResults.UnitsKilled.Add(neighbourUnit);
-                                    }
-                                    else
-                                    {
-                                        battleResults.UnitsPushed.Add(new PushResult()
-                                        {
-                                            UnitPushed = neighbourUnit,
-                                            StartPosition = neighbourUnit.Position,
-                                            EndPosition = newNeighbourPosition
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return battleResults;
+            var arbiter = new BattleArbiter(Units, MapModel);
+            return arbiter.PerformBattleAtPlace(battleActivatorPosition);
         }
 
         public void FinalizeKillUnit(UnitModel unit) // ugly code
@@ -179,18 +103,72 @@ namespace Assets.Scripts.Game
             Units.RemoveUnit(unit.Position);
         }
 
-    }
-
-        public class BattleResults
+        public bool IsFinished()
         {
-            public List<UnitModel> UnitsKilled = new List<UnitModel>();
-            public List<PushResult> UnitsPushed = new List<PushResult>();
+            return PlayerLost(MyPlayer.Player1) || PlayerLost(MyPlayer.Player2);
         }
 
-    public class PushResult
-    {
-        public UnitModel UnitPushed;
-        public MyHexPosition StartPosition;
-        public MyHexPosition EndPosition;
+        public MyPlayer GetWinner()
+        {
+            Assert.IsTrue(IsFinished());
+            if (PlayerLost(MyPlayer.Player1))
+            {
+                return MyPlayer.Player2;
+            }
+            else
+            {
+                return MyPlayer.Player1;
+            }
+        }
+
+        private bool PlayerLost(MyPlayer player)
+        {
+            return !Units.HasAnyUnits(player) || UnitsOfPlayerCannotMove(player);
+        }
+
+        private bool UnitsOfPlayerCannotMove(MyPlayer player)
+        {
+            return Units.GetUnitsOfPlayer(player).All(c =>
+            {
+                return c.PossibleMoveTargets.All(k => !MapModel.HasTileAt(k) || Units.IsUnitAt(k));
+            });
+        }
+
+        public bool CanMoveTo(UnitModel unitMoved, MyHexPosition target)
+        {
+            if (IsTileMovable(target)) //empty!
+            {
+                return true;
+            }
+            else if (!unitMoved.PossibleMoveTargets.Contains(target))
+            {
+                return false;
+            }
+            else
+            {
+                if (Units.IsUnitAt(target))
+                {
+                    var tempUnitsContainer = Units.Clone();
+                    var tempMapModel = MapModel.Clone();
+
+                    var newOrientation = unitMoved.Position.NeighboursWithDirections.Where(c => c.NeighbourPosition.Equals(target))
+                        .Select(c => c.NeighbourDirection).First();
+
+                    var tempUnitModel = tempUnitsContainer.GetUnitAt(unitMoved.Position);
+                    tempUnitsContainer.OrientUnit(tempUnitModel.Position, newOrientation);
+
+                    var arbiter = new BattleArbiter(tempUnitsContainer, tempMapModel);
+                    var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position);
+                    if (
+                        battleResults.UnitsKilled.Any(c => c.Position.Equals(target)) ||
+                        battleResults.UnitsPushed.Any(c => c.StartPosition.Equals(target)))
+                    {
+                        return true; // we killed or pushed target where we are going
+                    }
+                }
+
+            }
+            return false;
+        }
     }
 }

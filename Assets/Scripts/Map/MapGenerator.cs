@@ -38,7 +38,7 @@ namespace Assets.Scripts.Map
                 }
             }
 
-            var positionToTiles = new Dictionary<MyHexPosition, GameObject>();
+            var positionToTiles = new List<TileModel>();
 
             for (int x = 0; x < Width; x++)
             {
@@ -58,7 +58,7 @@ namespace Assets.Scripts.Map
                     {
                         tile.GetComponent<TileModel>().Role = TileRole.Normal;
                     }
-                    positionToTiles[hexPosition] = tile;
+                    positionToTiles.Add(tile.GetComponent<TileModel>());
                     tile.transform.SetParent(MapParentGameObject.transform);
 
                     if (Application.isEditor)

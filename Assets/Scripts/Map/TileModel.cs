@@ -10,5 +10,14 @@ namespace Assets.Scripts.Map
     {
         [SerializeField] public TileRole Role;
         [SerializeField] public MyHexPosition Position;
+
+        public TileModel Clone()
+        {
+            return new TileModel()
+            {
+                Role = Role,
+                Position =  Position
+            };
+        }
     }
 }

@@ -9,12 +9,13 @@ namespace Assets.Scripts.Units
     public class UnitView : MonoBehaviour
     {
         private UnitModel _model;
-        private GameObject _flagChild;
+        private UnitFlagView _flagChild;
 
         public void Start()
         {
-            _flagChild = transform.GetChild(0).gameObject;
+            _flagChild = GetComponentInChildren<UnitFlagView>();
             _model = GetComponent<UnitModel>();
+            _model.OnUnitKilled += () => GameObject.Destroy(transform.gameObject);
         }
 
         public void Update()
@@ -26,10 +27,10 @@ namespace Assets.Scripts.Units
         {
             if (_flagChild == null) // todo more elegant solution
             {
-                _flagChild = transform.GetChild(0).gameObject;
+                _flagChild = GetComponentInChildren<UnitFlagView>();
                 _model = GetComponent<UnitModel>();
             }
-            _flagChild.GetComponent<SpriteRenderer>().color = Constants.PlayersFlagColors[_model.Owner];
+            _flagChild.SetFlagColor( Constants.PlayersFlagColors[_model.Owner]);
             transform.localPosition = _model.Position.GetPosition();
             transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation,0);
         }

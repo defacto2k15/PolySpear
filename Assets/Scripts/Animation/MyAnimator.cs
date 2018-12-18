@@ -58,5 +58,7 @@ namespace Assets.Scripts.Game
             _animationTarget.GetComponent<UnitView>().enabled = false;
             _animation = new DeathAnimation(targetUnit);
         }
+
+        public UnitModel AnimationTarget => _animationTarget;
     }
 }
