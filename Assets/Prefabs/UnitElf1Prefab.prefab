@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4245461836019450}
   - component: {fileID: 212531604394751210}
+  - component: {fileID: 114337561091286088}
   m_Layer: 0
   m_Name: UnitFlag
   m_TagString: Untagged
@@ -55,6 +56,7 @@ GameObject:
   - component: {fileID: 114713600540373638}
   - component: {fileID: 114257906844314770}
   - component: {fileID: 114887661263228980}
+  - component: {fileID: 114787014049136302}
   m_Layer: 0
   m_Name: UnitElf1Prefab
   m_TagString: Untagged
@@ -114,10 +116,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: 0
-  Position:
-    U: 0
-    V: 0
+--- !u!114 &114337561091286088
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1109302334914056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114713600540373638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -127,6 +136,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37c8e9e7726e41a4c89d1c06ddfc6a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114787014049136302
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1971217509518276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3140fd2e571f7a4694a6ee4aeb05155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114887661263228980

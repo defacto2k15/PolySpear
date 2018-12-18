@@ -3870,6 +3870,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1962177293}
   - component: {fileID: 1962177295}
+  - component: {fileID: 1962177294}
   m_Layer: 0
   m_Name: MapParent
   m_TagString: Untagged
@@ -3916,6 +3917,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1962177294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1962177292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0a808691b88b3840a74484bd6e55dcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1962177295
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ namespace Assets.Scripts.Game
 {
     public class UnitsContainer : MonoBehaviour
     {
-        private Dictionary<MyHexPosition, GameObject> _units = new Dictionary<MyHexPosition, GameObject>();
+        private Dictionary<MyHexPosition, UnitModel> _units = new Dictionary<MyHexPosition, UnitModel>();
 
         public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
         {
@@ -18,7 +18,7 @@ namespace Assets.Scripts.Game
             unit.GetComponent<UnitModel>().Position = position;
             unit.GetComponent<UnitModel>().Owner = player;
 
-            _units[position] = unit;
+            _units[position] = unit.GetComponent<UnitModel>();
         }
 
         public bool IsUnitAt(MyHexPosition position)
@@ -28,7 +28,7 @@ namespace Assets.Scripts.Game
 
         public UnitModel GetUnitAt(MyHexPosition position)
         {
-            return _units[position].GetComponent<UnitModel>();
+            return _units[position];
         }
 
         public void MoveUnit(MyHexPosition oldPosition, MyHexPosition newPosition)
@@ -37,31 +37,39 @@ namespace Assets.Scripts.Game
             var unit = _units[oldPosition];
             _units.Remove(oldPosition);
             _units[newPosition] = unit;
-            unit.GetComponent<UnitModel>().Position = newPosition;
+            unit.Position = newPosition;
         }
 
         public void OrientUnit(MyHexPosition unitPosition, Orientation orientation)
         {
             Assert.IsTrue(IsUnitAt(unitPosition));
             var unit = _units[unitPosition];
-            unit.GetComponent<UnitModel>().Orientation = orientation;
+            unit.Orientation = orientation;
         }
 
         public void RemoveUnit(MyHexPosition position)
         {
             Assert.IsTrue(_units.ContainsKey(position));
-            GameObject.Destroy(_units[position]);
+            _units[position].SetUnitKilled();
             _units.Remove(position);
         }
 
         public bool HasAnyUnits(MyPlayer player)
         {
-            return _units.Values.Any(c => c.GetComponent<UnitModel>().Owner == player);
+            return _units.Values.Any(c => c.Owner == player);
         }
 
         public List<UnitModel> GetUnitsOfPlayer(MyPlayer player)
         {
-            return _units.Values.Select(c => c.GetComponent<UnitModel>()).Where(c => c.Owner == player).ToList();
+            return _units.Values.Where(c => c.Owner == player).ToList();
+        }
+
+        public UnitsContainer Clone()
+        {
+            return new UnitsContainer()
+            {
+                _units = _units.ToDictionary(c => c.Key, c => c.Value.Clone())
+            };
         }
     }
 }

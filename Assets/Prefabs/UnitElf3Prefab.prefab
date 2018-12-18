@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4474877950674674}
   - component: {fileID: 212264840614170028}
+  - component: {fileID: 114036008939064830}
   m_Layer: 0
   m_Name: UnitFlag
   m_TagString: Untagged
@@ -55,6 +56,7 @@ GameObject:
   - component: {fileID: 114635444590682584}
   - component: {fileID: 114402379307561836}
   - component: {fileID: 114216427154115812}
+  - component: {fileID: 114655981756310676}
   m_Layer: 0
   m_Name: UnitElf3Prefab
   m_TagString: Untagged
@@ -103,6 +105,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &114036008939064830
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1121831913203830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114216427154115812
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,10 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: 0
-  Position:
-    U: 0
-    V: 0
 --- !u!114 &114635444590682584
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -146,6 +155,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37c8e9e7726e41a4c89d1c06ddfc6a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114655981756310676
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1993296647057554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3140fd2e571f7a4694a6ee4aeb05155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212264840614170028

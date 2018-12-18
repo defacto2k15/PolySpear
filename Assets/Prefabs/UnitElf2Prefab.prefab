@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 114619671386733416}
   - component: {fileID: 114385790163884842}
   - component: {fileID: 114638197649384172}
+  - component: {fileID: 114893947169164732}
   m_Layer: 0
   m_Name: UnitElf2Prefab
   m_TagString: Untagged
@@ -55,6 +56,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4686350615973148}
   - component: {fileID: 212845307750816404}
+  - component: {fileID: 114095668008489212}
   m_Layer: 0
   m_Name: UnitFlag
   m_TagString: Untagged
@@ -103,6 +105,17 @@ Transform:
   m_Father: {fileID: 4663690846014300}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114095668008489212
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412295642567802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114385790163884842
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -114,10 +127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: 0
-  Position:
-    U: 0
-    V: 0
 --- !u!114 &114619671386733416
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -148,6 +157,17 @@ MonoBehaviour:
     type: 2}
   PushSymbolPrefab: {fileID: 1380839134815536, guid: 23284815b6942474db6f76de0df3c984,
     type: 2}
+--- !u!114 &114893947169164732
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1194863082384322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3140fd2e571f7a4694a6ee4aeb05155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212249986173008408
 SpriteRenderer:
   m_ObjectHideFlags: 1

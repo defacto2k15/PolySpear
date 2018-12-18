@@ -8,29 +8,24 @@ namespace Assets.Scripts.Map
 {
     public class MapModel : MonoBehaviour
     {
-        public Dictionary<MyHexPosition, GameObject> Tiles { set { _tiles = value; } }
-        private Dictionary<MyHexPosition, GameObject> _tiles;
-
-        public void Start()
-        {
-            if (_tiles == null)
-            {
-                _tiles = new Dictionary<MyHexPosition, GameObject>();
-                foreach (var child in transform.Cast<Transform>().Select(c => c.gameObject).Select(c => c.GetComponent<TileModel>()).Where(c => c != null))
-                {
-                    _tiles[child.Position] = child.gameObject;
-                }
-            }
-        }
+        public List<TileModel> Tiles { get; set; }
 
         public bool HasTileAt(MyHexPosition position)
         {
-            return _tiles.ContainsKey(position);
+            return Tiles.Any(c => c.Position.Equals(position));
         }
 
-        public GameObject GetTileAt(MyHexPosition position)
+        public TileModel GetTileAt(MyHexPosition position)
         {
-            return _tiles[position];
+            return Tiles.First(c => c.Position.Equals(position));
+        }
+
+        public MapModel Clone()
+        {
+            return new MapModel()
+            {
+                Tiles = Tiles.Select(c => c.Clone()).ToList()
+            };
         }
     }
 }
