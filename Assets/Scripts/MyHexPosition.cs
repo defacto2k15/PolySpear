@@ -94,7 +94,7 @@ namespace Assets.Scripts
 
         public MyHexPosition GoInDirection(Orientation orientation)
         {
-            return new MyHexPosition(U + orientation.NeighboutOffset.U, V + orientation.NeighboutOffset.V);
+            return new MyHexPosition(U + orientation.NeighbourOffset().U, V + orientation.NeighbourOffset().V);
         }
 
         public override string ToString()

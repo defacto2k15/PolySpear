@@ -136,13 +136,13 @@ namespace Assets.Scripts.Game
 
         public bool CanMoveTo(UnitModel unitMoved, MyHexPosition target)
         {
-            if (IsTileMovable(target)) //empty!
-            {
-                return true;
-            }
-            else if (!unitMoved.PossibleMoveTargets.Contains(target))
+            if (!unitMoved.PossibleMoveTargets.Contains(target))
             {
                 return false;
+            }
+            else if (IsTileMovable(target) ) //empty!
+            {
+                return true;
             }
             else
             {

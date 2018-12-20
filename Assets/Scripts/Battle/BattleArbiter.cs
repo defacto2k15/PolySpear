@@ -53,7 +53,7 @@ namespace Assets.Scripts.Battle
                         var neighbourUnit = _units.GetUnitAt(pair.NeighbourPosition);
                         if (!battleResults.UnitIncapaciated(neighbourUnit))
                         {
-                            battleResults.Add(PerformSingleFight(neighbourUnit, intruderUnit, pair.NeighbourDirection.Opposite, symbol => symbol.ActiveEffect));
+                            battleResults.Add(PerformSingleFight(neighbourUnit, intruderUnit, pair.NeighbourDirection.Opposite(), symbol => symbol.ActiveEffect));
                             if (battleResults.UnitsKilled.Contains(intruderUnit))
                             {
                                 return battleResults;
@@ -76,7 +76,7 @@ namespace Assets.Scripts.Battle
                 return battleResults;
             }
 
-            var attackerSymbolLocalDirection = attacker.Orientation.CalculateLocalDirection(attackerDirectionFromDefender.Opposite);
+            var attackerSymbolLocalDirection = attacker.Orientation.CalculateLocalDirection(attackerDirectionFromDefender.Opposite());
             var defendingSymbolLocalDirection = defender.Orientation.CalculateLocalDirection(attackerDirectionFromDefender);
 
             if (attacker.Symbols.ContainsKey(attackerSymbolLocalDirection))
@@ -96,7 +96,7 @@ namespace Assets.Scripts.Battle
                 }
                 if (effectReciever.WasPushed)
                 {
-                    var newDefenderPosition = defender.Position.GoInDirection(attackerDirectionFromDefender.Opposite);
+                    var newDefenderPosition = defender.Position.GoInDirection(attackerDirectionFromDefender.Opposite());
                     if (!_mapModel.HasTileAt(newDefenderPosition) || _units.IsUnitAt(newDefenderPosition))
                     {
                         battleResults.UnitsKilled.Add(defender);

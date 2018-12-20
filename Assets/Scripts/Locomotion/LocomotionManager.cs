@@ -34,7 +34,7 @@ namespace Assets.Scripts.Animation
                 }
             }
 
-            List<Orientation> transitionalOrientations = Orientation.GetOrientationsToTarget(unit.Orientation, targetOrientation);
+            List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Orientation, targetOrientation);
             _journeySteps = new Queue<JourneyStep>();
             foreach (var orientation in transitionalOrientations)
             {

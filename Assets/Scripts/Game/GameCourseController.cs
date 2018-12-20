@@ -110,7 +110,7 @@ namespace Assets.Scripts.Game
                         var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(clickedUnit, c)).ToList();
                         _view.SetMoveTargets(possibleMoveTargets);
                     }
-                    else if (_selectedUnit != null && _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
+                    else if (_selectedUnit != null &&  _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
                     {
                             // we are moving!!!
                             _locomotionManager.StartJourney(_selectedUnit, selectorPosition);

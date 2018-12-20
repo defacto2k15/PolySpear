@@ -37,7 +37,6 @@ namespace Assets.Scripts.Map
             {
                 _view.MakeSelectorInisible();
             }
-            var ay = 2;
         }
 
         private MyHexPosition getMouseHex()

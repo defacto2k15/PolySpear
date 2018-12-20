@@ -32,7 +32,7 @@ namespace Assets.Scripts.Units
             }
             _flagChild.SetFlagColor( Constants.PlayersFlagColors[_model.Owner]);
             transform.localPosition = _model.Position.GetPosition();
-            transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation,0);
+            transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation(),0);
         }
     }
 }
