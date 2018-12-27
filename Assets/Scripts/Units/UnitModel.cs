@@ -10,11 +10,32 @@ namespace Assets.Scripts.Units
 {
     public class UnitModel : MonoBehaviour
     {
-        public MyPlayer Owner;
-        public MyHexPosition Position;
-        public Orientation Orientation;
-        public Dictionary<Orientation, SymbolModel> Symbols => GetComponentsInChildren<SymbolModel>().ToDictionary(c => c.Orientation, c => c);
+        public MyPlayer Owner { get; set; }
+        public MyHexPosition Position { get; set; }
+        public Orientation Orientation { get; set; } 
+        public Dictionary<Orientation, SymbolModel> Symbols { get; set; }
+        public bool IsUnitAlive = true;
 
         public List<MyHexPosition> PossibleMoveTargets => Position.Neighbors.ToList();
+
+        public event Action OnUnitKilled;
+
+        public void SetUnitKilled()
+        {
+            IsUnitAlive = false;
+            OnUnitKilled?.Invoke();
+        }
+
+        public UnitModel Clone()
+        {
+            return new UnitModel()
+            {
+                Owner = Owner,
+                Position = Position,
+                Orientation = Orientation,
+                Symbols = Symbols.ToDictionary(c => c.Key, c => c.Value)
+            };
+        }
     }
+
 }

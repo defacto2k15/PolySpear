@@ -19,6 +19,25 @@ namespace Assets.Scripts.Game
             _selector = CreateMarker("Selector", Constants.SelectorColor, Vector3.zero, "TileSelector");
         }
 
+        public void Reset()
+        {
+            GameObject.Destroy(_selector);
+            _selector = null;
+            if (_selectedUnitMarker != null)
+            {
+                GameObject.Destroy(_selectedUnitMarker);
+                _selectedUnitMarker = null;
+            }
+            if (_moveTargetMarkers != null)
+            {
+                foreach (var marker in _moveTargetMarkers)
+                {
+                    GameObject.Destroy(marker);
+                }
+                _moveTargetMarkers = null;
+            }
+        }
+
         public void MoveSelectorTo(MyHexPosition position)
         {
             _selector.transform.localPosition = position.GetPosition();

@@ -13,7 +13,13 @@ namespace Assets.Scripts.Symbols
     {
         private UnitModel _owningUnit;
 
-        public IEffectContainer EffectContainer;
+        [SerializeField]
+        public SerializableIEffect SerializablePassiveEffect;
+        [SerializeField]
+        public SerializableIEffect SerializableActiveEffect;
+        [SerializeField]
+        public SerializableIEffect SerializableReactiveEffect;
+        [SerializeField]
         public Orientation Orientation;
 
         public void Start()
@@ -23,8 +29,8 @@ namespace Assets.Scripts.Symbols
 
         public Orientation LocalOrientation => Orientation;
 
-        public IEffect PassiveEffect => EffectContainer.PassiveEffect;
-        public IEffect ActiveEffect => EffectContainer.ActiveEffect;
-        public IEffect ReactEffect => EffectContainer.ReactEffect;
+        public IEffect PassiveEffect => SerializablePassiveEffect.Value;
+        public IEffect ActiveEffect => SerializableActiveEffect.Value;
+        public IEffect ReactEffect => SerializableReactiveEffect.Value;
     }
 }
