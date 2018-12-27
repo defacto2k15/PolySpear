@@ -12,7 +12,6 @@ namespace Assets.Scripts.ScenarioTesting
 {
     public class ScenarioTestingGameCourseController : MonoBehaviour
     {
-        //private GameCourseView _view;
         private LocomotionManager _locomotionManager;
         private GameCourseModel _courseModel;
         private Stack<OptionalAnimator> _animations;
@@ -23,12 +22,8 @@ namespace Assets.Scripts.ScenarioTesting
             set { _shouldShowAnimations = value; }
         }
 
-        // UI State
-        //private UnitModel _selectedUnit;
-
         public void CustomStart()
         {
-            //_view = GetComponent<GameCourseView>();
             _locomotionManager = new LocomotionManager();
             _courseModel = GetComponent<GameCourseModel>();
             _animations = new Stack<OptionalAnimator>();
@@ -36,12 +31,8 @@ namespace Assets.Scripts.ScenarioTesting
 
         public void CustomUpdate()
         {
-            if (_animations.Any() ) //todo this is duplicated
+            if (_animations.Any() ) 
             {
-                //_view.MakeSelectorInvisible(); //todo: these lines vvv are repeated many times. This needs to change
-                //_view.RemoveSelectedMarker();
-                //_view.RemoveMoveTargets();
-                //_selectedUnit = null;
                 if (!_animations.Peek().WeAreDuringAnimation())
                 {
                     _animations.Pop();
@@ -54,7 +45,6 @@ namespace Assets.Scripts.ScenarioTesting
             }
             if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
             {
-                //EndGameScreenView.ShowScreen(_courseModel.GetWinner());
                 return;
             }
 
@@ -63,13 +53,8 @@ namespace Assets.Scripts.ScenarioTesting
                 if (!_locomotionManager.AnyMoreSteps)
                 {
                     _locomotionManager = new LocomotionManager();
-                    //_view.MakeSelectorVisible();
                     return;
                 }
-                //_view.MakeSelectorInvisible();
-                //_view.RemoveSelectedMarker();
-                //_view.RemoveMoveTargets();
-                //_selectedUnit = null;
                 HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
                 return;
             }
@@ -80,54 +65,17 @@ namespace Assets.Scripts.ScenarioTesting
                 return;
             }
 
-            //_view.MakeSelectorVisible();
             if (_courseModel.Phrase == Phrase.Placing)
             {
                 if (_courseModel.Turn == GameTurn.FirstPlayerTurn)
                 {
-                    // todo prawdziwa faza wystawiania
-                    //_courseModel.AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
-                    //_courseModel.AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
-                    //_courseModel.AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
                     _courseModel.NextTurn(); 
                 }
                 else
                 {
-                    // todo wstawianie drugiego
-                    //_courseModel.AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
-                    //_courseModel.AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
-                    //_courseModel.AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
-                    //_courseModel.Phrase = Phrase.Play;
                     _courseModel.NextTurn();
                     _courseModel.NextPhrase();
                 }
-            }
-            else
-            {
-                //if (Input.GetMouseButtonDown(0))
-                //{
-                //    var clickedUnit = _courseModel.GetUnitAt(selectorPosition);
-
-                //    if (clickedUnit != null && clickedUnit.Owner == _courseModel.Turn.Player) // we clicked our own unit
-                //    {
-                //        _selectedUnit = clickedUnit;
-                //        _view.SetSelectedMarker(_selectedUnit.Position);
-                //        var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(clickedUnit, c)).ToList();
-                //        _view.SetMoveTargets(possibleMoveTargets);
-                //    }
-                //    else if (_selectedUnit != null &&  _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
-                //    {
-                //            // we are moving!!!
-                //            _locomotionManager.StartJourney(_selectedUnit, selectorPosition);
-                //            _courseModel.NextTurn();
-                //    }
-                //    else
-                //    {
-                //        _view.RemoveSelectedMarker();
-                //        _view.RemoveMoveTargets();
-                //        _selectedUnit = null;
-                //    }
-                //}
             }
         }
 
@@ -196,18 +144,8 @@ namespace Assets.Scripts.ScenarioTesting
             {
                 if (_courseModel.HasTileAt(hexPosition))
                 {
-                    //_view.MakeSelectorVisible();
-                    //_view.MoveSelectorTo(hexPosition);
                     return hexPosition;
                 }
-                else
-                {
-                    //_view.MakeSelectorInvisible();
-                }
-            }
-            else
-            {
-                //_view.MakeSelectorInvisible();
             }
             return null; // todo, returning null is ugly
         }
@@ -238,8 +176,6 @@ namespace Assets.Scripts.ScenarioTesting
 
         /// Custom used to testing
         /// 
-
-
         public UnitModel CreateUnit(GameObject prefab, MyHexPosition startPosition, Orientation startOrientation, MyPlayer player)
         {
             return _courseModel.AddUnit(startPosition, player, startOrientation, prefab);
@@ -247,11 +183,9 @@ namespace Assets.Scripts.ScenarioTesting
 
         public void Reset() // such custom reseting is not optimal, but good for now
         {
-            //_view.Reset();
             _locomotionManager = new LocomotionManager();
             _courseModel.Reset();
             _animations = new Stack<OptionalAnimator>();
-            //_selectedUnit = null;
         }
 
         public bool IsDurningLocomotion => _locomotionManager.WeAreDuringLocomotion();
