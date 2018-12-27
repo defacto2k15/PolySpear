@@ -18,11 +18,17 @@ namespace Assets.Scripts.Game
         public MapModel MapModel;
         public UnitsContainer Units;
 
-
         public void Start()
         {
             _phrase = Phrase.Placing;
             _turn = GameTurn.FirstPlayerTurn;
+        }
+
+        public void Reset()
+        {
+            Start();
+            MapModel.Reset();
+            Units.Reset();
         }
 
         public Phrase Phrase
@@ -37,9 +43,9 @@ namespace Assets.Scripts.Game
             set { _turn = value; }
         }
 
-        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab) // todo redesign
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab) // todo redesign
         {
-            Units.AddUnit(position, player, orientation, unitPrefab);
+            return Units.AddUnit(position, player, orientation, unitPrefab);
         }
 
         public bool HasTileAt(MyHexPosition hexPosition)
@@ -136,13 +142,13 @@ namespace Assets.Scripts.Game
 
         public bool CanMoveTo(UnitModel unitMoved, MyHexPosition target)
         {
-            if (IsTileMovable(target)) //empty!
-            {
-                return true;
-            }
-            else if (!unitMoved.PossibleMoveTargets.Contains(target))
+            if (!unitMoved.PossibleMoveTargets.Contains(target))
             {
                 return false;
+            }
+            else if (IsTileMovable(target) ) //empty!
+            {
+                return true;
             }
             else
             {
@@ -170,5 +176,6 @@ namespace Assets.Scripts.Game
             }
             return false;
         }
+
     }
 }

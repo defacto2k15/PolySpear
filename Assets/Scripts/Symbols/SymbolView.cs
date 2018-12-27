@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Symbols
 {
+    [ExecuteInEditMode]
     public class SymbolView : MonoBehaviour
     {
         private SymbolModel _model;
@@ -18,7 +19,7 @@ namespace Assets.Scripts.Symbols
 
         public void Update()
         {
-            transform.localEulerAngles = new Vector3(180, 0, _model.LocalOrientation.FlatRotation);
+            transform.localEulerAngles = new Vector3(180, 0, _model.LocalOrientation.FlatRotation());
         }
     }
 }

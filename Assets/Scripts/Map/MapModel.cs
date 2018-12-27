@@ -27,5 +27,9 @@ namespace Assets.Scripts.Map
                 Tiles = Tiles.Select(c => c.Clone()).ToList()
             };
         }
+
+        public void Reset()
+        {
+        }
     }
 }

@@ -38,13 +38,21 @@ namespace Assets.Scripts.Game
 
         public void Update()
         {
-            if (_animations.Any() && _animations.Peek().WeAreDuringAnimation())
+            if (_animations.Any())
             {
                 _view.MakeSelectorInvisible(); //todo: these lines vvv are repeated many times. This needs to change
                 _view.RemoveSelectedMarker();
                 _view.RemoveMoveTargets();
                 _selectedUnit = null;
-                _animations.Peek().UpdateAnimation();
+
+                if (!_animations.Peek().WeAreDuringAnimation())
+                {
+                    _animations.Pop();
+                }
+                else
+                {
+                    _animations.Peek().UpdateAnimation();
+                }
                 return;
             }
             if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
@@ -110,7 +118,7 @@ namespace Assets.Scripts.Game
                         var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(clickedUnit, c)).ToList();
                         _view.SetMoveTargets(possibleMoveTargets);
                     }
-                    else if (_selectedUnit != null && _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
+                    else if (_selectedUnit != null &&  _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
                     {
                             // we are moving!!!
                             _locomotionManager.StartJourney(_selectedUnit, selectorPosition);
@@ -142,14 +150,12 @@ namespace Assets.Scripts.Game
                     newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
                     {
                         _courseModel.OrientUnit(locomotionTarget, step.Director.To);
-                        _animations.Pop();
                     });
                 }else if (step.StepType == JourneyStepType.Motion)
                 {
                     newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
                     {
                         _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
-                        _animations.Pop();
                     });
                 }
                 _animations.Push(newAnimator);

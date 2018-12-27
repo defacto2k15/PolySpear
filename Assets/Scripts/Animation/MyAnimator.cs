@@ -11,7 +11,7 @@ namespace Assets.Scripts.Game
         private UnitModel _animationTarget;
         private Action _completedCallback;
 
-        public bool WeAreDuringAnimation() // remove, animator is now to use once
+        public bool WeAreDuringAnimation() 
         {
             return _animation != null;
         }
