@@ -31,7 +31,6 @@ namespace Assets.Scripts.Map
                 {
                     _view.MakeSelectorInisible();
                 }
-                Debug.Log("Paiting at: " + hexPosition);
             }
             else
             {

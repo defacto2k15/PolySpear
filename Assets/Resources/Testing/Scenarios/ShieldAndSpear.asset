@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: ShieldAndSpear
+  m_EditorClassIdentifier: 
+  TestDescription: When moving onto shield, not damage is done
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e,
+      type: 2}
+    State:
+      Position:
+        U: 2
+        V: 2
+      Orientation: 0
+    OwningPlayer: 0
+  - UnitPrefab: {fileID: 1993296647057554, guid: d212cc0fe0fd0e547865b45274961a90,
+      type: 2}
+    State:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    OwningPlayer: 1
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 1
+      V: 1
+  Predictions:
+  - UnitIndex: 0
+    Type: 0
+    PredictedState:
+      Position:
+        U: 1
+        V: 1
+      Orientation: 4

@@ -11,7 +11,16 @@ namespace Assets.Scripts.Game
     {
         private Dictionary<MyHexPosition, UnitModel> _units = new Dictionary<MyHexPosition, UnitModel>();
 
-        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
+        public void Reset()
+        {
+            foreach (var position in _units.Keys.ToList())
+            {
+                RemoveUnit(position);
+            }
+            _units = new Dictionary<MyHexPosition, UnitModel>();
+        }
+
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
         {
             var unit = Instantiate(unitPrefab, transform);
             unit.GetComponent<UnitModel>().Orientation = orientation;
@@ -19,6 +28,7 @@ namespace Assets.Scripts.Game
             unit.GetComponent<UnitModel>().Owner = player;
 
             _units[position] = unit.GetComponent<UnitModel>();
+            return unit.GetComponent<UnitModel>();
         }
 
         public bool IsUnitAt(MyHexPosition position)
@@ -71,5 +81,6 @@ namespace Assets.Scripts.Game
                 _units = _units.ToDictionary(c => c.Key, c => c.Value.Clone())
             };
         }
+
     }
 }

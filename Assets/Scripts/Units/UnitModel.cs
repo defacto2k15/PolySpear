@@ -14,6 +14,7 @@ namespace Assets.Scripts.Units
         public MyHexPosition Position { get; set; }
         public Orientation Orientation { get; set; } 
         public Dictionary<Orientation, SymbolModel> Symbols { get; set; }
+        public bool IsUnitAlive = true;
 
         public List<MyHexPosition> PossibleMoveTargets => Position.Neighbors.ToList();
 
@@ -21,6 +22,7 @@ namespace Assets.Scripts.Units
 
         public void SetUnitKilled()
         {
+            IsUnitAlive = false;
             OnUnitKilled?.Invoke();
         }
 

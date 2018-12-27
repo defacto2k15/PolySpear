@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsUnitAlive: 1
 --- !u!114 &114279902461883610
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -158,6 +159,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45aa0f45c0f49d54081e176c04aa523d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SerializablePassiveEffect:
+    Select: Assets.Scripts.Symbols.EmptyEffect
+  SerializableActiveEffect:
+    Select: Assets.Scripts.Symbols.StrikeEffect
+  SerializableReactiveEffect:
+    Select: Assets.Scripts.Symbols.StrikeEffect
   Orientation: 0
 --- !u!114 &114337561091286088
 MonoBehaviour:

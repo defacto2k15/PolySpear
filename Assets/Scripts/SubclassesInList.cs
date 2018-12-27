@@ -12,6 +12,7 @@ namespace Assets.Scripts
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             Type[] allTypes = assembly.GetTypes();
+            Debug.Log("Subclasses: "+allTypes);
             List = allTypes.Where(type.IsAssignableFrom)
                 .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
                 .Select(t => t.FullName).ToArray();

@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 212415386031426438}
   - component: {fileID: 114541311987887962}
   - component: {fileID: 114043654656613092}
-  - component: {fileID: 114328356235777162}
   - component: {fileID: 114260058358341336}
   m_Layer: 0
   m_Name: SpearmanPrefab
@@ -97,22 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3140fd2e571f7a4694a6ee4aeb05155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114328356235777162
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800704055953674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dffeaefd9fa50134ab04db3f0a5ae3ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SpearSymbolPrefab: {fileID: 1689343940014390, guid: b1c9b297af7e0604f836654f6c7a9bc2,
-    type: 2}
-  SwordSymbolPrefab: {fileID: 0}
-  ShieldSymbolPrefab: {fileID: 0}
-  PushSymbolPrefab: {fileID: 0}
 --- !u!114 &114524433468256832
 MonoBehaviour:
   m_ObjectHideFlags: 1
