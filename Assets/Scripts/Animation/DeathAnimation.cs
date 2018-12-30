@@ -20,7 +20,6 @@ namespace Assets.Scripts.Animation
 
         protected override void Update()
         {
-            Debug.Log("W13 UPDATE!!");
             bool flip = (Mathf.Repeat(Time.time, Constants.DeathAnimationLoopLength) < Constants.DeathAnimationLoopLength / 2f);
             _renderers.ForEach(c => c.flipY = flip);
         }

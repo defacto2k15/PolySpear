@@ -89,22 +89,6 @@ namespace Assets.Scripts.Game
                 }
             }
 
-            //if (_locomotionManager.WeAreDuringLocomotion())
-            //{
-            //    if (!_locomotionManager.AnyMoreSteps)
-            //    {
-            //        _locomotionManager = new LocomotionManager();
-            //        _view.MakeSelectorVisible();
-            //        return;
-            //    }
-            //    _view.MakeSelectorInvisible();
-            //    _view.RemoveSelectedMarker();
-            //    _view.RemoveMoveTargets();
-            //    _selectedUnit = null;
-            //    HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
-            //    return;
-            //}
-
             var selectorPosition = UpdateSelector();
             if (selectorPosition == null)
             {
@@ -163,39 +147,12 @@ namespace Assets.Scripts.Game
             }
         }
 
-        //private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
-        //{
-            //// WE ARE FIGHTING
-            //if (step.StepType == JourneyStepType.Action)
-            //{
-            //    ExecuteBattle(locomotionTarget.Position);
-            //}
-            //else
-            //{
-            //    var newAnimator = new MyAnimator();
-            //    if (step.StepType == JourneyStepType.Director)
-            //    {
-            //        newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
-            //        {
-            //            _courseModel.OrientUnit(locomotionTarget, step.Director.To);
-            //        });
-            //    }else if (step.StepType == JourneyStepType.Motion)
-            //    {
-            //        newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
-            //        {
-            //            _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
-            //        });
-            //    }
-            //    _animations.Push(newAnimator);
-            //}
-        //}
 
         private void ExecuteBattle(MyHexPosition battlePlace)
         {
             var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
             _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitsIncapaciated.Contains(c.LocomotionLocomotionTarget)));
 
-            Debug.Log("W92 Units killed: "+battleResults.UnitsKilled.Count);
             battleResults.UnitsKilled.ForEach(c =>
             {
                 _locomotions.Push(LocomotionManager.CreateDeathJourney(c));

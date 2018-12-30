@@ -9,7 +9,6 @@ namespace Assets.Scripts.Locomotion
     {
         public void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
-            Debug.Log("W12 APPLYTING!!");
             model.FinalizeKillUnit(locomotionTarget);
             GameObject.Destroy(locomotionTarget);
         }
