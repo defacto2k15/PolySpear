@@ -12,14 +12,14 @@ namespace Assets.Scripts.ScenarioTesting
 {
     public class ScenarioOneTestExecutor 
     {
-        private ScenarioTestingGameCourseController _controller;
+        private ScenarioTestingUIController _controller;
         private Scenario _scenario;
         private readonly LateStart _lateStart = new LateStart();
         private List<UnitModel> _createdUnits = new List<UnitModel>();
         private int _movementIndex = 0;
         private bool _executionFinished = false;
 
-        public ScenarioOneTestExecutor(ScenarioTestingGameCourseController controller, Scenario scenario)
+        public ScenarioOneTestExecutor(ScenarioTestingUIController controller, Scenario scenario)
         {
             _controller = controller;
             _scenario = scenario;
@@ -29,18 +29,19 @@ namespace Assets.Scripts.ScenarioTesting
         {
             if (_lateStart.ShouldRunStart)
             {
-                _controller.CustomStart();
+                _controller.MyStart();
                 foreach (var startState in _scenario.StartStates)
                 {
                     var newUnit = _controller.CreateUnit(startState.UnitPrefab, startState.State.Position,
                         startState.State.Orientation, startState.OwningPlayer);
                     _createdUnits.Add(newUnit);
                 }
+                _controller.FinalizeStart();
             }
             else
             {
-                _controller.CustomUpdate();
-                if (_controller.IsDurningLocomotion || _controller.IsDurningAnimation)
+                _controller.MyUpdate();
+                if (_controller.IsDurningLocomotion)
                 {
                     return;
                 }

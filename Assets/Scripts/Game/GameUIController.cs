@@ -26,6 +26,10 @@ namespace Assets.Scripts.Game
         {
             CourseController.MyUpdate();
             GameCourseState state = CourseController.CourseState;
+            if (state == GameCourseState.Starting)
+            {
+                CourseController.PlaceUnits();
+            }
 
             var position = UpdateSelector();
             if (Input.GetMouseButtonDown(0))

@@ -4266,21 +4266,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de43cc87bb83af542bd79151ba069806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameCourseController: {fileID: 2029522717}
 --- !u!114 &2029522719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 205af87eb200be44ab885e0229aa3774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: f53d3f2eaa4a1bf4c9cd52adde119378, type: 2}
-  RunOnlySingleScenario: 0
+  SingleScenario: {fileID: 11400000, guid: c8ab2cc28ba47bd4494fc7839fe47632, type: 2}
+  RunOnlySingleScenario: 1
   ShouldShowAnimations: 1
 --- !u!114 &2029522720
 MonoBehaviour:
@@ -4288,7 +4289,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c91908ed09f64284ab9fb68d54c8874c, type: 3}
   m_Name: 
