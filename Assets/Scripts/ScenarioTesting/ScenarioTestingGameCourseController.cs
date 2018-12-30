@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Game;
+using Assets.Scripts.Locomotion;
 using Assets.Scripts.Units;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Assets.Scripts.ScenarioTesting
 
         public void CustomStart()
         {
-            _locomotionManager = new LocomotionManager();
+            //_locomotionManager = new LocomotionManager();
             _courseModel = GetComponent<GameCourseModel>();
             _animations = new Stack<OptionalAnimator>();
         }
@@ -48,16 +49,16 @@ namespace Assets.Scripts.ScenarioTesting
                 return;
             }
 
-            if (_locomotionManager.WeAreDuringLocomotion())
-            {
-                if (!_locomotionManager.AnyMoreSteps)
-                {
-                    _locomotionManager = new LocomotionManager();
-                    return;
-                }
-                HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
-                return;
-            }
+            //if (_locomotionManager.WeAreDuringLocomotion())
+            //{
+            //    if (!_locomotionManager.AnyMoreSteps)
+            //    {
+            //        _locomotionManager = new LocomotionManager();
+            //        return;
+            //    }
+            //    HandleLocomotion(_locomotionManager.AdvanceStep(), _locomotionManager.LocomotionTarget);
+            //    return;
+            //}
 
             var selectorPosition = UpdateSelector();
             if (selectorPosition == null)
@@ -79,41 +80,41 @@ namespace Assets.Scripts.ScenarioTesting
             }
         }
 
-        private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
-        {
-            // WE ARE FIGHTING
-            if (step.StepType == JourneyStepType.Action)
-            {
-                ExecuteBattle(locomotionTarget.Position);
-            }
-            else
-            {
-                var newAnimator = new OptionalAnimator(_shouldShowAnimations);
-                if (step.StepType == JourneyStepType.Director)
-                {
-                    newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
-                    {
-                        _courseModel.OrientUnit(locomotionTarget, step.Director.To);
-                    });
-                }else if (step.StepType == JourneyStepType.Motion)
-                {
-                    newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
-                    {
-                        _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
-                    });
-                }
-                _animations.Push(newAnimator);
-            }
-        }
+        //private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
+        //{
+        //    // WE ARE FIGHTING
+        //    if (step.StepType == JourneyStepType.Action)
+        //    {
+        //        ExecuteBattle(locomotionTarget.Position);
+        //    }
+        //    else
+        //    {
+        //        var newAnimator = new OptionalAnimator(_shouldShowAnimations);
+        //        if (step.StepType == JourneyStepType.Director)
+        //        {
+        //            newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
+        //            {
+        //                _courseModel.OrientUnit(locomotionTarget, step.Director.To);
+        //            });
+        //        }else if (step.StepType == JourneyStepType.Motion)
+        //        {
+        //            newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
+        //            {
+        //                _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
+        //            });
+        //        }
+        //        _animations.Push(newAnimator);
+        //    }
+        //}
 
         private void ExecuteBattle(MyHexPosition battlePlace)
         {
             var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
             _animations = new Stack<OptionalAnimator>(_animations.Where(c => !battleResults.UnitsIncapaciated.Contains(c.AnimationTarget)));
 
-            if (battleResults.UnitsIncapaciated.Contains(_locomotionManager.LocomotionTarget))
+            if (battleResults.UnitsIncapaciated.Contains(_locomotionManager.LocomotionLocomotionTarget))
             {
-                _locomotionManager = new LocomotionManager();
+                //_locomotionManager = new LocomotionManager();
             }
             battleResults.UnitsKilled.ForEach(c =>
             {
@@ -183,17 +184,17 @@ namespace Assets.Scripts.ScenarioTesting
 
         public void Reset() // such custom reseting is not optimal, but good for now
         {
-            _locomotionManager = new LocomotionManager();
+            //_locomotionManager = new LocomotionManager();
             _courseModel.Reset();
             _animations = new Stack<OptionalAnimator>();
         }
 
-        public bool IsDurningLocomotion => _locomotionManager.WeAreDuringLocomotion();
+        public bool IsDurningLocomotion => false;// _locomotionManager.WeAreDuringLocomotion();
         public bool IsDurningAnimation => _animations.Any();
 
         public void Move(UnitModel unit, MyHexPosition targetPosition)
         {
-            _locomotionManager.StartJourney(unit, targetPosition);
+            //_locomotionManager.StartJourney(unit, targetPosition);
             _courseModel.NextTurn();
         }
 

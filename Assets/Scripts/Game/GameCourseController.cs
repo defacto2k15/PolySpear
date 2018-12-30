@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
+using Assets.Scripts.Locomotion;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -22,9 +23,8 @@ namespace Assets.Scripts.Game
         public GameObject Orc3Prefab; 
 
         private GameCourseView _view;
-        private LocomotionManager _locomotionManager;
         private GameCourseModel _courseModel;
-        private Stack<MyAnimator> _animations = new Stack<MyAnimator>();
+        private Stack<LocomotionManager> _locomotions;
         
         // UI State
         private UnitModel _selectedUnit;
@@ -32,50 +32,78 @@ namespace Assets.Scripts.Game
         public void Start()
         {
             _view = GetComponent<GameCourseView>();
-            _locomotionManager = new LocomotionManager();
+            _locomotions = new Stack<LocomotionManager>();
             _courseModel = GetComponent<GameCourseModel>();
         }
 
         public void Update()
         {
-            if (_animations.Any())
-            {
-                _view.MakeSelectorInvisible(); //todo: these lines vvv are repeated many times. This needs to change
-                _view.RemoveSelectedMarker();
-                _view.RemoveMoveTargets();
-                _selectedUnit = null;
-
-                if (!_animations.Peek().WeAreDuringAnimation())
-                {
-                    _animations.Pop();
-                }
-                else
-                {
-                    _animations.Peek().UpdateAnimation();
-                }
-                return;
-            }
             if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
             {
                 EndGameScreenView.ShowScreen(_courseModel.GetWinner());
                 return;
             }
 
-            if (_locomotionManager.WeAreDuringLocomotion())
+            if (_locomotions.Any())
             {
-                if (!_locomotionManager.AnyMoreSteps)
+                var currentLocomotion = _locomotions.Peek();
+                if (currentLocomotion.LocomotionFinished)
                 {
-                    _locomotionManager = new LocomotionManager();
+                    _locomotions.Pop();
                     _view.MakeSelectorVisible();
-                    return;
+                    return; //todo ??
                 }
-                _view.MakeSelectorInvisible();
-                _view.RemoveSelectedMarker();
-                _view.RemoveMoveTargets();
-                _selectedUnit = null;
-                HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
-                return;
+                else
+                {
+                    _view.MakeSelectorInvisible();
+                    _view.RemoveSelectedMarker();
+                    _view.RemoveMoveTargets();
+                    _selectedUnit = null;
+
+                    if (currentLocomotion.DuringAnimation)
+                    {
+                        currentLocomotion.UpdateAnimation();
+                    }
+                    else
+                    {
+                        var steps = currentLocomotion.AdvanceJourney();
+                        var previousStep = steps.PreviousStep;
+                        var locomotionTarget = currentLocomotion.LocomotionLocomotionTarget;
+                        if (previousStep != null)
+                        {
+                            if (!previousStep.ShouldExecuteBattle)
+                            {
+                                previousStep.ApplyStepToModel(_courseModel, locomotionTarget);
+                            }
+                        }
+
+                        // WE ARE FIGHTING
+                        if (steps.NextStep != null)
+                        {
+                            if (steps.NextStep.ShouldExecuteBattle )
+                            {
+                                ExecuteBattle(locomotionTarget.Position);
+                            }
+                        }
+                    }
+                }
             }
+
+            //if (_locomotionManager.WeAreDuringLocomotion())
+            //{
+            //    if (!_locomotionManager.AnyMoreSteps)
+            //    {
+            //        _locomotionManager = new LocomotionManager();
+            //        _view.MakeSelectorVisible();
+            //        return;
+            //    }
+            //    _view.MakeSelectorInvisible();
+            //    _view.RemoveSelectedMarker();
+            //    _view.RemoveMoveTargets();
+            //    _selectedUnit = null;
+            //    HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
+            //    return;
+            //}
 
             var selectorPosition = UpdateSelector();
             if (selectorPosition == null)
@@ -118,11 +146,11 @@ namespace Assets.Scripts.Game
                         var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(clickedUnit, c)).ToList();
                         _view.SetMoveTargets(possibleMoveTargets);
                     }
-                    else if (_selectedUnit != null &&  _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
+                    else if (_selectedUnit != null && _courseModel.CanMoveTo(_selectedUnit, selectorPosition) ) // we have arleady selected unit and we can go when we clicked
                     {
-                            // we are moving!!!
-                            _locomotionManager.StartJourney(_selectedUnit, selectorPosition);
-                            _courseModel.NextTurn();
+                        // we are moving!!!
+                        _locomotions.Push(LocomotionManager.CreateMovementJourney(_selectedUnit, selectorPosition));
+                        _courseModel.NextTurn();
                     }
                     else
                     {
@@ -135,61 +163,47 @@ namespace Assets.Scripts.Game
             }
         }
 
-        private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
-        {
-            // WE ARE FIGHTING
-            if (step.StepType == JourneyStepType.Action)
-            {
-                ExecuteBattle(locomotionTarget.Position);
-            }
-            else
-            {
-                var newAnimator = new MyAnimator();
-                if (step.StepType == JourneyStepType.Director)
-                {
-                    newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
-                    {
-                        _courseModel.OrientUnit(locomotionTarget, step.Director.To);
-                    });
-                }else if (step.StepType == JourneyStepType.Motion)
-                {
-                    newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
-                    {
-                        _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
-                    });
-                }
-                _animations.Push(newAnimator);
-            }
-        }
+        //private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
+        //{
+            //// WE ARE FIGHTING
+            //if (step.StepType == JourneyStepType.Action)
+            //{
+            //    ExecuteBattle(locomotionTarget.Position);
+            //}
+            //else
+            //{
+            //    var newAnimator = new MyAnimator();
+            //    if (step.StepType == JourneyStepType.Director)
+            //    {
+            //        newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
+            //        {
+            //            _courseModel.OrientUnit(locomotionTarget, step.Director.To);
+            //        });
+            //    }else if (step.StepType == JourneyStepType.Motion)
+            //    {
+            //        newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
+            //        {
+            //            _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
+            //        });
+            //    }
+            //    _animations.Push(newAnimator);
+            //}
+        //}
 
         private void ExecuteBattle(MyHexPosition battlePlace)
         {
             var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
-            _animations = new Stack<MyAnimator>(_animations.Where(c => !battleResults.UnitsIncapaciated.Contains(c.AnimationTarget)));
+            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitsIncapaciated.Contains(c.LocomotionLocomotionTarget)));
 
-            if (battleResults.UnitsIncapaciated.Contains(_locomotionManager.LocomotionTarget))
-            {
-                _locomotionManager = new LocomotionManager();
-            }
+            Debug.Log("W92 Units killed: "+battleResults.UnitsKilled.Count);
             battleResults.UnitsKilled.ForEach(c =>
             {
-                var newAnimator = new MyAnimator();
-                newAnimator.StartDeathAnimation(c, () =>
-                {
-                    _courseModel.FinalizeKillUnit(c);
-                });
-                _animations.Push(newAnimator);
+                _locomotions.Push(LocomotionManager.CreateDeathJourney(c));
             });
 
             battleResults.UnitsPushed.ForEach(c =>
             {
-                var newAnimator = new MyAnimator();
-                newAnimator.StartMotionAnimation(c.UnitPushed, c.EndPosition, () =>
-                {
-                    _courseModel.MoveUnit(c.UnitPushed, c.EndPosition);
-                    ExecuteBattle(c.EndPosition);
-                });
-                _animations.Push(newAnimator);
+                _locomotions.Push(LocomotionManager.CreatePushJourney(c.UnitPushed, c.EndPosition));
             });
         }
 

@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
-namespace Assets.Scripts.Animation
+namespace Assets.Scripts.Locomotion
 {
     public class LocomotionManager
     {
-        private UnitModel _modelBeingMoved;
-        private Queue<JourneyStep> _journeySteps;
+        private UnitModel _locomotionTarget;
+        private Queue<IJourneyStep> _journeySteps;
+        private IJourneyStep _currentStep;
+        private MyAnimation _currentAnimation;
 
-        public bool WeAreDuringLocomotion()
+        private LocomotionManager(UnitModel locomotionTarget, Queue<IJourneyStep> journeySteps)
         {
-            return _modelBeingMoved != null;
+            _locomotionTarget = locomotionTarget;
+            _journeySteps = journeySteps;
         }
 
-        public void StartJourney(UnitModel unit, MyHexPosition target)
+        public static LocomotionManager CreateMovementJourney(UnitModel unit, MyHexPosition target) 
         {
-            Assert.IsFalse(WeAreDuringLocomotion(), "There is arleady one unit during travel");
             Assert.IsFalse(unit.Position.Equals(target), "Unit is arleady at target");
-            _modelBeingMoved = unit;
 
             // todo, now it supports movement by only one hex, should be more
             Orientation targetOrientation = Orientation.N;
@@ -35,97 +34,73 @@ namespace Assets.Scripts.Animation
             }
 
             List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Orientation, targetOrientation);
-            _journeySteps = new Queue<JourneyStep>();
+            var journeySteps = new Queue<IJourneyStep>();
             foreach (var orientation in transitionalOrientations)
             {
-                _journeySteps.Enqueue(new JourneyStep(new JourneyDirector()
+                journeySteps.Enqueue(new JourneyDirector()
                 {
                     To = orientation
-                }));
+                });
             }
-            _journeySteps.Enqueue(new JourneyStep());
-            _journeySteps.Enqueue(new JourneyStep(new JourneyMotion()
+            journeySteps.Enqueue(new JourneyBattle());
+            journeySteps.Enqueue(new JourneyMotion()
             {
                 To = target
-            }));
-            _journeySteps.Enqueue(new JourneyStep());
+            });
+            journeySteps.Enqueue(new JourneyBattle());
+            return new LocomotionManager(unit, journeySteps);
         }
 
-
-        public JourneyStep NextStep()
+        public static LocomotionManager CreatePushJourney(UnitModel unit, MyHexPosition target)
         {
-            Assert.IsTrue(_journeySteps.Any(), "There are no more steps to do");
-            var nextStep = _journeySteps.Dequeue();
-            return nextStep;
-        }
-
-        public bool AnyMoreSteps => _journeySteps.Any();
-
-        public UnitModel LocomotionTarget
-        {
-            get
+            var journeySteps = new Queue<IJourneyStep>();
+            journeySteps.Enqueue(new JourneyMotion()
             {
-                Assert.IsTrue(WeAreDuringLocomotion(), "We are not during journey");
-                return _modelBeingMoved;
+                To = target
+            });
+            journeySteps.Enqueue(new JourneyBattle());
+            return new LocomotionManager(unit, journeySteps);
+        }
+
+        public static LocomotionManager CreateDeathJourney(UnitModel unit)
+        {
+            var journeySteps = new Queue<IJourneyStep>();
+            journeySteps.Enqueue( new JourneyDeath());
+            return new LocomotionManager(unit, journeySteps);
+        }
+
+        public JourneyStepPairs AdvanceJourney()
+        {
+            Assert.IsTrue(_journeySteps.Any() || _currentStep != null, "There are no more steps to do");
+            IJourneyStep nextStep = null;
+            if (_journeySteps.Any())
+            {
+                nextStep = _journeySteps.Dequeue();
             }
+            var steps = new JourneyStepPairs()
+            {
+                PreviousStep = _currentStep,
+                NextStep = nextStep
+            };
+            _currentStep = nextStep;
+            if (_currentStep != null)
+            {
+                _currentAnimation = _currentStep.CreateAnimation( _locomotionTarget);
+                _currentAnimation.StartAnimation();
+            }
+            return steps;
+        }
+
+        public bool LocomotionFinished => !_journeySteps.Any() &&  _currentStep == null ;
+
+        public UnitModel LocomotionLocomotionTarget => _locomotionTarget;
+
+        public bool DuringAnimation => _currentAnimation != null && _currentAnimation.WeAreDuringAnimation();
+
+        public void UpdateAnimation()
+        {
+            Assert.IsTrue(_currentAnimation.WeAreDuringAnimation(), "We should be during animation, but it is finished");
+            _currentAnimation.UpdateAnimation();
         }
     }
-
-    public enum JourneyStepType
-    {
-        Motion, Director, Action
-    }
-        public class JourneyStep // todo maybe polymorphism??
-        {
-            private JourneyMotion _motion;
-            private JourneyDirector _director;
-            private JourneyStepType _stepType;
-
-            public JourneyStep()
-            {
-                _stepType = JourneyStepType.Action;
-            }
-
-            public JourneyStep(JourneyMotion motion)
-            {
-                _stepType = JourneyStepType.Motion;
-                _motion = motion;
-            }
-
-            public JourneyStep(JourneyDirector director)
-            {
-                _stepType = JourneyStepType.Director;
-                _director = director;
-            }
-
-            public JourneyMotion Motion 
-            {
-                get
-                {
-                    Assert.IsNotNull(_motion);
-                    return _motion;
-                }   
-            }
-
-            public JourneyDirector Director
-            {
-                get
-                {
-                    Assert.IsNotNull(_director);
-                    return _director;
-                }
-            }
-
-            public JourneyStepType StepType => _stepType;
-        }
-
-        public class JourneyMotion
-        {
-            public MyHexPosition To;
-        }
-
-        public class JourneyDirector // obrot
-        {
-            public Orientation To;
-        }
 }
