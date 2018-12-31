@@ -138,16 +138,16 @@ namespace Assets.Scripts.Game
         private void ExecuteBattle(MyHexPosition battlePlace)
         {
             var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
-            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitsIncapaciated.Contains(c.LocomotionLocomotionTarget)));
+            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)));
 
-            battleResults.UnitsKilled.ForEach(c =>
+            battleResults.StruckUnits.ForEach(c =>
             {
                 _locomotions.Push(LocomotionManager.CreateDeathJourney(c));
             });
 
-            battleResults.UnitsPushed.ForEach(c =>
+            battleResults.Displacements.ForEach(c =>
             {
-                _locomotions.Push(LocomotionManager.CreatePushJourney(c.UnitPushed, c.EndPosition));
+                _locomotions.Push(LocomotionManager.CreatePushJourney(c.Unit, c.DisplacementEnd));
             });
         }
 

@@ -165,12 +165,7 @@ namespace Assets.Scripts.Game
 
                     var arbiter = new BattleArbiter(tempUnitsContainer, tempMapModel);
                     var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position);
-                    if (
-                        battleResults.UnitsKilled.Any(c => c.Position.Equals(target)) ||
-                        battleResults.UnitsPushed.Any(c => c.StartPosition.Equals(target)))
-                    {
-                        return true; // we killed or pushed target where we are going
-                    }
+                    return battleResults.PositionWasFreed(target);
                 }
 
             }

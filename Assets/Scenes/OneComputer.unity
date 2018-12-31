@@ -4190,6 +4190,7 @@ GameObject:
   - component: {fileID: 2029522720}
   - component: {fileID: 2029522719}
   - component: {fileID: 2029522718}
+  - component: {fileID: 2029522721}
   m_Layer: 0
   m_Name: GameCourse
   m_TagString: Untagged
@@ -4255,6 +4256,7 @@ MonoBehaviour:
   Orc1Prefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0, type: 2}
   Orc2Prefab: {fileID: 1671819279958726, guid: 3fa7a16d74906bf40a2046e17b98c36e, type: 2}
   Orc3Prefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e, type: 2}
+  DebugShouldEndGame: 0
 --- !u!114 &2029522718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4280,7 +4282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: c8ab2cc28ba47bd4494fc7839fe47632, type: 2}
+  SingleScenario: {fileID: 11400000, guid: 43f7e764b25e6b04785b5f1f59cd4d1b, type: 2}
   RunOnlySingleScenario: 1
   ShouldShowAnimations: 1
 --- !u!114 &2029522720
@@ -4296,6 +4298,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CourseController: {fileID: 2029522717}
   EndGameScreenView: {fileID: 544415439}
+--- !u!114 &2029522721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2029522713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65a1e890255b4a849b41ace87a6667ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2092869184
 GameObject:
   m_ObjectHideFlags: 0

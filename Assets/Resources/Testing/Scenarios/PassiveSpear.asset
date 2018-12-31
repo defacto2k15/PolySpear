@@ -43,3 +43,10 @@ MonoBehaviour:
         U: 0
         V: 0
       Orientation: 0
+  - UnitIndex: 1
+    Type: 0
+    PredictedState:
+      Position:
+        U: 2
+        V: 0
+      Orientation: 3

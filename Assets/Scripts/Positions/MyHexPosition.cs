@@ -97,6 +97,16 @@ namespace Assets.Scripts
             return new MyHexPosition(U + orientation.NeighbourOffset().U, V + orientation.NeighbourOffset().V);
         }
 
+        public static MyHexPosition operator -(MyHexPosition first, MyHexPosition second)
+        {
+            return new MyHexPosition(first.U - second.U, first.V - second.V);
+        }
+
+        public static MyHexPosition operator +(MyHexPosition first, MyHexPosition second)
+        {
+            return new MyHexPosition(first.U + second.U, first.V + second.V);
+        }
+
         public override string ToString()
         {
             return $"{nameof(U)}: {U}, {nameof(V)}: {V}";

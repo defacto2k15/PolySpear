@@ -55,7 +55,7 @@ namespace Assets.Scripts.Battle
                         if (!battleResults.UnitIncapaciated(neighbourUnit))
                         {
                             battleResults.Add(PerformSingleFight(neighbourUnit, intruderUnit, pair.NeighbourDirection.Opposite(), symbol => symbol.ActiveEffect));
-                            if (battleResults.UnitsKilled.Contains(intruderUnit))
+                            if (battleResults.UnitIncapaciated(intruderUnit))
                             {
                                 return battleResults;
                             }
@@ -83,35 +83,21 @@ namespace Assets.Scripts.Battle
             if (attacker.Symbols.ContainsKey(attackerSymbolLocalDirection))
             {
                 var symbol = attacker.Symbols[attackerSymbolLocalDirection];
-                var effectReciever = new EffectReciever();
-                attackingEffectExtractor(symbol).Execute(effectReciever);
+                var effect = attackingEffectExtractor(symbol);
+
+                var attackerBattlefieldVision = new BattlefieldVision(attacker, _units, _mapModel);
+                if (effect.IsActivated(attackerBattlefieldVision, attacker.Position))
+                {
+                    effect.Execute(attackerBattlefieldVision, attacker.Position, battleResults);
+                }
                 if (defender.Symbols.ContainsKey(defendingSymbolLocalDirection))
                 {
-                    defender.Symbols[defendingSymbolLocalDirection].ReactEffect.Execute(effectReciever);
-                }
-
-                if (!effectReciever.IsAlive)
-                {
-                    battleResults.UnitsKilled.Add(defender);
-                    return battleResults;
-                }
-                if (effectReciever.WasPushed)
-                {
-                    var newDefenderPosition = defender.Position.GoInDirection(attackerDirectionFromDefender.Opposite());
-                    if (!_mapModel.HasTileAt(newDefenderPosition) || _units.IsUnitAt(newDefenderPosition))
+                    var defenderBattlefieldVision = new BattlefieldVision(defender, _units, _mapModel);
+                    var defenderEffect = defender.Symbols[defendingSymbolLocalDirection].ReactEffect;
+                    if (defenderEffect.IsActivated(defenderBattlefieldVision, attacker.Position))
                     {
-                        battleResults.UnitsKilled.Add(defender);
+                        defenderEffect.Execute(defenderBattlefieldVision, attacker.Position, battleResults);
                     }
-                    else
-                    {
-                        battleResults.UnitsPushed.Add(new PushResult()
-                        {
-                            UnitPushed = defender,
-                            StartPosition = defender.Position,
-                            EndPosition = newDefenderPosition
-                        });
-                    }
-
                 }
             }
             return battleResults;

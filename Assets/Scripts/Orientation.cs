@@ -56,6 +56,11 @@ namespace Assets.Scripts
             return GetInnerData(orientation).NeighbourOffset;
         }
 
+        public static int ClockwiseIndex(this Orientation orientation)
+        {
+            return GetInnerData(orientation).IndexClockwise;
+        }
+
 
         public static List<Orientation> GetOrientationsToTarget(Orientation startOrientation,
             Orientation targetOrientation)
@@ -104,8 +109,8 @@ namespace Assets.Scripts
 
             public float FlatRotation => _rotationInDegrees;
             public OrientationInnerData Opposite => AllOrientationInnerDatasClockwise[(_indexClockwise + 3) % 6];
-
             public MyHexPosition NeighbourOffset => _neighboutOffset;
+            public int IndexClockwise => _indexClockwise;
 
             public static List<OrientationInnerData> GetOrientationInnerDatasToTarget(OrientationInnerData startOrientationInnerData,
                 OrientationInnerData targetOrientationInnerData)
