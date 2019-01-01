@@ -15,7 +15,10 @@ namespace Assets.Scripts.Units
         {
             _flagChild = GetComponentInChildren<UnitFlagView>();
             _model = GetComponent<UnitModel>();
-            _model.OnUnitKilled += () => GameObject.Destroy(transform.gameObject);
+            _model.OnUnitKilled += () =>
+            {
+                GameObject.Destroy(transform.gameObject);
+            };
         }
 
         public void Update()

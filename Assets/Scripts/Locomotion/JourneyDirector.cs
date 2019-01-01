@@ -7,16 +7,20 @@ namespace Assets.Scripts.Locomotion
     {
         public Orientation To;
 
-        public void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
             model.OrientUnit(locomotionTarget, To);
+            return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(UnitModel locomotionTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel locomotionTarget)
         {
             return new RotationAnimation(locomotionTarget, To);
         }
 
-        public bool ShouldExecuteBattle => false;
+        public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
+        {
+            return false;
+        } 
     }
 }

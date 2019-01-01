@@ -54,13 +54,14 @@ namespace Assets.Scripts.Locomotion
         public static LocomotionManager CreatePushJourney(UnitModel unit, MyHexPosition target)
         {
             var journeySteps = new Queue<IJourneyStep>();
-            journeySteps.Enqueue(new JourneyMotion()
+            journeySteps.Enqueue(new JourneyDisplacement()
             {
                 To = target
             });
             journeySteps.Enqueue(new JourneyBattle());
             return new LocomotionManager(unit, journeySteps);
         }
+
 
         public static LocomotionManager CreateDeathJourney(UnitModel unit)
         {
@@ -69,7 +70,7 @@ namespace Assets.Scripts.Locomotion
             return new LocomotionManager(unit, journeySteps);
         }
 
-        public JourneyStepPairs AdvanceJourney()
+        public JourneyStepPairs AdvanceJourney(GameCourseModel model)
         {
             Assert.IsTrue(_journeySteps.Any() || _currentStep != null, "There are no more steps to do");
             IJourneyStep nextStep = null;
@@ -85,7 +86,7 @@ namespace Assets.Scripts.Locomotion
             _currentStep = nextStep;
             if (_currentStep != null)
             {
-                _currentAnimation = _currentStep.CreateAnimation( _locomotionTarget);
+                _currentAnimation = _currentStep.CreateAnimation(model, _locomotionTarget);
                 _currentAnimation.StartAnimation();
             }
             return steps;

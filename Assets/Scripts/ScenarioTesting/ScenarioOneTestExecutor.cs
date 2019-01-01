@@ -89,6 +89,13 @@ namespace Assets.Scripts.ScenarioTesting
         public void CleanUpState()
         {
             _controller.Reset();
+            foreach (var unit in _createdUnits)
+            {
+                if (unit.IsUnitAlive)
+                {
+                    unit.SetUnitKilled();
+                }
+            }
         }
 
         public bool ExecutionFinished => _executionFinished;

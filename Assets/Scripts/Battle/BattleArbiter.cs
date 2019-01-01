@@ -85,14 +85,14 @@ namespace Assets.Scripts.Battle
                 var symbol = attacker.Symbols[attackerSymbolLocalDirection];
                 var effect = attackingEffectExtractor(symbol);
 
-                var attackerBattlefieldVision = new BattlefieldVision(attacker, _units, _mapModel);
+                var attackerBattlefieldVision = new BattlefieldVision(attacker, attackerSymbolLocalDirection, _units, _mapModel);
                 if (effect.IsActivated(attackerBattlefieldVision, attacker.Position))
                 {
                     effect.Execute(attackerBattlefieldVision, attacker.Position, battleResults);
                 }
                 if (defender.Symbols.ContainsKey(defendingSymbolLocalDirection))
                 {
-                    var defenderBattlefieldVision = new BattlefieldVision(defender, _units, _mapModel);
+                    var defenderBattlefieldVision = new BattlefieldVision(defender,defendingSymbolLocalDirection, _units, _mapModel);
                     var defenderEffect = defender.Symbols[defendingSymbolLocalDirection].ReactEffect;
                     if (defenderEffect.IsActivated(defenderBattlefieldVision, attacker.Position))
                     {

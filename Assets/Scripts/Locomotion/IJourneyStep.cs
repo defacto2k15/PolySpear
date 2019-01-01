@@ -5,8 +5,8 @@ namespace Assets.Scripts.Locomotion
 {
     public interface IJourneyStep
     {
-        void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget);
-        MyAnimation CreateAnimation(UnitModel animationTarget);
-        bool ShouldExecuteBattle { get; } //ugly as hell, but we treat battles differently
+        BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget);
+        MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget);
+        bool ShouldRemoveUnitAfterStep(GameCourseModel model);
     }
 }

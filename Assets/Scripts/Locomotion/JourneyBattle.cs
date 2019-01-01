@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Animation;
+﻿using System;
+using Assets.Scripts.Animation;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 
@@ -6,15 +7,19 @@ namespace Assets.Scripts.Locomotion
 {
     public class JourneyBattle : IJourneyStep
     {
-        public void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
+            return model.PerformBattleAtPlace(locomotionTarget.Position);
         }
 
-        public MyAnimation CreateAnimation(UnitModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
         {
             return new EmptyAnimation(animationTarget);
         }
 
-        public bool ShouldExecuteBattle => true;
+        public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
+        {
+            return false;
+        } 
     }
 }

@@ -9,6 +9,7 @@ namespace Assets.Scripts.Animation
     {
         private readonly List<SpriteRenderer> _renderers;
         private float _startTime;
+        private bool _finished;
 
         public DeathAnimation(UnitModel targetUnit) : base(targetUnit)
         {

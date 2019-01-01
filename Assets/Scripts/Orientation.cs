@@ -74,6 +74,13 @@ namespace Assets.Scripts
             return GetOrientation(GetInnerData(orientation).CalculateLocalDirection(GetInnerData(globalDirection)));
         }
 
+        public static Orientation AddRotation(this Orientation orientation, Orientation secondaryOrientation)
+        {
+            return GetOrientation(
+                OrientationInnerData.AllOrientationInnerDatasClockwise
+                    [(GetInnerData(orientation).IndexClockwise + GetInnerData(secondaryOrientation).IndexClockwise) % OrientationInnerData.AllOrientationInnerDatasClockwise.Count]);
+        }
+
         private class OrientationInnerData
         {
 

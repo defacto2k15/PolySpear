@@ -77,24 +77,33 @@ namespace Assets.Scripts.Game
                     }
                     else
                     {
-                        var steps = currentLocomotion.AdvanceJourney();
+                        var steps = currentLocomotion.AdvanceJourney(_courseModel);
                         var previousStep = steps.PreviousStep;
                         var locomotionTarget = currentLocomotion.LocomotionLocomotionTarget;
                         if (previousStep != null)
                         {
-                            if (!previousStep.ShouldExecuteBattle)
+                            if (previousStep.ShouldRemoveUnitAfterStep(_courseModel))
                             {
-                                previousStep.ApplyStepToModel(_courseModel, locomotionTarget);
+                                locomotionTarget.SetUnitKilled();
+                                _locomotions.Pop();
+                                return;
                             }
                         }
 
-                        // WE ARE FIGHTING
                         if (steps.NextStep != null)
                         {
-                            if (steps.NextStep.ShouldExecuteBattle)
+                            var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
+                            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)));
+
+                            battleResults.StruckUnits.ForEach(c =>
                             {
-                                ExecuteBattle(locomotionTarget.Position);
-                            }
+                                _locomotions.Push(LocomotionManager.CreateDeathJourney(c));
+                            });
+
+                            battleResults.Displacements.ForEach(c =>
+                            {
+                                _locomotions.Push(LocomotionManager.CreatePushJourney(c.Unit, c.DisplacementEnd));
+                            });
                         }
                     }
                 }
@@ -134,22 +143,6 @@ namespace Assets.Scripts.Game
         }
 
         public MyPlayer CurrentPlayer => _courseModel.Turn.Player;
-
-        private void ExecuteBattle(MyHexPosition battlePlace)
-        {
-            var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
-            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)));
-
-            battleResults.StruckUnits.ForEach(c =>
-            {
-                _locomotions.Push(LocomotionManager.CreateDeathJourney(c));
-            });
-
-            battleResults.Displacements.ForEach(c =>
-            {
-                _locomotions.Push(LocomotionManager.CreatePushJourney(c.Unit, c.DisplacementEnd));
-            });
-        }
 
         public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit)
         {

@@ -58,6 +58,8 @@ namespace Assets.Scripts.Units
         {
             return _struckUnits.Any(c => c.Position.Equals(target)) || _displacements.Any(c => c.DisplacementStart.Equals(target));
         }
+
+        public static BattleResults Empty => new BattleResults();
     }
 
     public class UnitDisplacements

@@ -60,7 +60,6 @@ namespace Assets.Scripts.Game
         public void RemoveUnit(MyHexPosition position)
         {
             Assert.IsTrue(_units.ContainsKey(position));
-            _units[position].SetUnitKilled();
             _units.Remove(position);
         }
 

@@ -7,17 +7,20 @@ namespace Assets.Scripts.Locomotion
 {
     public class JourneyDeath : IJourneyStep
     {
-        public void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
             model.FinalizeKillUnit(locomotionTarget);
-            GameObject.Destroy(locomotionTarget);
+            return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(UnitModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
         {
             return new DeathAnimation(animationTarget);
         }
 
-        public bool ShouldExecuteBattle => false;
+        public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
+        {
+            return true;
+        } 
     }
 }

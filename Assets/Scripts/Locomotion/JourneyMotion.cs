@@ -6,16 +6,20 @@ namespace Assets.Scripts.Locomotion
     public class JourneyMotion : IJourneyStep
     {
         public MyHexPosition To;
-        public void ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
             model.MoveUnit(locomotionTarget, To);
+            return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation( UnitModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
         {
             return new MotionAnimation(animationTarget, To);
         }
 
-        public bool ShouldExecuteBattle => false;
+        public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
+        {
+            return false;
+        } 
     }
 }

@@ -13,19 +13,21 @@ namespace Assets.Scripts.Battle
     public class BattlefieldVision
     {
         private UnitModel _posessedUnit;
+        private readonly Orientation _directionOfAttack;
         private UnitsContainer _units;
         private MapModel _map;
 
-        public BattlefieldVision(UnitModel posessedUnit, UnitsContainer units, MapModel map)
+        public BattlefieldVision(UnitModel posessedUnit, Orientation directionOfAttack, UnitsContainer units, MapModel map)
         {
             _posessedUnit = posessedUnit;
+            _directionOfAttack = directionOfAttack;
             _units = units;
             _map = map;
         }
 
         public UnitModel GetUnitAt(MyHexPosition localPosition)
         {
-            if (!_units.IsUnitAt(localPosition))
+            if (!_units.IsUnitAt(ToGlobalPosition(localPosition)))
             {
                 return null;
             }
@@ -36,7 +38,7 @@ namespace Assets.Scripts.Battle
 
         public MyHexPosition ToGlobalPosition(MyHexPosition myHexPosition)
         {
-            var transformator = new BattlefieldPointOfViewTransformator(_posessedUnit.Position, _posessedUnit.Orientation);
+            var transformator = new BattlefieldPointOfViewTransformator(_posessedUnit.Position, _posessedUnit.Orientation.AddRotation(_directionOfAttack));
             return transformator.ToGlobalPosition(myHexPosition);
         }
     }
@@ -58,7 +60,7 @@ namespace Assets.Scripts.Battle
             var localPositionCube = PositionUtils.AxialToCube(localPositionBeforeOrientation);
             for (int i = 0; i < _globalCenterOrientation.ClockwiseIndex(); i++)
             {
-                localPositionCube = RotateRightByOneStep( localPositionCube);
+                localPositionCube = RotateLeftByOneStep( localPositionCube);
             }
             return PositionUtils.CubeToAxial(localPositionCube);
         }
@@ -78,7 +80,7 @@ namespace Assets.Scripts.Battle
             var localPositionCube = PositionUtils.AxialToCube(position);
             for (int i = 0; i < _globalCenterOrientation.ClockwiseIndex(); i++)
             {
-                localPositionCube = RotateLeftByOneStep( localPositionCube);
+                localPositionCube = RotateRightByOneStep( localPositionCube);
             }
             return PositionUtils.CubeToAxial(localPositionCube) + _globalCenterPosition;
         }
