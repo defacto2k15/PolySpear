@@ -41,7 +41,7 @@ namespace Assets.Scripts.ScenarioTesting
             else
             {
                 _scenarios = new Queue<ScenarioWithIndex>(
-                    Resources.LoadAll<Scenario>("Testing/Scenarios").Cast<Scenario>().Select((c, i) => new ScenarioWithIndex()
+                    Resources.LoadAll<Scenario>("Testing/Scenarios").Cast<Scenario>().Where(c => c.TestEnabled).Select((c, i) => new ScenarioWithIndex()
                     {
                         Index = i,
                         Scenario = c

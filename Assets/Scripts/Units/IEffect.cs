@@ -9,7 +9,7 @@ namespace Assets.Scripts.Units
 {
     public interface IEffect
     {
-        //void Execute(EffectReciever effectReciever);
+        UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition);
         bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition);
         void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever);
     }

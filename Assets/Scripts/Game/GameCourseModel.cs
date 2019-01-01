@@ -104,6 +104,12 @@ namespace Assets.Scripts.Game
             return arbiter.PerformBattleAtPlace(battleActivatorPosition);
         }
 
+        public BattleResults PerformPassiveOnlyBattleAtPlace(MyHexPosition battleActivatorPosition)
+        {
+            var arbiter = new BattleArbiter(Units, MapModel);
+            return arbiter.PerformPassiveBattleAtPlace(battleActivatorPosition);
+        }
+
         public void FinalizeKillUnit(UnitModel unit) // ugly code
         {
             Units.RemoveUnit(unit.Position);

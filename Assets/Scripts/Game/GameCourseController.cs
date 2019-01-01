@@ -93,7 +93,8 @@ namespace Assets.Scripts.Game
                         if (steps.NextStep != null)
                         {
                             var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
-                            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)));
+
+                            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)).Reverse());
 
                             battleResults.StruckUnits.ForEach(c =>
                             {

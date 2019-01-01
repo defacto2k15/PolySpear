@@ -6,6 +6,13 @@ namespace Assets.Scripts.Symbols
 {
     public class PushEffect : IEffect
     {
+        public UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition)
+        {
+            var target = vision.GetUnitAt(new MyHexPosition(1, 0));
+            Assert.IsNotNull(target,"There is no target");
+            return target;
+        }
+
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
             var unitInFront = vision.GetUnitAt(new MyHexPosition(1, 0));

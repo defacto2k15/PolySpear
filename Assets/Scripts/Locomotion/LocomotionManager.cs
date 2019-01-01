@@ -58,7 +58,7 @@ namespace Assets.Scripts.Locomotion
             {
                 To = target
             });
-            journeySteps.Enqueue(new JourneyBattle());
+            journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
             return new LocomotionManager(unit, journeySteps);
         }
 

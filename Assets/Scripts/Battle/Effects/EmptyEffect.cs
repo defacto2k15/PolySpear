@@ -1,13 +1,15 @@
 using Assets.Scripts.Battle;
 using Assets.Scripts.Units;
+using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Symbols
 {
     public class EmptyEffect : IEffect
     {
-        public void Execute(BattleResults battleResults)
+        public UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            //do nothing
+            Assert.IsTrue(false, "Empty effect should not be called, it is never activated");
+            return null;
         }
 
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)

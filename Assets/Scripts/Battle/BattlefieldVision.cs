@@ -41,6 +41,11 @@ namespace Assets.Scripts.Battle
             var transformator = new BattlefieldPointOfViewTransformator(_posessedUnit.Position, _posessedUnit.Orientation.AddRotation(_directionOfAttack));
             return transformator.ToGlobalPosition(myHexPosition);
         }
+
+        public bool HasTileAt(MyHexPosition pos)
+        {
+            return _map.HasTileAt(pos);
+        }
     }
 
     public class BattlefieldPointOfViewTransformator
