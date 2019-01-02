@@ -4025,7 +4025,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1946101839}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.010356, y: 6.2918253, z: 2.1866932}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4318,7 +4318,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 205af87eb200be44ab885e0229aa3774, type: 3}
   m_Name: 
@@ -4326,7 +4326,7 @@ MonoBehaviour:
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
   SingleScenario: {fileID: 11400000, guid: c0c95142da40ddf428322de5431a505a, type: 2}
-  RunOnlySingleScenario: 1
+  RunOnlySingleScenario: 0
   ShouldShowAnimations: 1
 --- !u!114 &2029522720
 MonoBehaviour:
@@ -4334,7 +4334,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c91908ed09f64284ab9fb68d54c8874c, type: 3}
   m_Name: 
