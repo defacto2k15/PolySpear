@@ -3455,13 +3455,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1746026151}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0.7069905, y: 0.00072213623, z: -0.0007242216, w: 0.70722234}
   m_LocalPosition: {x: 3, y: 0, z: 1.7320508}
   m_LocalScale: {x: 2, y: 2.000001, z: 1.0000005}
   m_Children: []
   m_Father: {fileID: 1962177293}
   m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90.00001, y: 0, z: -0.117000006}
 --- !u!114 &1746026153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3991,6 +3991,46 @@ MonoBehaviour:
   Variation: 0
   Speed: 0
   Range: 0
+--- !u!1 &1946101839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1946101841}
+  - component: {fileID: 1946101840}
+  m_Layer: 0
+  m_Name: Projectiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1946101840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1946101839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e666edf36733a04c81eb992780d6eb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1946101841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1946101839}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1962177292
 GameObject:
   m_ObjectHideFlags: 0
@@ -4187,8 +4227,10 @@ GameObject:
   - component: {fileID: 2029522715}
   - component: {fileID: 2029522714}
   - component: {fileID: 2029522717}
+  - component: {fileID: 2029522720}
   - component: {fileID: 2029522719}
   - component: {fileID: 2029522718}
+  - component: {fileID: 2029522721}
   m_Layer: 0
   m_Name: GameCourse
   m_TagString: Untagged
@@ -4222,6 +4264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapModel: {fileID: 1962177295}
   Units: {fileID: 364502400}
+  Projectiles: {fileID: 1946101840}
 --- !u!4 &2029522716
 Transform:
   m_ObjectHideFlags: 0
@@ -4241,12 +4284,11 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11bbe3082e2876c4c80db6d652347cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EndGameScreenView: {fileID: 544415439}
   SpearmanPrefab: {fileID: 1800704055953674, guid: 63c28821bb33f2248919d3ab6d9dedc9,
     type: 2}
   Elf1Prefab: {fileID: 1971217509518276, guid: 8f2b5ec605e1a324ab68f1dadcdeac91, type: 2}
@@ -4255,6 +4297,9 @@ MonoBehaviour:
   Orc1Prefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0, type: 2}
   Orc2Prefab: {fileID: 1671819279958726, guid: 3fa7a16d74906bf40a2046e17b98c36e, type: 2}
   Orc3Prefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e, type: 2}
+  ArrowPrefab: {fileID: 1913103536335902, guid: f905835c6f70fb141b46e43b9859562a,
+    type: 2}
+  DebugShouldEndGame: 0
 --- !u!114 &2029522718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4266,7 +4311,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de43cc87bb83af542bd79151ba069806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameCourseController: {fileID: 2029522717}
 --- !u!114 &2029522719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2029522713}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205af87eb200be44ab885e0229aa3774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TestingScreenView: {fileID: 1616942785}
+  Controller: {fileID: 2029522718}
+  SingleScenario: {fileID: 11400000, guid: c0c95142da40ddf428322de5431a505a, type: 2}
+  RunOnlySingleScenario: 0
+  ShouldShowAnimations: 1
+--- !u!114 &2029522720
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4274,14 +4336,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 2029522713}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 205af87eb200be44ab885e0229aa3774, type: 3}
+  m_Script: {fileID: 11500000, guid: c91908ed09f64284ab9fb68d54c8874c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestingScreenView: {fileID: 1616942785}
-  Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: f53d3f2eaa4a1bf4c9cd52adde119378, type: 2}
-  RunOnlySingleScenario: 1
-  ShouldShowAnimations: 1
+  CourseController: {fileID: 2029522717}
+  EndGameScreenView: {fileID: 544415439}
+--- !u!114 &2029522721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2029522713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65a1e890255b4a849b41ace87a6667ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2092869184
 GameObject:
   m_ObjectHideFlags: 0

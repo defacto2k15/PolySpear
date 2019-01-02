@@ -5,12 +5,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.Animation
 {
-    public class DeathAnimation : IAnimation
+    public class DeathAnimation : MyAnimation
     {
         private readonly List<SpriteRenderer> _renderers;
         private float _startTime;
+        private bool _finished;
 
-        public DeathAnimation(UnitModel targetUnit)
+        public DeathAnimation(UnitModel targetUnit) : base(targetUnit)
         {
             _renderers = new List<SpriteRenderer>();
             _renderers.Add(targetUnit.GetComponent<SpriteRenderer>());
@@ -18,12 +19,12 @@ namespace Assets.Scripts.Animation
             _startTime = Time.time;
         }
 
-        public void Update()
+        protected override void Update()
         {
             bool flip = (Mathf.Repeat(Time.time, Constants.DeathAnimationLoopLength) < Constants.DeathAnimationLoopLength / 2f);
             _renderers.ForEach(c => c.flipY = flip);
         }
 
-        public bool Finished => _startTime + Constants.DeathAnimationLength < Time.time;
+        protected override bool Finished => _startTime + Constants.DeathAnimationLength < Time.time;
     }
 }

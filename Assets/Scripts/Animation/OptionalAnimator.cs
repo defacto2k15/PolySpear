@@ -13,7 +13,7 @@ namespace Assets.Scripts.Animation
     public class OptionalAnimator
     {
         private readonly bool _shouldShowAnimations;
-        private MyAnimator _animator;
+        private MyAnimation _animation;
         private Action _callback;
         private UnitModel _animationTarget;
 
@@ -22,7 +22,7 @@ namespace Assets.Scripts.Animation
             _shouldShowAnimations = shouldShowAnimations;
             if (_shouldShowAnimations)
             {
-                _animator = new MyAnimator();
+                //_animator = new MyAnimator();
             }
         }
 
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Animation
         {
                 if (_shouldShowAnimations)
                 {
-                    return _animator.WeAreDuringAnimation();
+                    return _animation.WeAreDuringAnimation();
                 }
                 else
                 {
@@ -43,7 +43,7 @@ namespace Assets.Scripts.Animation
         {
             if (_shouldShowAnimations)
             {
-                _animator.UpdateAnimation();
+                _animation.UpdateAnimation();
             }
             else
             {
@@ -59,7 +59,7 @@ namespace Assets.Scripts.Animation
         {
             if (_shouldShowAnimations)
             {
-                _animator.StartRotationAnimation(targetUnit, targetOrientation, completedCallback);
+                //_animator.StartRotationAnimation(targetUnit, targetOrientation, completedCallback);
             }
             else
             {
@@ -72,7 +72,7 @@ namespace Assets.Scripts.Animation
         {
             if (_shouldShowAnimations)
             {
-                _animator.StartMotionAnimation(targetUnit, targetPosition, completedCallback);
+                //_animator.StartMotionAnimation(targetUnit, targetPosition, completedCallback);
             }
             else
             {
@@ -85,7 +85,7 @@ namespace Assets.Scripts.Animation
         {
             if (_shouldShowAnimations)
             {
-                _animator.StartDeathAnimation(targetUnit, completedCallback);
+                //_animator.StartDeathAnimation(targetUnit, completedCallback);
             }
             else
             {
@@ -94,6 +94,6 @@ namespace Assets.Scripts.Animation
             }
         }
 
-        public UnitModel AnimationTarget => _shouldShowAnimations ? _animator.AnimationTarget : _animationTarget;
+        public PawnModel AnimationTarget => _shouldShowAnimations ? _animation.AnimationTarget : _animationTarget;
     }
 }

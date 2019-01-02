@@ -1,28 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
-namespace Assets.Scripts.Animation
+namespace Assets.Scripts.Locomotion
 {
-    public class LocomotionManager
+    public class LocomotionManager<T> where T : PawnModel
     {
-        private UnitModel _modelBeingMoved;
-        private Queue<JourneyStep> _journeySteps;
+        private T _locomotionTarget;
+        private Queue<IJourneyStep<T>> _journeySteps;
+        private IJourneyStep<T> _currentStep;
+        private MyAnimation _currentAnimation;
 
-        public bool WeAreDuringLocomotion()
+        public LocomotionManager(T locomotionTarget, Queue<IJourneyStep<T>> journeySteps)
         {
-            return _modelBeingMoved != null;
+            _locomotionTarget = locomotionTarget;
+            _journeySteps = journeySteps;
         }
 
-        public void StartJourney(UnitModel unit, MyHexPosition target)
+        public JourneyStepPairs<T> AdvanceJourney(GameCourseModel model)
         {
-            Assert.IsFalse(WeAreDuringLocomotion(), "There is arleady one unit during travel");
+            Assert.IsTrue(_journeySteps.Any() || _currentStep != null, "There are no more steps to do");
+            IJourneyStep<T> nextStep = null;
+            if (_journeySteps.Any())
+            {
+                nextStep = _journeySteps.Dequeue();
+            }
+            var steps = new JourneyStepPairs<T>()
+            {
+                PreviousStep = _currentStep,
+                NextStep = nextStep
+            };
+            _currentStep = nextStep;
+            if (_currentStep != null)
+            {
+                _currentAnimation = _currentStep.CreateAnimation(model, _locomotionTarget);
+                _currentAnimation.StartAnimation();
+            }
+            return steps;
+        }
+
+        public bool LocomotionFinished => !_journeySteps.Any() &&  _currentStep == null ;
+
+        public T LocomotionLocomotionTarget => _locomotionTarget;
+
+        public bool DuringAnimation => _currentAnimation != null && _currentAnimation.WeAreDuringAnimation();
+
+        public void UpdateAnimation()
+        {
+            Assert.IsTrue(_currentAnimation.WeAreDuringAnimation(), "We should be during animation, but it is finished");
+            _currentAnimation.UpdateAnimation();
+        }
+    }
+
+    public static class LocomotionUtils
+    {
+        public static LocomotionManager<UnitModel> CreateMovementJourney(UnitModel unit, MyHexPosition target) 
+        {
             Assert.IsFalse(unit.Position.Equals(target), "Unit is arleady at target");
-            _modelBeingMoved = unit;
 
             // todo, now it supports movement by only one hex, should be more
             Orientation targetOrientation = Orientation.N;
@@ -35,97 +72,64 @@ namespace Assets.Scripts.Animation
             }
 
             List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Orientation, targetOrientation);
-            _journeySteps = new Queue<JourneyStep>();
+            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
             foreach (var orientation in transitionalOrientations)
             {
-                _journeySteps.Enqueue(new JourneyStep(new JourneyDirector()
+                journeySteps.Enqueue(new JourneyDirector()
                 {
                     To = orientation
-                }));
+                });
             }
-            _journeySteps.Enqueue(new JourneyStep());
-            _journeySteps.Enqueue(new JourneyStep(new JourneyMotion()
+            journeySteps.Enqueue(new JourneyBattle());
+            journeySteps.Enqueue(new JourneyMotion()
             {
                 To = target
-            }));
-            _journeySteps.Enqueue(new JourneyStep());
+            });
+            journeySteps.Enqueue(new JourneyBattle());
+            return new LocomotionManager<UnitModel>(unit, journeySteps);
         }
 
-
-        public JourneyStep NextStep()
+        public static LocomotionManager<UnitModel> CreatePushJourney(UnitModel unit, MyHexPosition target)
         {
-            Assert.IsTrue(_journeySteps.Any(), "There are no more steps to do");
-            var nextStep = _journeySteps.Dequeue();
-            return nextStep;
-        }
-
-        public bool AnyMoreSteps => _journeySteps.Any();
-
-        public UnitModel LocomotionTarget
-        {
-            get
+            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
+            journeySteps.Enqueue(new JourneyDisplacement()
             {
-                Assert.IsTrue(WeAreDuringLocomotion(), "We are not during journey");
-                return _modelBeingMoved;
+                To = target
+            });
+            journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
+            return new LocomotionManager<UnitModel>(unit, journeySteps);
+        }
+
+
+        public static LocomotionManager<UnitModel> CreateDeathJourney(UnitModel unit)
+        {
+            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
+            journeySteps.Enqueue( new JourneyDeath());
+            return new LocomotionManager<UnitModel>(unit, journeySteps);
+        }
+
+        public static LocomotionManager<ProjectileModel> CreateProjectileJourney(ProjectileModel projectile, MyHexPosition endPosition)
+        {
+            var startPosition = projectile.Position;
+            int offsetU = endPosition.U - startPosition.U;
+            int offsetV = endPosition.V - startPosition.V;
+
+            var journeySteps = new Queue<IJourneyStep<ProjectileModel>>();
+
+            Assert.IsTrue((offsetU != 0 && offsetV == 0) || (offsetU == 0 && offsetV != 0) || (offsetU == offsetV),
+                $"Move is not horizontal nor diagonal: startPosition {startPosition} endPosition {endPosition}");
+            var stepsCount = Math.Max(Math.Abs(offsetU), Math.Abs(offsetV));
+
+            // horizontal movement
+            for (int i = 1; i <= stepsCount; i++)
+            {
+                journeySteps.Enqueue(new ProjectileJourneyMotion()
+                {
+                    To = startPosition + new MyHexPosition(startPosition.U + i * Math.Sign(offsetU), startPosition.V + i * Math.Sign(offsetV))
+                });
             }
+            journeySteps.Enqueue(new ProjectileJourneyHit());
+            return new LocomotionManager<ProjectileModel>(projectile, journeySteps);
         }
     }
-
-    public enum JourneyStepType
-    {
-        Motion, Director, Action
-    }
-        public class JourneyStep // todo maybe polymorphism??
-        {
-            private JourneyMotion _motion;
-            private JourneyDirector _director;
-            private JourneyStepType _stepType;
-
-            public JourneyStep()
-            {
-                _stepType = JourneyStepType.Action;
-            }
-
-            public JourneyStep(JourneyMotion motion)
-            {
-                _stepType = JourneyStepType.Motion;
-                _motion = motion;
-            }
-
-            public JourneyStep(JourneyDirector director)
-            {
-                _stepType = JourneyStepType.Director;
-                _director = director;
-            }
-
-            public JourneyMotion Motion 
-            {
-                get
-                {
-                    Assert.IsNotNull(_motion);
-                    return _motion;
-                }   
-            }
-
-            public JourneyDirector Director
-            {
-                get
-                {
-                    Assert.IsNotNull(_director);
-                    return _director;
-                }
-            }
-
-            public JourneyStepType StepType => _stepType;
-        }
-
-        public class JourneyMotion
-        {
-            public MyHexPosition To;
-        }
-
-        public class JourneyDirector // obrot
-        {
-            public Orientation To;
-        }
 }
