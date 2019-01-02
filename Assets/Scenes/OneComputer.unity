@@ -4318,14 +4318,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 205af87eb200be44ab885e0229aa3774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: c0c95142da40ddf428322de5431a505a, type: 2}
+  SingleScenario: {fileID: 11400000, guid: 6f9e6aea04206ba4c982df24b585c654, type: 2}
   RunOnlySingleScenario: 0
   ShouldShowAnimations: 1
 --- !u!114 &2029522720
@@ -4334,7 +4334,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2029522713}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c91908ed09f64284ab9fb68d54c8874c, type: 3}
   m_Name: 

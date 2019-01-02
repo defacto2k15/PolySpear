@@ -53,6 +53,12 @@ namespace Assets.Scripts.ScenarioTesting
             }
             GameCourseController.MoveTo(targetPosition,unit);
         }
+
+        public bool IsPositionMovable(UnitModel unit, MyHexPosition position)
+        {
+            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit);
+            return possibleTargets.Any(c => c.Equals(position));
+        }
     }
 
     public class ImpossibleMovePredictionException : Exception
