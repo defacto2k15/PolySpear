@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: GrabbedUnitKilledBySpear
+  m_EditorClassIdentifier: 
+  TestDescription: We grab unit that is 3 and put it in place where spear kills it
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1768008085121668, guid: f83bb9d095ede954eb827b2933702362,
+      type: 2}
+    State:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    OwningPlayer: 0
+  - UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+      type: 2}
+    State:
+      Position:
+        U: 4
+        V: 0
+      Orientation: 0
+    OwningPlayer: 1
+  - UnitPrefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e,
+      type: 2}
+    State:
+      Position:
+        U: 2
+        V: 1
+      Orientation: 0
+    OwningPlayer: 0
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 1
+      V: 0
+  Predictions:
+  - UnitIndex: 1
+    Type: 1
+    PredictedState:
+      Position:
+        U: 2
+        V: 0
+      Orientation: 0

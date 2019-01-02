@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
-    public class UnitView : MonoBehaviour
+    public class UnitView : PawnView
     {
-        private UnitModel _model;
+        private UnitModel _unitModel;
         private UnitFlagView _flagChild;
 
-        public void Start()
+        protected override void MyStart()
         {
             _flagChild = GetComponentInChildren<UnitFlagView>();
-            _model = GetComponent<UnitModel>();
-            _model.OnUnitKilled += () => GameObject.Destroy(transform.gameObject);
+            _unitModel = GetComponent<UnitModel>();
         }
 
-        public void Update()
+        protected override void MyUpdate()
         {
             UpdateView(); // very wasteful, but works!
         }
@@ -28,11 +26,9 @@ namespace Assets.Scripts.Units
             if (_flagChild == null) // todo more elegant solution
             {
                 _flagChild = GetComponentInChildren<UnitFlagView>();
-                _model = GetComponent<UnitModel>();
+                _unitModel = GetComponent<UnitModel>();
             }
-            _flagChild.SetFlagColor( Constants.PlayersFlagColors[_model.Owner]);
-            transform.localPosition = _model.Position.GetPosition();
-            transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation(),0);
+            _flagChild.SetFlagColor( Constants.PlayersFlagColors[_unitModel.Owner]);
         }
     }
 }

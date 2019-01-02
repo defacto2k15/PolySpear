@@ -3,22 +3,20 @@ using UnityEngine;
 
 namespace Assets.Scripts.Game
 {
-    public class MotionAnimation : IAnimation
+    public class MotionAnimation : MyAnimation
     {
-        private readonly UnitModel _targetUnit;
         private readonly MyHexPosition _targetPosition;
 
-        public MotionAnimation(UnitModel targetUnit, MyHexPosition targetPosition)
+        public MotionAnimation(PawnModel targetUnit, MyHexPosition targetPosition) :base(targetUnit)
         {
-            _targetUnit = targetUnit;
             _targetPosition = targetPosition;
         }
 
-        public bool Finished => Vector3.Distance(_targetPosition.GetPosition(), _targetUnit.transform.localPosition) < Constants.MotionEpsilon;
+        protected override bool Finished => Vector3.Distance(_targetPosition.GetPosition(), _animationTarget.transform.localPosition) < Constants.MotionEpsilon;
 
-        public void Update()
+        protected override void Update()
         {
-            _targetUnit.transform.localPosition = Vector3.Lerp(_targetUnit.transform.localPosition, _targetPosition.GetPosition(),
+            _animationTarget.transform.localPosition = Vector3.Lerp(_animationTarget.transform.localPosition, _targetPosition.GetPosition(),
                 Time.deltaTime * Constants.MotionSpeed);
         }
     }

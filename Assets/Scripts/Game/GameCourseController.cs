@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
+using Assets.Scripts.Locomotion;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -11,8 +12,6 @@ namespace Assets.Scripts.Game
 {
     public class GameCourseController : MonoBehaviour
     {
-        public EndGameScreenView EndGameScreenView;
-
         public GameObject SpearmanPrefab; 
         public GameObject Elf1Prefab; 
         public GameObject Elf2Prefab; 
@@ -21,223 +20,170 @@ namespace Assets.Scripts.Game
         public GameObject Orc2Prefab; 
         public GameObject Orc3Prefab; 
 
-        private GameCourseView _view;
-        private LocomotionManager _locomotionManager;
+        public GameObject ArrowPrefab; 
+
         private GameCourseModel _courseModel;
-        private Stack<MyAnimator> _animations = new Stack<MyAnimator>();
-        
-        // UI State
-        private UnitModel _selectedUnit;
+        private Stack<LocomotionManager<UnitModel>> _unitLocomotions;
+        private Stack<LocomotionManager<ProjectileModel>> _projectileLocomotions;
+
+        public bool DebugShouldEndGame = true;
 
         public void Start()
         {
-            _view = GetComponent<GameCourseView>();
-            _locomotionManager = new LocomotionManager();
+            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
             _courseModel = GetComponent<GameCourseModel>();
         }
 
-        public void Update()
+        public GameCourseState CourseState
         {
-            if (_animations.Any())
+            get
             {
-                _view.MakeSelectorInvisible(); //todo: these lines vvv are repeated many times. This needs to change
-                _view.RemoveSelectedMarker();
-                _view.RemoveMoveTargets();
-                _selectedUnit = null;
-
-                if (!_animations.Peek().WeAreDuringAnimation())
+                if (_courseModel.Phrase == Phrase.Placing)
                 {
-                    _animations.Pop();
+                    return GameCourseState.Starting;
+                }
+                if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished() && DebugShouldEndGame)
+                {
+                    return GameCourseState.Finished;
+                }
+                if (_unitLocomotions.Any() || _projectileLocomotions.Any())
+                {
+                    return GameCourseState.NonInteractive;
                 }
                 else
                 {
-                    _animations.Peek().UpdateAnimation();
+                    return GameCourseState.Interactive;
                 }
-                return;
             }
-            if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
+        }
+
+        public void MyUpdate()
+        {
+            if (DebugShouldEndGame && _courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
             {
-                EndGameScreenView.ShowScreen(_courseModel.GetWinner());
                 return;
             }
 
-            if (_locomotionManager.WeAreDuringLocomotion())
+            ProcessLocomotionStack(_projectileLocomotions);
+            if (!_projectileLocomotions.Any())
             {
-                if (!_locomotionManager.AnyMoreSteps)
+                ProcessLocomotionStack(_unitLocomotions);
+            }
+        }
+
+        private void ProcessLocomotionStack<T>(Stack<LocomotionManager<T>> locomotions) where T : PawnModel
+        {
+            if (locomotions.Any())
+            {
+                var currentLocomotion = locomotions.Peek();
+                if (currentLocomotion.LocomotionFinished)
                 {
-                    _locomotionManager = new LocomotionManager();
-                    _view.MakeSelectorVisible();
-                    return;
-                }
-                _view.MakeSelectorInvisible();
-                _view.RemoveSelectedMarker();
-                _view.RemoveMoveTargets();
-                _selectedUnit = null;
-                HandleLocomotion(_locomotionManager.NextStep(), _locomotionManager.LocomotionTarget);
-                return;
-            }
-
-            var selectorPosition = UpdateSelector();
-            if (selectorPosition == null)
-            {
-                return;
-            }
-
-            _view.MakeSelectorVisible();
-            if (_courseModel.Phrase == Phrase.Placing)
-            {
-                if (_courseModel.Turn == GameTurn.FirstPlayerTurn)
-                {
-                    // todo prawdziwa faza wystawiania
-                    _courseModel.AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
-                    _courseModel.AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
-                    _courseModel.AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
-                    _courseModel.NextTurn(); 
+                    locomotions.Pop();
                 }
                 else
                 {
-                    // todo wstawianie drugiego
-                    _courseModel.AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
-                    _courseModel.AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
-                    _courseModel.AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
-                    _courseModel.Phrase = Phrase.Play;
-                    _courseModel.NextTurn();
-                    _courseModel.NextPhrase();
-                }
-            }
-            else
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    var clickedUnit = _courseModel.GetUnitAt(selectorPosition);
-
-                    if (clickedUnit != null && clickedUnit.Owner == _courseModel.Turn.Player) // we clicked our own unit
+                    if (currentLocomotion.DuringAnimation)
                     {
-                        _selectedUnit = clickedUnit;
-                        _view.SetSelectedMarker(_selectedUnit.Position);
-                        var possibleMoveTargets = clickedUnit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(clickedUnit, c)).ToList();
-                        _view.SetMoveTargets(possibleMoveTargets);
-                    }
-                    else if (_selectedUnit != null &&  _courseModel.CanMoveTo(_selectedUnit, selectorPosition)) // we have arleady selected unit and we can go when we clicked
-                    {
-                            // we are moving!!!
-                            _locomotionManager.StartJourney(_selectedUnit, selectorPosition);
-                            _courseModel.NextTurn();
+                        currentLocomotion.UpdateAnimation();
+                        return;
                     }
                     else
                     {
-                        _view.RemoveSelectedMarker();
-                        _view.RemoveMoveTargets();
-                        _selectedUnit = null;
-                    }
+                        var steps = currentLocomotion.AdvanceJourney(_courseModel);
+                        var previousStep = steps.PreviousStep;
+                        var locomotionTarget = currentLocomotion.LocomotionLocomotionTarget;
+                        if (previousStep != null)
+                        {
+                            if (previousStep.ShouldRemoveUnitAfterStep(_courseModel))
+                            {
+                                locomotionTarget.SetUnitKilled();
+                                locomotions.Pop();
+                                return;
+                            }
+                        }
 
-                }
-            }
-        }
+                        if (steps.NextStep != null)
+                        {
+                            var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
 
-        private void HandleLocomotion(JourneyStep step, UnitModel locomotionTarget)
-        {
-            // WE ARE FIGHTING
-            if (step.StepType == JourneyStepType.Action)
-            {
-                ExecuteBattle(locomotionTarget.Position);
-            }
-            else
-            {
-                var newAnimator = new MyAnimator();
-                if (step.StepType == JourneyStepType.Director)
-                {
-                    newAnimator.StartRotationAnimation(locomotionTarget, step.Director.To, () =>
-                    {
-                        _courseModel.OrientUnit(locomotionTarget, step.Director.To);
-                    });
-                }else if (step.StepType == JourneyStepType.Motion)
-                {
-                    newAnimator.StartMotionAnimation(locomotionTarget, step.Motion.To, () =>
-                    {
-                        _courseModel.MoveUnit(locomotionTarget, step.Motion.To);
-                    });
-                }
-                _animations.Push(newAnimator);
-            }
-        }
+                            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>(_unitLocomotions
+                                .Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)).Reverse());
 
-        private void ExecuteBattle(MyHexPosition battlePlace)
-        {
-            var battleResults = _courseModel.PerformBattleAtPlace(battlePlace);
-            _animations = new Stack<MyAnimator>(_animations.Where(c => !battleResults.UnitsIncapaciated.Contains(c.AnimationTarget)));
+                            battleResults.KilledUnits.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney(c)); });
 
-            if (battleResults.UnitsIncapaciated.Contains(_locomotionManager.LocomotionTarget))
-            {
-                _locomotionManager = new LocomotionManager();
-            }
-            battleResults.UnitsKilled.ForEach(c =>
-            {
-                var newAnimator = new MyAnimator();
-                newAnimator.StartDeathAnimation(c, () =>
-                {
-                    _courseModel.FinalizeKillUnit(c);
-                });
-                _animations.Push(newAnimator);
-            });
+                            battleResults.Displacements.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(c.Unit, c.DisplacementEnd)); });
 
-            battleResults.UnitsPushed.ForEach(c =>
-            {
-                var newAnimator = new MyAnimator();
-                newAnimator.StartMotionAnimation(c.UnitPushed, c.EndPosition, () =>
-                {
-                    _courseModel.MoveUnit(c.UnitPushed, c.EndPosition);
-                    ExecuteBattle(c.EndPosition);
-                });
-                _animations.Push(newAnimator);
-            });
-        }
-
-        private MyHexPosition UpdateSelector()
-        {
-            var hexPosition = getMouseHex();
-            if (hexPosition != null)
-            {
-                if (_courseModel.HasTileAt(hexPosition))
-                {
-                    _view.MakeSelectorVisible();
-                    _view.MoveSelectorTo(hexPosition);
-                    return hexPosition;
-                }
-                else
-                {
-                    _view.MakeSelectorInvisible();
-                }
-            }
-            else
-            {
-                _view.MakeSelectorInvisible();
-            }
-            return null; // todo, returning null is ugly
-        }
-
-        private MyHexPosition getMouseHex()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray, float.MaxValue);
-            if (hits.Length == 0)
-            {
-                return null;
-            }
-            else
-            {
-                float minDist = float.PositiveInfinity;
-                int min = 0;
-                for (int i = 0; i < hits.Length; ++i)
-                {
-                    if (hits[i].distance < minDist)
-                    {
-                        minDist = hits[i].distance;
-                        min = i;
+                            battleResults.Projectiles.ForEach(c =>
+                            {
+                                var projectile = _courseModel.AddProjectie(c.StartPosition, c.Orientation, ArrowPrefab);
+                                _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition));
+                            });
+                        }
                     }
                 }
-                return MyHexPosition.FromWorldPosition(hits[min].point);
             }
         }
+
+        public void PlaceUnits() // temporary
+        {
+            // todo prawdziwa faza wystawiania
+            _courseModel.AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
+            _courseModel.AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
+            _courseModel.AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
+            _courseModel.NextTurn();
+            // todo wstawianie drugiego
+            _courseModel.AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
+            _courseModel.AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
+            _courseModel.AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
+            _courseModel.Phrase = Phrase.Play;
+            _courseModel.NextTurn();
+            _courseModel.NextPhrase();
+        }
+
+        public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit)
+        {
+            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(selectedUnit, selectorPosition));
+            _courseModel.NextTurn();
+        }
+
+        public bool TileIsClickable(MyHexPosition hexPosition)
+        {
+            return _courseModel.HasTileAt(hexPosition);
+        }
+
+        public UnitModel GetUnitAtPlace(MyHexPosition position)
+        {
+            return _courseModel.GetUnitAt(position);
+        }
+
+        public MyPlayer CurrentPlayer => _courseModel.Turn.Player;
+
+        public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit)
+        {
+            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).ToList();
+        }
+
+        public UnitModel AddUnit(MyHexPosition startPosition, MyPlayer player, Orientation startOrientation, GameObject prefab) //temporary
+        {
+            return _courseModel.AddUnit(startPosition, player, startOrientation, prefab);
+        }
+
+        public void NextPhrase()  //temporary, for testing
+        {
+            _courseModel.NextPhrase();
+        } 
+
+        public void Reset()
+        {
+            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
+            _courseModel.Reset();
+        }
+    }
+
+    public enum GameCourseState
+    {
+        Starting, Finished, Interactive, NonInteractive
     }
 }

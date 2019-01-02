@@ -15,7 +15,7 @@ namespace Assets.Scripts.ScenarioTesting
     public class ScenarioTestingExecutor : MonoBehaviour
     {
         public TestingScreenView TestingScreenView;
-        public ScenarioTestingGameCourseController Controller;
+        public ScenarioTestingUIController Controller;
         public Scenario SingleScenario;
         public bool RunOnlySingleScenario = false;
         public bool ShouldShowAnimations = true;
@@ -28,7 +28,7 @@ namespace Assets.Scripts.ScenarioTesting
         public void Start()
         {
             Assert.raiseExceptions = true;
-            Controller.ShouldShowAnimations = ShouldShowAnimations;
+            //Controller.ShouldShowAnimations = ShouldShowAnimations;
             if (RunOnlySingleScenario)
             {
                 _scenarios = new Queue<ScenarioWithIndex>();
@@ -41,7 +41,7 @@ namespace Assets.Scripts.ScenarioTesting
             else
             {
                 _scenarios = new Queue<ScenarioWithIndex>(
-                    Resources.LoadAll<Scenario>("Testing/Scenarios").Cast<Scenario>().Select((c, i) => new ScenarioWithIndex()
+                    Resources.LoadAll<Scenario>("Testing/Scenarios").Cast<Scenario>().Where(c => c.TestEnabled).Select((c, i) => new ScenarioWithIndex()
                     {
                         Index = i,
                         Scenario = c
