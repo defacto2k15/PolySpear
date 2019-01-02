@@ -12,5 +12,6 @@ namespace Assets.Scripts.Units
         UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition);
         bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition);
         void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever);
+        bool IsDefendableEffect { get; }
     }
 }

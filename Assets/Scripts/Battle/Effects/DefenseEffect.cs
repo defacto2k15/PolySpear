@@ -24,5 +24,7 @@ namespace Assets.Scripts.Symbols
                 reciever.UnStrike(vision.PossesedUnit);
             }
         }
+
+        public bool IsDefendableEffect => false;
     }
 }

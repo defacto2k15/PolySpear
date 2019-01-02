@@ -9,19 +9,19 @@ namespace Assets.Scripts.Game
     {
         private bool _animationStarted = false;
 
-        protected  UnitModel _animationTarget;
+        protected  PawnModel _animationTarget;
 
-        protected MyAnimation(UnitModel animationTarget)
+        protected MyAnimation(PawnModel animationTarget)
         {
             _animationTarget = animationTarget;
         }
 
-        public UnitModel AnimationTarget => _animationTarget;
+        public PawnModel AnimationTarget => _animationTarget;
 
         public void StartAnimation()
         {
             _animationStarted = true;
-            _animationTarget.GetComponent<UnitView>().enabled = false;
+            _animationTarget.GetComponent<PawnView>().enabled = false;
         }
 
         public bool WeAreDuringAnimation()
@@ -35,7 +35,7 @@ namespace Assets.Scripts.Game
             Update();
             if (Finished)
             {
-                _animationTarget.GetComponent<UnitView>().enabled = true;
+                _animationTarget.GetComponent<PawnView>().enabled = true;
             }
         }
 

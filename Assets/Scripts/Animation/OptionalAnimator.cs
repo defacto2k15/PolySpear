@@ -94,6 +94,6 @@ namespace Assets.Scripts.Animation
             }
         }
 
-        public UnitModel AnimationTarget => _shouldShowAnimations ? _animation.AnimationTarget : _animationTarget;
+        public PawnModel AnimationTarget => _shouldShowAnimations ? _animation.AnimationTarget : _animationTarget;
     }
 }

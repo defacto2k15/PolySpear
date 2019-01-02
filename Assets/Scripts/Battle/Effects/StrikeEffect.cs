@@ -32,5 +32,7 @@ namespace Assets.Scripts.Symbols
             Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedUnit.Owner,"There is no enemy unit in front of me");
             reciever.AddStruckUnit(unitInFront);
         }
+
+        public bool IsDefendableEffect => true;
     }
 }

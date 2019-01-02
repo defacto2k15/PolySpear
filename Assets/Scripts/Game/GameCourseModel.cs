@@ -17,6 +17,7 @@ namespace Assets.Scripts.Game
 
         public MapModel MapModel;
         public UnitsContainer Units;
+        public ProjectilesContainer Projectiles;
 
         public void Start()
         {
@@ -29,6 +30,7 @@ namespace Assets.Scripts.Game
             Start();
             MapModel.Reset();
             Units.Reset();
+            Projectiles.Reset();
         }
 
         public Phrase Phrase
@@ -48,6 +50,11 @@ namespace Assets.Scripts.Game
             return Units.AddUnit(position, player, orientation, unitPrefab);
         }
 
+        public ProjectileModel AddProjectie(MyHexPosition startPosition, Orientation orientation, GameObject arrowPrefab)
+        {
+            return Projectiles.AddProjectile(startPosition, orientation, arrowPrefab);
+        }
+
         public bool HasTileAt(MyHexPosition hexPosition)
         {
             return MapModel.HasTileAt(hexPosition);
@@ -55,9 +62,9 @@ namespace Assets.Scripts.Game
 
         public UnitModel GetUnitAt(MyHexPosition position)
         {
-            if (Units.IsUnitAt(position))
+            if (Units.IsPawnAt(position))
             {
-                return Units.GetUnitAt(position);
+                return Units.GetPawnAt(position);
             }
             else
             {
@@ -67,7 +74,7 @@ namespace Assets.Scripts.Game
 
         public bool IsTileMovable(MyHexPosition position)
         {
-            return MapModel.HasTileAt(position) && !Units.IsUnitAt(position);
+            return MapModel.HasTileAt(position) && !Units.IsPawnAt(position);
         }
 
         public void NextTurn()
@@ -85,34 +92,45 @@ namespace Assets.Scripts.Game
 
         public void OrientUnit(UnitModel unit, Orientation orientation)
         {
-            Units.OrientUnit(unit.Position, orientation);
+            Units.OrientPawn(unit.Position, orientation);
         }
 
         public void MoveUnit(UnitModel unit, MyHexPosition newPosition)
         {
-            Units.MoveUnit(unit.Position, newPosition);
+            Units.MovePawn(unit.Position, newPosition);
+        }
+
+        public void MoveProjectile(ProjectileModel projectile, MyHexPosition newPosition)
+        {
+            Projectiles.MovePawn(projectile.Position, newPosition);
         }
 
         public bool HasUnitAt(MyHexPosition position)
         {
-            return Units.IsUnitAt(position);
+            return Units.IsPawnAt(position);
         }
 
         public BattleResults PerformBattleAtPlace(MyHexPosition battleActivatorPosition)
         {
-            var arbiter = new BattleArbiter(Units, MapModel);
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
             return arbiter.PerformBattleAtPlace(battleActivatorPosition);
         }
 
         public BattleResults PerformPassiveOnlyBattleAtPlace(MyHexPosition battleActivatorPosition)
         {
-            var arbiter = new BattleArbiter(Units, MapModel);
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
             return arbiter.PerformPassiveBattleAtPlace(battleActivatorPosition);
+        }
+
+        public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
+        {
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
+            return arbiter.PerformProjectileHitAtPlace( projectileHitPosition);
         }
 
         public void FinalizeKillUnit(UnitModel unit) // ugly code
         {
-            Units.RemoveUnit(unit.Position);
+            Units.RemovePawn(unit.Position);
         }
 
         public bool IsFinished()
@@ -142,7 +160,7 @@ namespace Assets.Scripts.Game
         {
             return Units.GetUnitsOfPlayer(player).All(c =>
             {
-                return c.PossibleMoveTargets.All(k => !MapModel.HasTileAt(k) || Units.IsUnitAt(k));
+                return c.PossibleMoveTargets.All(k => !MapModel.HasTileAt(k) || Units.IsPawnAt(k));
             });
         }
 
@@ -158,25 +176,24 @@ namespace Assets.Scripts.Game
             }
             else
             {
-                if (Units.IsUnitAt(target))
+                if (Units.IsPawnAt(target))
                 {
                     var tempUnitsContainer = Units.Clone();
+                    var tempProjectilesContainer = Projectiles.Clone();
                     var tempMapModel = MapModel.Clone();
 
                     var newOrientation = unitMoved.Position.NeighboursWithDirections.Where(c => c.NeighbourPosition.Equals(target))
                         .Select(c => c.NeighbourDirection).First();
 
-                    var tempUnitModel = tempUnitsContainer.GetUnitAt(unitMoved.Position);
-                    tempUnitsContainer.OrientUnit(tempUnitModel.Position, newOrientation);
+                    var tempUnitModel = tempUnitsContainer.GetPawnAt(unitMoved.Position);
+                    tempUnitsContainer.OrientPawn(tempUnitModel.Position, newOrientation);
 
-                    var arbiter = new BattleArbiter(tempUnitsContainer, tempMapModel);
+                    var arbiter = new BattleArbiter(tempUnitsContainer, tempProjectilesContainer, tempMapModel);
                     var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position);
                     return battleResults.PositionWasFreed(target);
                 }
-
             }
             return false;
         }
-
     }
 }

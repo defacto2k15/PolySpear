@@ -27,11 +27,11 @@ namespace Assets.Scripts.Battle
 
         public UnitModel GetUnitAt(MyHexPosition localPosition)
         {
-            if (!_units.IsUnitAt(ToGlobalPosition(localPosition)))
+            if (!_units.IsPawnAt(ToGlobalPosition(localPosition)))
             {
                 return null;
             }
-            return _units.GetUnitAt(ToGlobalPosition(localPosition));
+            return _units.GetPawnAt(ToGlobalPosition(localPosition));
         }
 
         public UnitModel PossesedUnit => _posessedUnit;

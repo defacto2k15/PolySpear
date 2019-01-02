@@ -1,8 +1,10 @@
-﻿namespace Assets.Scripts.Locomotion
+﻿using Assets.Scripts.Units;
+
+namespace Assets.Scripts.Locomotion
 {
-    public class JourneyStepPairs
+    public class JourneyStepPairs<T> where T : PawnModel
     {
-        public IJourneyStep PreviousStep;
-        public IJourneyStep NextStep;
+        public IJourneyStep<T> PreviousStep;
+        public IJourneyStep<T> NextStep;
     }
 }

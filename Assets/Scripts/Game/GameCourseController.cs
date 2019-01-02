@@ -20,14 +20,18 @@ namespace Assets.Scripts.Game
         public GameObject Orc2Prefab; 
         public GameObject Orc3Prefab; 
 
+        public GameObject ArrowPrefab; 
+
         private GameCourseModel _courseModel;
-        private Stack<LocomotionManager> _locomotions;
+        private Stack<LocomotionManager<UnitModel>> _unitLocomotions;
+        private Stack<LocomotionManager<ProjectileModel>> _projectileLocomotions;
 
         public bool DebugShouldEndGame = true;
 
         public void Start()
         {
-            _locomotions = new Stack<LocomotionManager>();
+            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
             _courseModel = GetComponent<GameCourseModel>();
         }
 
@@ -43,7 +47,7 @@ namespace Assets.Scripts.Game
                 {
                     return GameCourseState.Finished;
                 }
-                if (_locomotions.Any())
+                if (_unitLocomotions.Any() || _projectileLocomotions.Any())
                 {
                     return GameCourseState.NonInteractive;
                 }
@@ -61,19 +65,28 @@ namespace Assets.Scripts.Game
                 return;
             }
 
-            if (_locomotions.Any())
+            ProcessLocomotionStack(_projectileLocomotions);
+            if (!_projectileLocomotions.Any())
             {
-                var currentLocomotion = _locomotions.Peek();
+                ProcessLocomotionStack(_unitLocomotions);
+            }
+        }
+
+        private void ProcessLocomotionStack<T>(Stack<LocomotionManager<T>> locomotions) where T : PawnModel
+        {
+            if (locomotions.Any())
+            {
+                var currentLocomotion = locomotions.Peek();
                 if (currentLocomotion.LocomotionFinished)
                 {
-                    _locomotions.Pop();
-                    return; //todo ??
+                    locomotions.Pop();
                 }
                 else
                 {
                     if (currentLocomotion.DuringAnimation)
                     {
                         currentLocomotion.UpdateAnimation();
+                        return;
                     }
                     else
                     {
@@ -85,7 +98,7 @@ namespace Assets.Scripts.Game
                             if (previousStep.ShouldRemoveUnitAfterStep(_courseModel))
                             {
                                 locomotionTarget.SetUnitKilled();
-                                _locomotions.Pop();
+                                locomotions.Pop();
                                 return;
                             }
                         }
@@ -94,16 +107,17 @@ namespace Assets.Scripts.Game
                         {
                             var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
 
-                            _locomotions = new Stack<LocomotionManager>(_locomotions.Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)).Reverse());
+                            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>(_unitLocomotions
+                                .Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)).Reverse());
 
-                            battleResults.StruckUnits.ForEach(c =>
-                            {
-                                _locomotions.Push(LocomotionManager.CreateDeathJourney(c));
-                            });
+                            battleResults.KilledUnits.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney(c)); });
 
-                            battleResults.Displacements.ForEach(c =>
+                            battleResults.Displacements.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(c.Unit, c.DisplacementEnd)); });
+
+                            battleResults.Projectiles.ForEach(c =>
                             {
-                                _locomotions.Push(LocomotionManager.CreatePushJourney(c.Unit, c.DisplacementEnd));
+                                var projectile = _courseModel.AddProjectie(c.StartPosition, c.Orientation, ArrowPrefab);
+                                _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition));
                             });
                         }
                     }
@@ -129,7 +143,7 @@ namespace Assets.Scripts.Game
 
         public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit)
         {
-            _locomotions.Push(LocomotionManager.CreateMovementJourney(selectedUnit, selectorPosition));
+            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(selectedUnit, selectorPosition));
             _courseModel.NextTurn();
         }
 
@@ -162,7 +176,8 @@ namespace Assets.Scripts.Game
 
         public void Reset()
         {
-            _locomotions = new Stack<LocomotionManager>();
+            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
             _courseModel.Reset();
         }
     }

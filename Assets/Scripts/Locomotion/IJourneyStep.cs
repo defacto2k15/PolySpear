@@ -3,10 +3,10 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public interface IJourneyStep
+    public interface IJourneyStep<T> where T : PawnModel
     {
-        BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget);
-        MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget);
+        BattleResults ApplyStepToModel(GameCourseModel model, T locomotionTarget);
+        MyAnimation CreateAnimation(GameCourseModel model, T animationTarget);
         bool ShouldRemoveUnitAfterStep(GameCourseModel model);
     }
 }

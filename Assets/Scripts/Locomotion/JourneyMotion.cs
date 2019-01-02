@@ -3,7 +3,7 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyMotion : IJourneyStep
+    public class JourneyMotion  : IJourneyStep<UnitModel>
     {
         public MyHexPosition To;
         public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)

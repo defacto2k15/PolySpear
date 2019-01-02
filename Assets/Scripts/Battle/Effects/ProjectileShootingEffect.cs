@@ -1,44 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Scripts.Units;
-using UnityEngine;
+﻿using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Battle.Effects
 {
-    public class GrabEffect : IEffect
+    public class ProjectileShootingEffect : IEffect
     {
-        private const int MinDragDistance = 3;
-        private const int MaxDragDistance = 4;
-        private const int DistanceAfterGrab = 2;
+        private int _maxShootingDistance;
+        private ProjectileType _projectileType;
+
+        protected ProjectileShootingEffect(int maxShootingDistance, ProjectileType projectileType)
+        {
+            _maxShootingDistance = maxShootingDistance;
+            _projectileType = projectileType;
+        }
 
         public UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            var grabbedUnit = RetriveGrabbedUnit(vision);
+            var grabbedUnit = ShootingTarget(vision);
             Assert.IsNotNull(grabbedUnit,"There is no target");
             return grabbedUnit;
         }
 
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            return RetriveGrabbedUnit(vision) != null;
+            return ShootingTarget(vision) != null;
         }
 
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
         {
-            var grabbedUnit = RetriveGrabbedUnit(vision);
-            Assert.IsNotNull(grabbedUnit,"There is no target");
-            reciever.DisplaceUnit(grabbedUnit, vision.ToGlobalPosition(new MyHexPosition(DistanceAfterGrab,0)));
+            var targetUnit = ShootingTarget(vision);
+            Assert.IsNotNull(targetUnit,"There is no target");
+            reciever.AddProjectile(vision.PossesedUnit.Position, vision.PossesedUnit.Orientation, targetUnit.Position, _projectileType);
         }
 
-        public bool IsDefendableEffect => true;
+        public bool IsDefendableEffect => false;
 
-        private UnitModel RetriveGrabbedUnit(BattlefieldVision vision)
+        private UnitModel ShootingTarget(BattlefieldVision vision)
         {
-            for (int i = MinDragDistance; i <= MaxDragDistance; i++)
+            for (int i = 1; i <= _maxShootingDistance; i++)
             {
                 var pos = new MyHexPosition(i, 0);
                 if (!vision.HasTileAt(pos))
@@ -59,7 +58,6 @@ namespace Assets.Scripts.Battle.Effects
                 }
             }
             return null;
-            
         }
     }
 }

@@ -3,7 +3,7 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyDirector : IJourneyStep
+    public class JourneyDirector : IJourneyStep<UnitModel>
     {
         public Orientation To;
 

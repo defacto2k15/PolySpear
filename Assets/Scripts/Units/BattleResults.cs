@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Units
@@ -11,9 +12,13 @@ namespace Assets.Scripts.Units
     {
         private List<UnitModel> _struckUnits = new List<UnitModel>();
         private List<UnitDisplacements> _displacements = new List<UnitDisplacements>();
+        private List<ProjectileCreations> _projectiles = new List<ProjectileCreations>();
 
         public List<UnitModel> StruckUnits => _struckUnits;
         public List<UnitDisplacements> Displacements => _displacements;
+        public List<ProjectileCreations> Projectiles => _projectiles;
+
+        public List<UnitModel> KilledUnits => StruckUnits;
 
         public void AddStruckUnit(UnitModel unit)
         {
@@ -52,6 +57,8 @@ namespace Assets.Scripts.Units
 
             _displacements.AddRange(otherResults.Displacements);
             _displacements = _displacements.Where(c => !_struckUnits.Contains(c.Unit)).Distinct().ToList();
+
+            _projectiles.AddRange(otherResults.Projectiles);
         }
 
         public bool PositionWasFreed(MyHexPosition target)
@@ -60,6 +67,17 @@ namespace Assets.Scripts.Units
         }
 
         public static BattleResults Empty => new BattleResults();
+
+        public void AddProjectile(MyHexPosition startPosition, Orientation orientation, MyHexPosition endPosition, ProjectileType type)
+        {
+            _projectiles.Add(new ProjectileCreations()
+            {
+                StartPosition = startPosition,
+                EndPosition = endPosition,
+                Orientation = orientation,
+                Type = type
+            });
+        }
     }
 
     public class UnitDisplacements
@@ -67,5 +85,18 @@ namespace Assets.Scripts.Units
         public UnitModel Unit;
         public MyHexPosition DisplacementStart;
         public MyHexPosition DisplacementEnd;
+    }
+
+    public class ProjectileCreations
+    {
+        public MyHexPosition StartPosition;
+        public MyHexPosition EndPosition;
+        public Orientation Orientation;
+        public ProjectileType Type;
+    }
+
+    public enum ProjectileType
+    {
+        Arrow, Laser
     }
 }

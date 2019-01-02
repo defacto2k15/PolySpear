@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyDeath : IJourneyStep
+    public class JourneyDeath : IJourneyStep<UnitModel>
     {
         public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {

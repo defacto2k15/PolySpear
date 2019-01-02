@@ -20,5 +20,7 @@ namespace Assets.Scripts.Symbols
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
         {
         }
+
+        public bool IsDefendableEffect => false;
     }
 }

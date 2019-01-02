@@ -32,5 +32,7 @@ namespace Assets.Scripts.Symbols
             Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedUnit.Owner,"There is no enemy unit in front of me");
             reciever.DisplaceUnit(unitInFront, vision.ToGlobalPosition(new MyHexPosition(2,0)));
         }
+
+        public bool IsDefendableEffect => true;
     }
 }

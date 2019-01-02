@@ -5,7 +5,7 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyBattle : IJourneyStep
+    public class JourneyBattle : IJourneyStep<UnitModel>
     {
         public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
         {
