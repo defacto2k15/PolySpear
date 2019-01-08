@@ -50,9 +50,9 @@ namespace Assets.Scripts.Game
             return Units.AddUnit(position, player, orientation, unitPrefab);
         }
 
-        public ProjectileModel AddProjectie(MyHexPosition startPosition, Orientation orientation, GameObject arrowPrefab)
+        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation, GameObject projectilePrefab)
         {
-            return Projectiles.AddProjectile(startPosition, orientation, arrowPrefab);
+            return Projectiles.AddProjectile(startPosition, orientation, projectilePrefab);
         }
 
         public bool HasTileAt(MyHexPosition hexPosition)
