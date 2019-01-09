@@ -40,14 +40,14 @@ namespace Assets.Scripts.Map
 
             var positionToTiles = new List<TileModel>();
 
-            for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int y = 0; y < Height; y++)
+                for (int x = y%2; x < Width; x++)
                 {
                     var tile = Instantiate(TilePrefab);
                     var hexPosition = new MyHexPosition(x+y/2, y);
                     tile.GetComponent<TileModel>().Position = hexPosition;
-                    if (x == 0 )
+                    if (x == y%2 )
                     { 
                         tile.GetComponent<TileModel>().Role = TileRole.StartTeam1;
                     }else if (x == Width - 1)

@@ -23,14 +23,6 @@ MonoBehaviour:
         V: 0
       Orientation: 0
     OwningPlayer: 0
-  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
-      type: 2}
-    State:
-      Position:
-        U: 0
-        V: 0
-      Orientation: 0
-    OwningPlayer: 0
   Movements:
   - UnitIndex: 0
     NewPosition:
