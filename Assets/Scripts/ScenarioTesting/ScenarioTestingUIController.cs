@@ -28,7 +28,7 @@ namespace Assets.Scripts.ScenarioTesting
 
         public UnitModel CreateUnit(GameObject prefab, MyHexPosition startPosition, Orientation startOrientation, MyPlayer player)
         {
-            return GameCourseController.AddUnit(startPosition, player, startOrientation, prefab);
+            return GameCourseController.AddUnit(startPosition, player, startOrientation, prefab).Model;
         }
 
         //after units setting
@@ -53,12 +53,18 @@ namespace Assets.Scripts.ScenarioTesting
             }
             GameCourseController.MoveTo(targetPosition,unit);
         }
+
+        public bool IsPositionMovable(UnitModel unit, MyHexPosition position)
+        {
+            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit);
+            return possibleTargets.Any(c => c.Equals(position));
+        }
     }
 
     public class ImpossibleMovePredictionException : Exception
     {
         public ImpossibleMovePredictionException(UnitModel unit, MyHexPosition targetPosition, List<MyHexPosition> possibleTargets)
-            :base($"Cannot move unit {unit} to position {targetPosition}. Only possible moves are {possibleTargets}")
+            :base($"Cannot move unit {unit} to position {targetPosition}. Only possible moves are {possibleTargets.Select(c => c.ToString()).Aggregate((acc, c) => acc+","+c)}")
         {
         }
     }

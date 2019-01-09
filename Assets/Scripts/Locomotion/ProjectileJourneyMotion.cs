@@ -3,16 +3,16 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class ProjectileJourneyMotion : IJourneyStep<ProjectileModel>
+    public class ProjectileJourneyMotion : IJourneyStep<ProjectileModelComponent>
     {
         public MyHexPosition To;
-        public BattleResults ApplyStepToModel(GameCourseModel model, ProjectileModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, ProjectileModelComponent locomotionTarget)
         {
-            model.MoveProjectile(locomotionTarget, To);
+            model.MoveProjectile(locomotionTarget.Model, To);
             return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, ProjectileModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
         {
             return new MotionAnimation(animationTarget, To);
         }

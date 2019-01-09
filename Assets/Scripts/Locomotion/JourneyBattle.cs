@@ -1,18 +1,26 @@
 ﻿using System;
 using Assets.Scripts.Animation;
+using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyBattle : IJourneyStep<UnitModel>
+    public class JourneyBattle : IJourneyStep<UnitModelComponent>
     {
-        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        private BattleCircumstances _battleCircumstances;
+
+        public JourneyBattle(BattleCircumstances battleCircumstances)
         {
-            return model.PerformBattleAtPlace(locomotionTarget.Position);
+            _battleCircumstances = battleCircumstances;
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
+        {
+            return model.PerformBattleAtPlace(locomotionTarget.Model.Position, _battleCircumstances);
+        }
+
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
             return new EmptyAnimation(animationTarget);
         }

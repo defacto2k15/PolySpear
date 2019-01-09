@@ -9,14 +9,14 @@ namespace Assets.Scripts.Game
     {
         private bool _animationStarted = false;
 
-        protected  PawnModel _animationTarget;
+        protected  PawnModelComponent _animationTarget;
 
-        protected MyAnimation(PawnModel animationTarget)
+        protected MyAnimation(PawnModelComponent animationTarget)
         {
             _animationTarget = animationTarget;
         }
 
-        public PawnModel AnimationTarget => _animationTarget;
+        public PawnModel AnimationTarget => _animationTarget.PawnModel;
 
         public void StartAnimation()
         {

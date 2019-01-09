@@ -33,6 +33,7 @@ namespace Assets.Scripts.Units
         public void UnStrike(UnitModel unit)
         {
             Assert.IsTrue(UnitWasStruck(unit), "Unit was not stuck, cannot unstuck");
+            _struckUnits.Remove(unit);
         }
 
         public void DisplaceUnit(UnitModel unit, MyHexPosition newPosition)

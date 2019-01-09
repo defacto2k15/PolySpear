@@ -11,7 +11,7 @@ namespace Assets.Scripts.Animation
         private float _startTime;
         private bool _finished;
 
-        public DeathAnimation(UnitModel targetUnit) : base(targetUnit)
+        public DeathAnimation(UnitModelComponent targetUnit) : base(targetUnit)
         {
             _renderers = new List<SpriteRenderer>();
             _renderers.Add(targetUnit.GetComponent<SpriteRenderer>());

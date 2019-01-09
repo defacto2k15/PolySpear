@@ -8,7 +8,7 @@ namespace Assets.Scripts.Units
 
         public void Start()
         {
-            _model = GetComponent<PawnModel>();
+            _model = GetComponent<PawnModelComponent>().PawnModel;
             _model.OnUnitKilled += () =>
             {
                 GameObject.Destroy(transform.gameObject);
@@ -34,7 +34,7 @@ namespace Assets.Scripts.Units
         {
             if (_model == null) // todo more elegant solution
             {
-                _model = GetComponent<PawnModel>();
+                _model = GetComponent<PawnModelComponent>().PawnModel;
             }
             transform.localPosition = _model.Position.GetPosition();
             transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation(),0);

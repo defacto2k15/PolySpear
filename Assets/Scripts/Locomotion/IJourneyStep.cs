@@ -3,7 +3,7 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public interface IJourneyStep<T> where T : PawnModel
+    public interface IJourneyStep<T> where T : PawnModelComponent
     {
         BattleResults ApplyStepToModel(GameCourseModel model, T locomotionTarget);
         MyAnimation CreateAnimation(GameCourseModel model, T animationTarget);

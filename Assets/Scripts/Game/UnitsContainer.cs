@@ -8,16 +8,17 @@ namespace Assets.Scripts.Game
 {
     public class UnitsContainer : PawnsContainer<UnitModel>
     {
-        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab)
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
         {
-            var unit = Instantiate(unitPrefab, transform);
-            unit.GetComponent<UnitModel>().Orientation = orientation;
-            unit.GetComponent<UnitModel>().Position = position;
-            unit.GetComponent<UnitModel>().Owner = player;
+            var unit = new UnitModel
+            {
+                Orientation = orientation,
+                Position = position,
+                Owner = player
+            };
 
-            var model = unit.GetComponent<UnitModel>();
-            base.AddPawn(position, model);
-            return model;
+            base.AddPawn(position, unit);
+            return unit;
         }
 
         public bool HasAnyUnits(MyPlayer player)

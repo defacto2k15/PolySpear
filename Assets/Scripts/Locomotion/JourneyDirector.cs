@@ -3,17 +3,17 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyDirector : IJourneyStep<UnitModel>
+    public class JourneyDirector : IJourneyStep<UnitModelComponent>
     {
         public Orientation To;
 
-        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
         {
-            model.OrientUnit(locomotionTarget, To);
+            model.OrientUnit(locomotionTarget.Model, To);
             return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel locomotionTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent locomotionTarget)
         {
             return new RotationAnimation(locomotionTarget, To);
         }

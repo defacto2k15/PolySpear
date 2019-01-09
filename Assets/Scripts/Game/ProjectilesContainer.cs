@@ -6,15 +6,16 @@ namespace Assets.Scripts.Game
 {
     public class ProjectilesContainer : PawnsContainer<ProjectileModel>
     {
-        public ProjectileModel AddProjectile(MyHexPosition position, Orientation orientation, GameObject projectilePrefab)
+        public ProjectileModel AddProjectile(MyHexPosition position, Orientation orientation)
         {
-            var projectile = Instantiate(projectilePrefab, transform);
-            projectile.GetComponent<ProjectileModel>().Orientation = orientation;
-            projectile.GetComponent<ProjectileModel>().Position = position;
+            var projectile = new ProjectileModel
+            {
+                Orientation = orientation,
+                Position = position
+            };
 
-            var model = projectile.GetComponent<ProjectileModel>();
-            base.AddPawn(position, model);
-            return model;
+            base.AddPawn(position, projectile);
+            return projectile;
         }
 
         public ProjectilesContainer Clone()

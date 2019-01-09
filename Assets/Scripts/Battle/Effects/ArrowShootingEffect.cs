@@ -9,7 +9,7 @@ namespace Assets.Scripts.Battle.Effects
 {
     public class ArrowShootingEffect : ProjectileShootingEffect
     {
-        public ArrowShootingEffect() : base(8, ProjectileType.Arrow)
+        public ArrowShootingEffect() : base(8, ProjectileType.Arrow, EffectActivationCircumstances.DirectorBattle)
         {
         }
     }

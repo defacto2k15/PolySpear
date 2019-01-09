@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4173622225641036}
   - component: {fileID: 212415386031426438}
   - component: {fileID: 114541311987887962}
-  - component: {fileID: 114043654656613092}
   - component: {fileID: 114260058358341336}
+  - component: {fileID: 114558944326726008}
   m_Layer: 0
   m_Name: SpearmanPrefab
   m_TagString: Untagged
@@ -74,17 +74,6 @@ Transform:
   m_Father: {fileID: 4173622225641036}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114043654656613092
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1800704055953674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114260058358341336
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -116,6 +105,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37c8e9e7726e41a4c89d1c06ddfc6a8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114558944326726008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1800704055953674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dadce336975f6b4681c1e194f6b7a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212415386031426438
@@ -151,7 +151,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1289110223
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4a0affd6437e29d4ebbc44d01bac504b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

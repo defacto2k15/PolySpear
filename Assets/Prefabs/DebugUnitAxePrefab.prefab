@@ -38,8 +38,8 @@ GameObject:
   - component: {fileID: 4001470976810492}
   - component: {fileID: 212245569158205220}
   - component: {fileID: 114206398710308848}
-  - component: {fileID: 114048986545355020}
   - component: {fileID: 114763349649058714}
+  - component: {fileID: 114598725129382434}
   m_Layer: 0
   m_Name: DebugUnitAxePrefab
   m_TagString: Untagged
@@ -136,18 +136,6 @@ Transform:
   m_Father: {fileID: 4001470976810492}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114048986545355020
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1708165030381952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsUnitAlive: 1
 --- !u!114 &114090797710421472
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -197,6 +185,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114598725129382434
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1708165030381952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dadce336975f6b4681c1e194f6b7a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114763349649058714

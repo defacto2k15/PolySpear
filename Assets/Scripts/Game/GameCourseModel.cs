@@ -45,14 +45,14 @@ namespace Assets.Scripts.Game
             set { _turn = value; }
         }
 
-        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab) // todo redesign
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
         {
-            return Units.AddUnit(position, player, orientation, unitPrefab);
+            return Units.AddUnit(position, player, orientation);
         }
 
-        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation, GameObject projectilePrefab)
+        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation)
         {
-            return Projectiles.AddProjectile(startPosition, orientation, projectilePrefab);
+            return Projectiles.AddProjectile(startPosition, orientation);
         }
 
         public bool HasTileAt(MyHexPosition hexPosition)
@@ -110,16 +110,16 @@ namespace Assets.Scripts.Game
             return Units.IsPawnAt(position);
         }
 
-        public BattleResults PerformBattleAtPlace(MyHexPosition battleActivatorPosition)
+        public BattleResults PerformBattleAtPlace(MyHexPosition battleActivatorPosition, BattleCircumstances battleCircumstances)
         {
             var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
-            return arbiter.PerformBattleAtPlace(battleActivatorPosition);
+            return arbiter.PerformBattleAtPlace(battleActivatorPosition, battleCircumstances);
         }
 
-        public BattleResults PerformPassiveOnlyBattleAtPlace(MyHexPosition battleActivatorPosition)
+        public BattleResults PerformPassiveOnlyBattleAtPlace(MyHexPosition battleActivatorPosition, BattleCircumstances battleCircumstances)
         {
             var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
-            return arbiter.PerformPassiveBattleAtPlace(battleActivatorPosition);
+            return arbiter.PerformPassiveBattleAtPlace(battleActivatorPosition, battleCircumstances);
         }
 
         public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
@@ -189,7 +189,7 @@ namespace Assets.Scripts.Game
                     tempUnitsContainer.OrientPawn(tempUnitModel.Position, newOrientation);
 
                     var arbiter = new BattleArbiter(tempUnitsContainer, tempProjectilesContainer, tempMapModel);
-                    var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position);
+                    var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position, BattleCircumstances.Director);
                     return battleResults.PositionWasFreed(target);
                 }
             }

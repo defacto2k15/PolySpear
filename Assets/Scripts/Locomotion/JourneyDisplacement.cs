@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyDisplacement : IJourneyStep<UnitModel>
+    public class JourneyDisplacement : IJourneyStep<UnitModelComponent>
     {
     public MyHexPosition To;
-    private IJourneyStep<UnitModel> _step;
+    private IJourneyStep<UnitModelComponent> _step;
 
-    public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+    public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
     {
         return GetInternalStep(model).ApplyStepToModel(model, locomotionTarget);
     }
 
-    public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
+    public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
     {
         return GetInternalStep(model).CreateAnimation(model, animationTarget);
     }
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Locomotion
         return sr;
     }
 
-    private IJourneyStep<UnitModel> GetInternalStep(GameCourseModel model)
+    private IJourneyStep<UnitModelComponent> GetInternalStep(GameCourseModel model)
     {
         if (_step == null)
         {

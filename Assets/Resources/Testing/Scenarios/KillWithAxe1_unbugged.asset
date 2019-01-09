@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
   m_Name: KillWithAxe1_unbugged
   m_EditorClassIdentifier: 
+  FileName_DO_NOT_CHANGE_BY_HAND: KillWithAxe1_unbugged
   TestDescription: Killing with axe (ranged)
   TestEnabled: 1
   StartStates:
@@ -18,7 +19,7 @@ MonoBehaviour:
       type: 2}
     State:
       Position:
-        U: 0
+        U: 1
         V: 0
       Orientation: 0
     OwningPlayer: 0
@@ -33,7 +34,7 @@ MonoBehaviour:
   Movements:
   - UnitIndex: 0
     NewPosition:
-      U: 1
+      U: 2
       V: 0
   Predictions:
   - UnitIndex: 1
@@ -43,3 +44,6 @@ MonoBehaviour:
         U: 0
         V: 0
       Orientation: 0
+    SelectorPosition:
+      U: 0
+      V: 0

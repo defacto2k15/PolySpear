@@ -18,6 +18,9 @@ namespace Assets.Scripts.ScenarioTesting
         private List<UnitModel> _createdUnits = new List<UnitModel>();
         private int _movementIndex = 0;
         private bool _executionFinished = false;
+        private float _testStartTime;
+
+        private const float MinimumTestTime = 1;
 
         public ScenarioOneTestExecutor(ScenarioTestingUIController controller, Scenario scenario)
         {
@@ -29,6 +32,7 @@ namespace Assets.Scripts.ScenarioTesting
         {
             if (_lateStart.ShouldRunStart)
             {
+                _testStartTime = Time.time;
                 _controller.MyStart();
                 foreach (var startState in _scenario.StartStates)
                 {
@@ -52,7 +56,11 @@ namespace Assets.Scripts.ScenarioTesting
                     _controller.Move(_createdUnits[movement.UnitIndex], movement.NewPosition);
                     _movementIndex++;
                 }
-                else 
+                else if (_testStartTime + MinimumTestTime > Time.time)
+                {
+                    return;
+                }
+                else
                 {
                     int i = 0;
                     foreach (var prediction in _scenario.Predictions)
@@ -73,9 +81,27 @@ namespace Assets.Scripts.ScenarioTesting
                                 Position = unit.Position
                             };
 
+                            if (!unit.IsUnitAlive)
+                            {
+                                throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"unit was dead");
+                            }
+
+
                             if (!currentState.Equals(prediction.PredictedState))
                             {
                                 throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"unit was at state {currentState}");
+                            }
+                        }else if (prediction.Type == ScenarioPredictionType.PositionIsMovable)
+                        {
+                            if (!_controller.IsPositionMovable(_createdUnits[prediction.UnitIndex], prediction.SelectorPosition))
+                            {
+                                throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"position was not movable");
+                            }
+                        }else if (prediction.Type == ScenarioPredictionType.PositionIsNotMovable)
+                        {
+                            if (_controller.IsPositionMovable(_createdUnits[prediction.UnitIndex], prediction.SelectorPosition))
+                            {
+                                throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"position was movable");
                             }
                         }
                         i++;
