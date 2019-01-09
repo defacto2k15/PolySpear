@@ -9,32 +9,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
-  m_Name: CanMoveIntoOccupiedFieldWithSpear
+  m_Name: CannotMoveIntoTakenFieldIfWeCantKill
   m_EditorClassIdentifier: 
-  FileName_DO_NOT_CHANGE_BY_HAND: CanMoveIntoOccupiedFieldWithSpear
-  TestDescription: We can move into a field that is occupied if we can kill its ocupant
-  TestEnabled: 0
+  FileName_DO_NOT_CHANGE_BY_HAND: CanMoveIntoTakenFieldIfWeKill
+  TestDescription: If neighbour field is taken, we cannot take it when we cannot kill
+    its occupant
+  TestEnabled: 1
   StartStates:
-  - UnitPrefab: {fileID: 1971217509518276, guid: 8f2b5ec605e1a324ab68f1dadcdeac91,
+  - UnitPrefab: {fileID: 1925818458664710, guid: 258757ce01f4e6a488915ced61afc998,
       type: 2}
     State:
       Position:
         U: 0
         V: 0
-      Orientation: 5
+      Orientation: 0
     OwningPlayer: 0
-  - UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+  - UnitPrefab: {fileID: 1911331921871210, guid: 2d4800b2b7078c74cb37e3c1c643f1f9,
       type: 2}
     State:
       Position:
         U: 1
         V: 1
-      Orientation: 1
+      Orientation: 4
     OwningPlayer: 1
   Movements: []
   Predictions:
   - UnitIndex: 0
-    Type: 2
+    Type: 3
     PredictedState:
       Position:
         U: 0
