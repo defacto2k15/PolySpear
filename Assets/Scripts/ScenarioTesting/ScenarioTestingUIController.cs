@@ -28,7 +28,7 @@ namespace Assets.Scripts.ScenarioTesting
 
         public UnitModel CreateUnit(GameObject prefab, MyHexPosition startPosition, Orientation startOrientation, MyPlayer player)
         {
-            return GameCourseController.AddUnit(startPosition, player, startOrientation, prefab);
+            return GameCourseController.AddUnit(startPosition, player, startOrientation, prefab).Model;
         }
 
         //after units setting

@@ -7,7 +7,7 @@ namespace Assets.Scripts.Game
     {
         private readonly MyHexPosition _targetPosition;
 
-        public MotionAnimation(PawnModel targetUnit, MyHexPosition targetPosition) :base(targetUnit)
+        public MotionAnimation(PawnModelComponent targetUnit, MyHexPosition targetPosition) :base(targetUnit)
         {
             _targetPosition = targetPosition;
         }

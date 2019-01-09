@@ -7,7 +7,7 @@ using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class LocomotionManager<T> where T : PawnModel
+    public class LocomotionManager<T> where T : PawnModelComponent
     {
         private T _locomotionTarget;
         private Queue<IJourneyStep<T>> _journeySteps;
@@ -44,7 +44,7 @@ namespace Assets.Scripts.Locomotion
 
         public bool LocomotionFinished => !_journeySteps.Any() &&  _currentStep == null ;
 
-        public T LocomotionLocomotionTarget => _locomotionTarget;
+        public T LocomotionTarget => _locomotionTarget;
 
         public bool DuringAnimation => _currentAnimation != null && _currentAnimation.WeAreDuringAnimation();
 
@@ -57,22 +57,22 @@ namespace Assets.Scripts.Locomotion
 
     public static class LocomotionUtils
     {
-        public static LocomotionManager<UnitModel> CreateMovementJourney(UnitModel unit, MyHexPosition target) 
+        public static LocomotionManager<UnitModelComponent> CreateMovementJourney(UnitModelComponent unit, MyHexPosition target) 
         {
-            Assert.IsFalse(unit.Position.Equals(target), "Unit is arleady at target");
+            Assert.IsFalse(unit.Model.Position.Equals(target), "Unit is arleady at target");
 
             // todo, now it supports movement by only one hex, should be more
             Orientation targetOrientation = Orientation.N;
             for (int i = 0; i < 6; i++)
             {
-                if (target.Equals(unit.Position.Neighbors[i]))
+                if (target.Equals(unit.Model.Position.Neighbors[i]))
                 {
-                    targetOrientation = unit.Position.NeighborDirections[i];
+                    targetOrientation = unit.Model.Position.NeighborDirections[i];
                 }
             }
 
-            List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Orientation, targetOrientation);
-            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
+            List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Model.Orientation, targetOrientation);
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
             foreach (var orientation in transitionalOrientations)
             {
                 journeySteps.Enqueue(new JourneyDirector()
@@ -86,35 +86,35 @@ namespace Assets.Scripts.Locomotion
                 To = target
             });
             journeySteps.Enqueue(new JourneyBattle());
-            return new LocomotionManager<UnitModel>(unit, journeySteps);
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 
-        public static LocomotionManager<UnitModel> CreatePushJourney(UnitModel unit, MyHexPosition target)
+        public static LocomotionManager<UnitModelComponent> CreatePushJourney(UnitModelComponent unit, MyHexPosition target)
         {
-            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
             journeySteps.Enqueue(new JourneyDisplacement()
             {
                 To = target
             });
             journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
-            return new LocomotionManager<UnitModel>(unit, journeySteps);
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 
 
-        public static LocomotionManager<UnitModel> CreateDeathJourney(UnitModel unit)
+        public static LocomotionManager<UnitModelComponent> CreateDeathJourney(UnitModelComponent unit)
         {
-            var journeySteps = new Queue<IJourneyStep<UnitModel>>();
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
             journeySteps.Enqueue( new JourneyDeath());
-            return new LocomotionManager<UnitModel>(unit, journeySteps);
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 
-        public static LocomotionManager<ProjectileModel> CreateProjectileJourney(ProjectileModel projectile, MyHexPosition endPosition)
+        public static LocomotionManager<ProjectileModelComponent> CreateProjectileJourney(ProjectileModelComponent projectile, MyHexPosition endPosition)
         {
-            var startPosition = projectile.Position;
+            var startPosition = projectile.Model.Position;
             int offsetU = endPosition.U - startPosition.U;
             int offsetV = endPosition.V - startPosition.V;
 
-            var journeySteps = new Queue<IJourneyStep<ProjectileModel>>();
+            var journeySteps = new Queue<IJourneyStep<ProjectileModelComponent>>();
 
             Assert.IsTrue((offsetU != 0 && offsetV == 0) || (offsetU == 0 && offsetV != 0) || (offsetU == offsetV),
                 $"Move is not horizontal nor diagonal: startPosition {startPosition} endPosition {endPosition}");
@@ -129,7 +129,7 @@ namespace Assets.Scripts.Locomotion
                 });
             }
             journeySteps.Enqueue(new ProjectileJourneyHit());
-            return new LocomotionManager<ProjectileModel>(projectile, journeySteps);
+            return new LocomotionManager<ProjectileModelComponent>(projectile, journeySteps);
         }
     }
 }

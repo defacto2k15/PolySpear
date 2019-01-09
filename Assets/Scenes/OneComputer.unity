@@ -4299,8 +4299,10 @@ MonoBehaviour:
   Orc3Prefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e, type: 2}
   ArrowPrefab: {fileID: 1913103536335902, guid: f905835c6f70fb141b46e43b9859562a,
     type: 2}
-  AxePrefab: {fileID: 0}
+  AxePrefab: {fileID: 1177238692297474, guid: a49e25f9020e0a445924a7a28e45d34a, type: 2}
   ProjectilePrefab: {fileID: 0}
+  UnitsParent: {fileID: 364502399}
+  ProjectilesParent: {fileID: 1946101839}
   DebugShouldEndGame: 0
 --- !u!114 &2029522718
 MonoBehaviour:

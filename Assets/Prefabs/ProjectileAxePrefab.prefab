@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4544053919012978}
   - component: {fileID: 212570237783880840}
-  - component: {fileID: 114337434251444066}
   - component: {fileID: 114863438585717010}
+  - component: {fileID: 114678094261469650}
   m_Layer: 0
   m_Name: ProjectileAxePrefab
   m_TagString: Untagged
@@ -42,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &114337434251444066
+--- !u!114 &114678094261469650
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,10 +50,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1177238692297474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ae2b56c651ed944a985120385883c82, type: 3}
+  m_Script: {fileID: 11500000, guid: d02e7fd2945b28748b53f795e2330037, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsUnitAlive: 1
 --- !u!114 &114863438585717010
 MonoBehaviour:
   m_ObjectHideFlags: 1

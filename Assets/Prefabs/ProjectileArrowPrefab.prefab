@@ -20,8 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4492841819801560}
   - component: {fileID: 212730090758184832}
-  - component: {fileID: 114831307773352894}
   - component: {fileID: 114029167831458944}
+  - component: {fileID: 114005345472959182}
   m_Layer: 0
   m_Name: ProjectileArrowPrefab
   m_TagString: Untagged
@@ -42,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &114005345472959182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1913103536335902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d02e7fd2945b28748b53f795e2330037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114029167831458944
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -53,18 +64,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d160a1db3119f42985021e4ac2af4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114831307773352894
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1913103536335902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ae2b56c651ed944a985120385883c82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsUnitAlive: 1
 --- !u!212 &212730090758184832
 SpriteRenderer:
   m_ObjectHideFlags: 1

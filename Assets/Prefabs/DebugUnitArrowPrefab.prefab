@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4709073266012448}
   - component: {fileID: 212641931961614334}
   - component: {fileID: 114293612477917536}
-  - component: {fileID: 114504201847748400}
   - component: {fileID: 114262020693787948}
+  - component: {fileID: 114584465567547310}
   m_Layer: 0
   m_Name: DebugUnitArrowPrefab
   m_TagString: Untagged
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ed3b38fc400ad04b9578ae7ad021850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114504201847748400
+--- !u!114 &114584465567547310
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,10 +177,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1182155931781302}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76fb2adb9d23d6b4ca624dfdee4c3b29, type: 3}
+  m_Script: {fileID: 11500000, guid: 6dadce336975f6b4681c1e194f6b7a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsUnitAlive: 1
 --- !u!114 &114853940886564920
 MonoBehaviour:
   m_ObjectHideFlags: 1

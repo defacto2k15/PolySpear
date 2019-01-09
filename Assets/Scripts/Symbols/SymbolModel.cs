@@ -24,7 +24,7 @@ namespace Assets.Scripts.Symbols
 
         public void Start()
         {
-            _owningUnit = GetComponentInParent<UnitModel>();
+            _owningUnit = GetComponentInParent<UnitModelComponent>().Model;
         }
 
         public Orientation LocalOrientation => Orientation;

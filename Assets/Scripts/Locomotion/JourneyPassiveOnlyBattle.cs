@@ -4,14 +4,14 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyPassiveOnlyBattle : IJourneyStep<UnitModel>
+    public class JourneyPassiveOnlyBattle : IJourneyStep<UnitModelComponent>
     {
-        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
         {
-            return model.PerformPassiveOnlyBattleAtPlace(locomotionTarget.Position);
+            return model.PerformPassiveOnlyBattleAtPlace(locomotionTarget.Model.Position);
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
             return new EmptyAnimation(animationTarget);
         }

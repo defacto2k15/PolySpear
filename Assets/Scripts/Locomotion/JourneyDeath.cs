@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class JourneyDeath : IJourneyStep<UnitModel>
+    public class JourneyDeath : IJourneyStep<UnitModelComponent>
     {
-        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModel locomotionTarget)
+        public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
         {
-            model.FinalizeKillUnit(locomotionTarget);
+            model.FinalizeKillUnit(locomotionTarget.Model);
             return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModel animationTarget)
+        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
             return new DeathAnimation(animationTarget);
         }

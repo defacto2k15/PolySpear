@@ -45,14 +45,14 @@ namespace Assets.Scripts.Game
             set { _turn = value; }
         }
 
-        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation, GameObject unitPrefab) // todo redesign
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
         {
-            return Units.AddUnit(position, player, orientation, unitPrefab);
+            return Units.AddUnit(position, player, orientation);
         }
 
-        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation, GameObject projectilePrefab)
+        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation)
         {
-            return Projectiles.AddProjectile(startPosition, orientation, projectilePrefab);
+            return Projectiles.AddProjectile(startPosition, orientation);
         }
 
         public bool HasTileAt(MyHexPosition hexPosition)

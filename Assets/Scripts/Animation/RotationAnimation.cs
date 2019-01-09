@@ -8,7 +8,7 @@ namespace Assets.Scripts.Game
     {
         private readonly Orientation _targetOrientation;
 
-        public RotationAnimation(UnitModel targetUnit, Orientation targetOrientation) :base(targetUnit)
+        public RotationAnimation(UnitModelComponent targetUnit, Orientation targetOrientation) :base(targetUnit)
         {
             _targetOrientation = targetOrientation;
         }

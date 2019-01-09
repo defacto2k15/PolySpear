@@ -5,7 +5,7 @@ namespace Assets.Scripts.Animation
 {
     public class EmptyAnimation : MyAnimation
     {
-        public EmptyAnimation(PawnModel animationTarget) : base(animationTarget)
+        public EmptyAnimation(PawnModelComponent animationTarget) : base(animationTarget)
         {
         }
 

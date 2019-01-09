@@ -12,7 +12,7 @@ namespace Assets.Scripts.Units
     {
         public void Start()
         {
-            var model = GetComponent<UnitModel>();
+            var model = GetComponent<UnitModelComponent>().Model;
             model.Symbols =  GetComponentsInChildren<SymbolModel>().ToDictionary(c => c.Orientation, c => c);
         }
     }

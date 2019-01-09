@@ -13,7 +13,7 @@ namespace Assets.Scripts.Units
         protected override void MyStart()
         {
             _flagChild = GetComponentInChildren<UnitFlagView>();
-            _unitModel = GetComponent<UnitModel>();
+            _unitModel = GetComponent<UnitModelComponent>().Model;
         }
 
         protected override void MyUpdate()
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Units
             if (_flagChild == null) // todo more elegant solution
             {
                 _flagChild = GetComponentInChildren<UnitFlagView>();
-                _unitModel = GetComponent<UnitModel>();
+                _unitModel = GetComponent<UnitModelComponent>().Model;
             }
             _flagChild.SetFlagColor( Constants.PlayersFlagColors[_unitModel.Owner]);
         }

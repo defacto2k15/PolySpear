@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
-    public abstract class PawnModel : MonoBehaviour
+    public abstract class PawnModel 
     {
         public MyHexPosition Position { get; set; }
         public Orientation Orientation { get; set; } 

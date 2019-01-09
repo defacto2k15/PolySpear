@@ -25,15 +25,21 @@ namespace Assets.Scripts.Game
         public GameObject ProjectilePrefab; //uogolnienie
 
         private GameCourseModel _courseModel;
-        private Stack<LocomotionManager<UnitModel>> _unitLocomotions;
-        private Stack<LocomotionManager<ProjectileModel>> _projectileLocomotions;
+        private Stack<LocomotionManager<UnitModelComponent>> _unitLocomotions;
+        private Stack<LocomotionManager<ProjectileModelComponent>> _projectileLocomotions;
+
+        private Dictionary<UnitModel, UnitModelComponent> _unitModelToGameObjectMap = new Dictionary<UnitModel, UnitModelComponent>();
+        private Dictionary<ProjectileModel, ProjectileModelComponent> _projectileModelToGameObjectMap = new Dictionary<ProjectileModel, ProjectileModelComponent>();
+
+        public GameObject UnitsParent;
+        public GameObject ProjectilesParent;
 
         public bool DebugShouldEndGame = true;
 
         public void Start()
         {
-            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
-            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
+            _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
             _courseModel = GetComponent<GameCourseModel>();
         }
 
@@ -74,7 +80,29 @@ namespace Assets.Scripts.Game
             }
         }
 
-        private void ProcessLocomotionStack<T>(Stack<LocomotionManager<T>> locomotions) where T : PawnModel
+        private ProjectileModelComponent AddProjectile(ProjectileCreations c)
+        {
+            var projectileModel = _courseModel.AddProjectile(c.StartPosition, c.Orientation);
+            var projectileObject = GameObject.Instantiate(ArrowPrefab, ProjectilesParent.transform);
+            var projectileModelComponent = projectileObject.GetComponent<ProjectileModelComponent>();
+            projectileModelComponent.Model = projectileModel;
+            _projectileModelToGameObjectMap[projectileModel] = projectileModelComponent;
+            projectileModelComponent.Model.OnUnitKilled += () => _projectileModelToGameObjectMap.Remove(projectileModel);
+            return projectileModelComponent;
+        }
+
+        public UnitModelComponent AddUnit(MyHexPosition startPosition, MyPlayer player, Orientation startOrientation, GameObject prefab) // public for test reasons
+        {
+            var unitModel = _courseModel.AddUnit(startPosition, player, startOrientation);
+            var unitObject = GameObject.Instantiate(prefab, UnitsParent.transform);
+            var unitModelComponent = unitObject.GetComponent<UnitModelComponent>();
+            unitModelComponent.Model = unitModel;
+            _unitModelToGameObjectMap[unitModel] = unitModelComponent;
+            unitModelComponent.Model.OnUnitKilled += () => { _unitModelToGameObjectMap.Remove(unitModel); }; // quite hacky
+            return unitModelComponent;
+        }
+
+        private void ProcessLocomotionStack<T>(Stack<LocomotionManager<T>> locomotions) where T : PawnModelComponent
         {
             if (locomotions.Any())
             {
@@ -94,12 +122,12 @@ namespace Assets.Scripts.Game
                     {
                         var steps = currentLocomotion.AdvanceJourney(_courseModel);
                         var previousStep = steps.PreviousStep;
-                        var locomotionTarget = currentLocomotion.LocomotionLocomotionTarget;
+                        var locomotionTarget = currentLocomotion.LocomotionTarget;
                         if (previousStep != null)
                         {
                             if (previousStep.ShouldRemoveUnitAfterStep(_courseModel))
                             {
-                                locomotionTarget.SetUnitKilled();
+                                locomotionTarget.PawnModel.SetUnitKilled();
                                 locomotions.Pop();
                                 return;
                             }
@@ -109,19 +137,19 @@ namespace Assets.Scripts.Game
                         {
                             var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
 
-                            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>(_unitLocomotions
-                                .Where(c => !battleResults.UnitWasStruck(c.LocomotionLocomotionTarget)).Reverse());
+                            _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>(_unitLocomotions
+                                .Where(c => !battleResults.UnitWasStruck(  c.LocomotionTarget.Model  )).Reverse());
 
-                            battleResults.KilledUnits.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney(c)); });
+                            battleResults.KilledUnits.ForEach(c =>
+                            {
+                                _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney( _unitModelToGameObjectMap[c] ));
+                            });
 
-                            battleResults.Displacements.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(c.Unit, c.DisplacementEnd)); });
+                            battleResults.Displacements.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(_unitModelToGameObjectMap[c.Unit], c.DisplacementEnd)); });
 
                             battleResults.Projectiles.ForEach(c =>
                             {
-                                //tu wypadaloby jakos ustalac ProjectilePrefab
-                                ProjectilePrefab = ArrowPrefab;
-                                //
-                                var projectile = _courseModel.AddProjectile(c.StartPosition, c.Orientation, ProjectilePrefab);
+                                var projectile = AddProjectile(c);
                                 _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition));
                             });
                         }
@@ -133,14 +161,14 @@ namespace Assets.Scripts.Game
         public void PlaceUnits() // temporary
         {
             // todo prawdziwa faza wystawiania
-            _courseModel.AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
-            _courseModel.AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
-            _courseModel.AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
+            AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
+            AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
+            AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
             _courseModel.NextTurn();
             // todo wstawianie drugiego
-            _courseModel.AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
-            _courseModel.AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
-            _courseModel.AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
+            AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
+            AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
+            AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
             _courseModel.Phrase = Phrase.Play;
             _courseModel.NextTurn();
             _courseModel.NextPhrase();
@@ -148,7 +176,7 @@ namespace Assets.Scripts.Game
 
         public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit)
         {
-            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(selectedUnit, selectorPosition));
+            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
         }
 
@@ -169,11 +197,6 @@ namespace Assets.Scripts.Game
             return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).ToList();
         }
 
-        public UnitModel AddUnit(MyHexPosition startPosition, MyPlayer player, Orientation startOrientation, GameObject prefab) //temporary
-        {
-            return _courseModel.AddUnit(startPosition, player, startOrientation, prefab);
-        }
-
         public void NextPhrase()  //temporary, for testing
         {
             _courseModel.NextPhrase();
@@ -181,8 +204,10 @@ namespace Assets.Scripts.Game
 
         public void Reset()
         {
-            _unitLocomotions = new Stack<LocomotionManager<UnitModel>>();
-            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModel>>();
+            _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>();
+            _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
+            _unitModelToGameObjectMap = new Dictionary<UnitModel, UnitModelComponent>();
+            _projectileModelToGameObjectMap = new Dictionary<ProjectileModel, ProjectileModelComponent>();
             _courseModel.Reset();
         }
     }
