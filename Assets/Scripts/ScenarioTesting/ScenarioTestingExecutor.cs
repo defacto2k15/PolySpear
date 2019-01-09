@@ -67,7 +67,7 @@ namespace Assets.Scripts.ScenarioTesting
                         Executor = new ScenarioOneTestExecutor(Controller, scenarioWithIndex.Scenario),
                         ScenarioWithIndex = scenarioWithIndex
                     };
-                    TestingScreenView.ShowTestTitle("Test "+scenarioWithIndex.Index+": "+scenarioWithIndex.Scenario.TestDescription);
+                    TestingScreenView.ShowTestTitle("Test "+scenarioWithIndex.Index+": "+scenarioWithIndex.Scenario.FileName_DO_NOT_CHANGE_BY_HAND+" - "+scenarioWithIndex.Scenario.TestDescription);
                 }
                 else
                 {
@@ -122,7 +122,7 @@ namespace Assets.Scripts.ScenarioTesting
                 foreach (var failedTest in failedTests)
                 {
                     sb.AppendLine("-----------------------------");
-                    sb.AppendLine($"Test {failedTest.ScenarioWithIndex.Index}: {failedTest.ScenarioWithIndex.Scenario.TestDescription} with message:");
+                    sb.AppendLine($"Test {failedTest.ScenarioWithIndex.Index}: {failedTest.ScenarioWithIndex.Scenario.FileName_DO_NOT_CHANGE_BY_HAND} - {failedTest.ScenarioWithIndex.Scenario.TestDescription} with message:");
                     sb.Append(failedTest.FailureException.ToString());
                 }
                 Debug.LogError(sb.ToString());
@@ -141,7 +141,7 @@ namespace Assets.Scripts.ScenarioTesting
     public class ScenarioWithIndex
     {
         public Scenario Scenario;
-        public int Index;
+        public int Index; 
     }
 
     public class ExecutorWithScenario
