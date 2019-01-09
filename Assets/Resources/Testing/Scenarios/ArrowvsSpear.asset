@@ -3,18 +3,19 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
-  m_Name: KillWithAxe1
+  m_Name: ArrowvsSpear
   m_EditorClassIdentifier: 
-  TestDescription: Killing with axe (ranged)
+  FileName_DO_NOT_CHANGE_BY_HAND: 
+  TestDescription: archer walks into a grid with spear (should archer kill first)
   TestEnabled: 1
   StartStates:
-  - UnitPrefab: {fileID: 1708165030381952, guid: cd6d8c7e0ecf79846b3580e765e2c93d,
+  - UnitPrefab: {fileID: 1182155931781302, guid: 7540f762f5a9292458ea98d29365d9f3,
       type: 2}
     State:
       Position:
@@ -22,13 +23,13 @@ MonoBehaviour:
         V: 0
       Orientation: 0
     OwningPlayer: 0
-  - UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+  - UnitPrefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e,
       type: 2}
     State:
       Position:
         U: 2
         V: 0
-      Orientation: 0
+      Orientation: 3
     OwningPlayer: 1
   Movements:
   - UnitIndex: 0
@@ -43,3 +44,16 @@ MonoBehaviour:
         U: 0
         V: 0
       Orientation: 0
+    SelectorPosition:
+      U: 0
+      V: 0
+  - UnitIndex: 0
+    Type: 0
+    PredictedState:
+      Position:
+        U: 1
+        V: 0
+      Orientation: 0
+    SelectorPosition:
+      U: 0
+      V: 0

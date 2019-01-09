@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: KillWithAxe1_unbugged
+  m_EditorClassIdentifier: 
+  TestDescription: Killing with axe (ranged)
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1708165030381952, guid: cd6d8c7e0ecf79846b3580e765e2c93d,
+      type: 2}
+    State:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    OwningPlayer: 0
+  - UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+      type: 2}
+    State:
+      Position:
+        U: 3
+        V: 0
+      Orientation: 0
+    OwningPlayer: 1
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 1
+      V: 0
+  Predictions:
+  - UnitIndex: 1
+    Type: 1
+    PredictedState:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0

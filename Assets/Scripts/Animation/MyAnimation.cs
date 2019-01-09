@@ -21,6 +21,7 @@ namespace Assets.Scripts.Game
         public void StartAnimation()
         {
             _animationStarted = true;
+            _animationTarget.GetComponent<PawnView>().Update();
             _animationTarget.GetComponent<PawnView>().enabled = false;
         }
 
