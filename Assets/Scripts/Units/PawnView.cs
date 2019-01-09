@@ -34,7 +34,7 @@ namespace Assets.Scripts.Units
         {
             if (_model == null) // todo more elegant solution
             {
-                _model = GetComponent<UnitModel>();
+                _model = GetComponent<PawnModel>();
             }
             transform.localPosition = _model.Position.GetPosition();
             transform.localEulerAngles = new Vector3(90,_model.Orientation.FlatRotation(),0);

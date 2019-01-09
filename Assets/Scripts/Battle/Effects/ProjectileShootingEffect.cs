@@ -23,7 +23,8 @@ namespace Assets.Scripts.Battle.Effects
 
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            return ShootingTarget(vision) != null;
+            var toReturn = ShootingTarget(vision) != null;
+            return toReturn;
         }
 
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)

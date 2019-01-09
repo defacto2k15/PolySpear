@@ -20,7 +20,9 @@ namespace Assets.Scripts.Game
         public GameObject Orc2Prefab; 
         public GameObject Orc3Prefab; 
 
-        public GameObject ArrowPrefab; 
+        public GameObject ArrowPrefab;
+        public GameObject AxePrefab;
+        public GameObject ProjectilePrefab; //uogolnienie
 
         private GameCourseModel _courseModel;
         private Stack<LocomotionManager<UnitModel>> _unitLocomotions;
@@ -116,7 +118,10 @@ namespace Assets.Scripts.Game
 
                             battleResults.Projectiles.ForEach(c =>
                             {
-                                var projectile = _courseModel.AddProjectie(c.StartPosition, c.Orientation, ArrowPrefab);
+                                //tu wypadaloby jakos ustalac ProjectilePrefab
+                                ProjectilePrefab = ArrowPrefab;
+                                //
+                                var projectile = _courseModel.AddProjectile(c.StartPosition, c.Orientation, ProjectilePrefab);
                                 _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition));
                             });
                         }

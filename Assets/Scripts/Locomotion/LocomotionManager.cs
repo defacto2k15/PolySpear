@@ -125,7 +125,7 @@ namespace Assets.Scripts.Locomotion
             {
                 journeySteps.Enqueue(new ProjectileJourneyMotion()
                 {
-                    To = startPosition + new MyHexPosition(startPosition.U + i * Math.Sign(offsetU), startPosition.V + i * Math.Sign(offsetV))
+                    To = startPosition + new MyHexPosition( i * Math.Sign(offsetU), i * Math.Sign(offsetV))
                 });
             }
             journeySteps.Enqueue(new ProjectileJourneyHit());

@@ -97,6 +97,6 @@ namespace Assets.Scripts.Units
 
     public enum ProjectileType
     {
-        Arrow, Laser
+        Arrow, Laser, Axe
     }
 }
