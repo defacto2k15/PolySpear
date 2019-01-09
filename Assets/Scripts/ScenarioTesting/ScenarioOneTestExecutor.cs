@@ -81,6 +81,12 @@ namespace Assets.Scripts.ScenarioTesting
                                 Position = unit.Position
                             };
 
+                            if (!unit.IsUnitAlive)
+                            {
+                                throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"unit was dead");
+                            }
+
+
                             if (!currentState.Equals(prediction.PredictedState))
                             {
                                 throw new FailedScenarioPredictionException(i, prediction.Type, prediction.Description, $"unit was at state {currentState}");

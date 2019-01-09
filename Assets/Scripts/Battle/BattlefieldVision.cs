@@ -16,13 +16,15 @@ namespace Assets.Scripts.Battle
         private readonly Orientation _directionOfAttack;
         private UnitsContainer _units;
         private MapModel _map;
+        private BattleCircumstances _battleCircumstances;
 
-        public BattlefieldVision(UnitModel posessedUnit, Orientation directionOfAttack, UnitsContainer units, MapModel map)
+        public BattlefieldVision(UnitModel posessedUnit, Orientation directionOfAttack, UnitsContainer units, MapModel map, BattleCircumstances battleCircumstances)
         {
             _posessedUnit = posessedUnit;
             _directionOfAttack = directionOfAttack;
             _units = units;
             _map = map;
+            _battleCircumstances = battleCircumstances;
         }
 
         public UnitModel GetUnitAt(MyHexPosition localPosition)
@@ -35,6 +37,7 @@ namespace Assets.Scripts.Battle
         }
 
         public UnitModel PossesedUnit => _posessedUnit;
+        public BattleCircumstances BattleCircumstances => _battleCircumstances;
 
         public MyHexPosition ToGlobalPosition(MyHexPosition myHexPosition)
         {

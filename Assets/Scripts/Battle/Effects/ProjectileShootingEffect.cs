@@ -7,11 +7,13 @@ namespace Assets.Scripts.Battle.Effects
     {
         private int _maxShootingDistance;
         private ProjectileType _projectileType;
+        private EffectActivationCircumstances _activationCircumstances;
 
-        protected ProjectileShootingEffect(int maxShootingDistance, ProjectileType projectileType)
+        protected ProjectileShootingEffect(int maxShootingDistance, ProjectileType projectileType, EffectActivationCircumstances activationCircumstances)
         {
             _maxShootingDistance = maxShootingDistance;
             _projectileType = projectileType;
+            _activationCircumstances = activationCircumstances;
         }
 
         public UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition)
@@ -23,6 +25,10 @@ namespace Assets.Scripts.Battle.Effects
 
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
+            if (!_activationCircumstances.IsActivated(vision.BattleCircumstances))
+            {
+                return false;
+            }
             var toReturn = ShootingTarget(vision) != null;
             return toReturn;
         }

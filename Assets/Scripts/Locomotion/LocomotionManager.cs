@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
@@ -80,12 +81,12 @@ namespace Assets.Scripts.Locomotion
                     To = orientation
                 });
             }
-            journeySteps.Enqueue(new JourneyBattle());
+                journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Director));
             journeySteps.Enqueue(new JourneyMotion()
             {
                 To = target
             });
-            journeySteps.Enqueue(new JourneyBattle());
+            journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Step));
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 

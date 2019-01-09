@@ -9,33 +9,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
-  m_Name: KillWithAxe1_unbugged
+  m_Name: BowOnlyKillsDuringRotation
   m_EditorClassIdentifier: 
-  FileName_DO_NOT_CHANGE_BY_HAND: KillWithAxe1_unbugged
-  TestDescription: Killing with axe (ranged)
+  FileName_DO_NOT_CHANGE_BY_HAND: 
+  TestDescription: Bow kills only during rotation, and not during step.
   TestEnabled: 1
   StartStates:
-  - UnitPrefab: {fileID: 1708165030381952, guid: cd6d8c7e0ecf79846b3580e765e2c93d,
+  - UnitPrefab: {fileID: 1182155931781302, guid: 7540f762f5a9292458ea98d29365d9f3,
       type: 2}
     State:
       Position:
-        U: 1
+        U: 0
         V: 0
-      Orientation: 0
+      Orientation: 1
     OwningPlayer: 0
-  - UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
       type: 2}
     State:
       Position:
         U: 3
-        V: 0
+        V: 3
+      Orientation: 0
+    OwningPlayer: 1
+  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
+      type: 2}
+    State:
+      Position:
+        U: 4
+        V: 4
       Orientation: 0
     OwningPlayer: 1
   Movements:
   - UnitIndex: 0
     NewPosition:
-      U: 2
-      V: 0
+      U: 1
+      V: 1
   Predictions:
   - UnitIndex: 1
     Type: 1
@@ -43,6 +51,16 @@ MonoBehaviour:
       Position:
         U: 0
         V: 0
+      Orientation: 0
+    SelectorPosition:
+      U: 0
+      V: 0
+  - UnitIndex: 2
+    Type: 0
+    PredictedState:
+      Position:
+        U: 4
+        V: 4
       Orientation: 0
     SelectorPosition:
       U: 0

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Animation;
+using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 
@@ -8,7 +9,7 @@ namespace Assets.Scripts.Locomotion
     {
         public BattleResults ApplyStepToModel(GameCourseModel model, UnitModelComponent locomotionTarget)
         {
-            return model.PerformPassiveOnlyBattleAtPlace(locomotionTarget.Model.Position);
+            return model.PerformPassiveOnlyBattleAtPlace(locomotionTarget.Model.Position, BattleCircumstances.Step);
         }
 
         public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)

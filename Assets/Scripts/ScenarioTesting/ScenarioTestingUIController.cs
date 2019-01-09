@@ -64,7 +64,7 @@ namespace Assets.Scripts.ScenarioTesting
     public class ImpossibleMovePredictionException : Exception
     {
         public ImpossibleMovePredictionException(UnitModel unit, MyHexPosition targetPosition, List<MyHexPosition> possibleTargets)
-            :base($"Cannot move unit {unit} to position {targetPosition}. Only possible moves are {possibleTargets}")
+            :base($"Cannot move unit {unit} to position {targetPosition}. Only possible moves are {possibleTargets.Select(c => c.ToString()).Aggregate((acc, c) => acc+","+c)}")
         {
         }
     }
