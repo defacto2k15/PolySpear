@@ -5,6 +5,7 @@ namespace Assets.Scripts.Locomotion
 {
     public class ProjectileJourneyMotion : IJourneyStep<ProjectileModelComponent>
     {
+        public MyHexPosition From;
         public MyHexPosition To;
         public BattleResults ApplyStepToModel(GameCourseModel model, ProjectileModelComponent locomotionTarget)
         {
@@ -14,7 +15,7 @@ namespace Assets.Scripts.Locomotion
 
         public MyAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
         {
-            return new MotionAnimation(animationTarget, To);
+            return new ProjectileConstantSpeedMotionAnimation(animationTarget, From, To);
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)

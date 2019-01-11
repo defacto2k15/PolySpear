@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Assets.Scripts.Game
 {
-    public class MotionAnimation : MyAnimation
+    public class UnitMotionAnimation : MyAnimation
     {
         private readonly MyHexPosition _targetPosition;
 
-        public MotionAnimation(PawnModelComponent targetUnit, MyHexPosition targetPosition) :base(targetUnit)
+        public UnitMotionAnimation(PawnModelComponent targetUnit, MyHexPosition targetPosition) :base(targetUnit)
         {
             _targetPosition = targetPosition;
         }

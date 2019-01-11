@@ -14,7 +14,7 @@ namespace Assets.Scripts.Locomotion
 
         public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
-            return new MotionAnimation(animationTarget, To);
+            return new UnitMotionAnimation(animationTarget, To);
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
