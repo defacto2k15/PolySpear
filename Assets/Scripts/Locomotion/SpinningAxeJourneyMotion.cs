@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Locomotion
 {
-    public class ProjectileJourneyMotion : IJourneyStep<ProjectileModelComponent>
+    public class SpinningAxeJourneyMotion : IJourneyStep<ProjectileModelComponent>
     {
         public MyHexPosition From;
         public MyHexPosition To;
@@ -15,7 +16,11 @@ namespace Assets.Scripts.Locomotion
 
         public IAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
         {
-            return new ProjectileConstantSpeedMotionAnimation(animationTarget, From, To);
+            return new CompositeAnimation( new List<IAnimation>()
+            {
+                new ProjectileConstantSpeedMotionAnimation(animationTarget, From, To),
+                new PerpetualSpinningAnimation(animationTarget)
+            });
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)

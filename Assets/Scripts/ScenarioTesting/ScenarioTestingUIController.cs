@@ -15,8 +15,6 @@ namespace Assets.Scripts.ScenarioTesting
     {
         public GameCourseController GameCourseController;
 
-        private Stack<OptionalAnimator> _animations;
-
         public void MyStart()
         {
         }

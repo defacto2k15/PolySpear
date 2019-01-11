@@ -83,7 +83,14 @@ namespace Assets.Scripts.Game
         private ProjectileModelComponent AddProjectile(ProjectileCreations c)
         {
             var projectileModel = _courseModel.AddProjectile(c.StartPosition, c.Orientation);
-            var projectileObject = GameObject.Instantiate(ArrowPrefab, ProjectilesParent.transform);
+
+            var prefab = ArrowPrefab;
+            if (c.Type == ProjectileType.Axe)
+            {
+                prefab = AxePrefab;
+            }
+
+            var projectileObject = GameObject.Instantiate(prefab, ProjectilesParent.transform);
             var projectileModelComponent = projectileObject.GetComponent<ProjectileModelComponent>();
             projectileModelComponent.Model = projectileModel;
             _projectileModelToGameObjectMap[projectileModel] = projectileModelComponent;
@@ -150,7 +157,7 @@ namespace Assets.Scripts.Game
                             battleResults.Projectiles.ForEach(c =>
                             {
                                 var projectile = AddProjectile(c);
-                                _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition));
+                                _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition, c.Type));
                             });
                         }
                     }

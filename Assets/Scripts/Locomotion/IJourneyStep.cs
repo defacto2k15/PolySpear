@@ -6,7 +6,7 @@ namespace Assets.Scripts.Locomotion
     public interface IJourneyStep<T> where T : PawnModelComponent
     {
         BattleResults ApplyStepToModel(GameCourseModel model, T locomotionTarget);
-        MyAnimation CreateAnimation(GameCourseModel model, T animationTarget);
+        IAnimation CreateAnimation(GameCourseModel model, T animationTarget);
         bool ShouldRemoveUnitAfterStep(GameCourseModel model);
     }
 }

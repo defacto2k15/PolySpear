@@ -2404,7 +2404,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 215382273}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -3932,7 +3932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: 4b5d1ff2f595df14594bf232702905c9, type: 2}
+  SingleScenario: {fileID: 11400000, guid: c96de09fe370ac44aad01459371403cf, type: 2}
   RunOnlySingleScenario: 1
   ShouldShowAnimations: 1
 --- !u!114 &2029522720

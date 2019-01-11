@@ -12,7 +12,7 @@ namespace Assets.Scripts.Locomotion
             return model.PerformPassiveOnlyBattleAtPlace(locomotionTarget.Model.Position, BattleCircumstances.Step);
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
+        public IAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
             return new EmptyAnimation(animationTarget);
         }

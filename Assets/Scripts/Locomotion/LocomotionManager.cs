@@ -13,7 +13,7 @@ namespace Assets.Scripts.Locomotion
         private T _locomotionTarget;
         private Queue<IJourneyStep<T>> _journeySteps;
         private IJourneyStep<T> _currentStep;
-        private MyAnimation _currentAnimation;
+        private IAnimation _currentAnimation;
 
         public LocomotionManager(T locomotionTarget, Queue<IJourneyStep<T>> journeySteps)
         {
@@ -109,7 +109,8 @@ namespace Assets.Scripts.Locomotion
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 
-        public static LocomotionManager<ProjectileModelComponent> CreateProjectileJourney(ProjectileModelComponent projectile, MyHexPosition endPosition)
+        public static LocomotionManager<ProjectileModelComponent> CreateProjectileJourney(ProjectileModelComponent projectile,
+            MyHexPosition endPosition, ProjectileType projectileType)
         {
             var startPosition = projectile.Model.Position;
             int offsetU = endPosition.U - startPosition.U;
@@ -124,11 +125,25 @@ namespace Assets.Scripts.Locomotion
             // horizontal movement
             for (int i = 1; i <= stepsCount; i++)
             {
-                journeySteps.Enqueue(new ProjectileJourneyMotion()
+                var fromPosition = startPosition +new MyHexPosition( (i-1) * Math.Sign(offsetU), (i-1) * Math.Sign(offsetV));
+                var toPosition = startPosition + new MyHexPosition( i * Math.Sign(offsetU), i * Math.Sign(offsetV));
+
+                if (projectileType == ProjectileType.Axe) //hack! beware! technical debt!
                 {
-                    From = startPosition +new MyHexPosition( (i-1) * Math.Sign(offsetU), (i-1) * Math.Sign(offsetV)) ,
-                    To = startPosition + new MyHexPosition( i * Math.Sign(offsetU), i * Math.Sign(offsetV))
-                });
+                    journeySteps.Enqueue(new SpinningAxeJourneyMotion()
+                    {
+                        From = fromPosition,
+                        To = toPosition
+                    });
+                }
+                else
+                {
+                    journeySteps.Enqueue(new ProjectileJourneyMotion()
+                    {
+                        From = fromPosition,
+                        To = toPosition
+                    });
+                }
             }
             journeySteps.Enqueue(new ProjectileJourneyHit());
             return new LocomotionManager<ProjectileModelComponent>(projectile, journeySteps);
