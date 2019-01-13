@@ -14,6 +14,6 @@ namespace Assets.Scripts.Units
         bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition);
         void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever);
         bool IsDefendableEffect { get; }
-        IAnimation UsageAnimation { get; }
+        Func<GameCourseModel,PawnModelComponent,PawnModelComponent, IAnimation> UsageAnimationGenerator { get; } //todo doubious elegance
     }
 }

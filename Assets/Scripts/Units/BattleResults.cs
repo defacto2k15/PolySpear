@@ -29,9 +29,10 @@ namespace Assets.Scripts.Units
         }
 
         public static BattleResults Empty => new BattleResults();
-        public List<UnitModel> KilledUnits => _engagements.SelectMany(c => c.EngagementResult.StruckUnits).Distinct().ToList();
-        public List<UnitDisplacements> Displacements => _engagements.SelectMany(c => c.EngagementResult.Displacements).Distinct().ToList();
-        public List<ProjectileCreations> Projectiles  => _engagements.SelectMany(c => c.EngagementResult.Projectiles).Distinct().ToList();
+        //public List<UnitModel> KilledUnits => _engagements.SelectMany(c => c.EngagementResult.StruckUnits).Distinct().ToList();
+        //public List<UnitDisplacements> Displacements => _engagements.SelectMany(c => c.EngagementResult.Displacements).Distinct().ToList();
+        //public List<ProjectileCreations> Projectiles  => _engagements.SelectMany(c => c.EngagementResult.Projectiles).Distinct().ToList();
+        public List<BattleEngagement> Engagements => _engagements;
 
         public bool UnitWasStruck(UnitModel locomotionTargetModel)
         {
@@ -70,6 +71,8 @@ namespace Assets.Scripts.Units
         }
 
         public BattleEngagementResult EngagementResult => _engagementResult;
+
+        public List<EngagementElement> EngagementElements => _engagementElements;
 
         public void AddEngagementElement(EngagementElement element)
         {

@@ -64,6 +64,6 @@ namespace Assets.Scripts.Battle.Effects
             
         }
 
-        public IAnimation UsageAnimation => new EmptyAnimation();
+        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
     }
 }

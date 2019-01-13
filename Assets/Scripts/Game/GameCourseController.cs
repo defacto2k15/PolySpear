@@ -7,6 +7,7 @@ using Assets.Scripts.Locomotion;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Game
 {
@@ -25,11 +26,12 @@ namespace Assets.Scripts.Game
         public GameObject ProjectilePrefab; //uogolnienie
 
         private GameCourseModel _courseModel;
+        private Stack<IAnimation> _soloAnimations = new Stack<IAnimation>();
         private Stack<LocomotionManager<UnitModelComponent>> _unitLocomotions;
         private Stack<LocomotionManager<ProjectileModelComponent>> _projectileLocomotions;
 
-        private Dictionary<UnitModel, UnitModelComponent> _unitModelToGameObjectMap = new Dictionary<UnitModel, UnitModelComponent>();
-        private Dictionary<ProjectileModel, ProjectileModelComponent> _projectileModelToGameObjectMap = new Dictionary<ProjectileModel, ProjectileModelComponent>();
+        private Dictionary<PawnModel, UnitModelComponent> _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
+        private Dictionary<PawnModel, ProjectileModelComponent> _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
 
         public GameObject UnitsParent;
         public GameObject ProjectilesParent;
@@ -109,8 +111,35 @@ namespace Assets.Scripts.Game
             return unitModelComponent;
         }
 
+        private PawnModelComponent getPawnModelComponent(PawnModel model)
+        {
+            if (_unitModelToGameObjectMap.ContainsKey(model))
+            {
+                return _unitModelToGameObjectMap[model];
+            }else if (_projectileModelToGameObjectMap.ContainsKey(model))
+            {
+                return _projectileModelToGameObjectMap[model];
+            }
+            Assert.IsFalse(true, "There is not pawnModel in dictionaries: "+model);
+            return null;
+        }
+
         private void ProcessLocomotionStack<T>(Stack<LocomotionManager<T>> locomotions) where T : PawnModelComponent
         {
+            if (_soloAnimations.Any())
+            {
+                var animation = _soloAnimations.Peek();
+                animation.UpdateAnimation();
+                if (!animation.WeAreDuringAnimation())
+                {
+                    _soloAnimations.Pop();
+                    if (_soloAnimations.Any())
+                    {
+                        _soloAnimations.Peek().StartAnimation();
+                    }
+                }
+            }
+
             if (locomotions.Any())
             {
                 var currentLocomotion = locomotions.Peek();
@@ -143,22 +172,42 @@ namespace Assets.Scripts.Game
                         if (steps.NextStep != null)
                         {
                             var battleResults = steps.NextStep.ApplyStepToModel(_courseModel, locomotionTarget);
-
                             _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>(_unitLocomotions
                                 .Where(c => !battleResults.UnitWasStruck(  c.LocomotionTarget.Model  )).Reverse());
 
-                            battleResults.KilledUnits.ForEach(c =>
+                            foreach (var engagement in battleResults.Engagements)
                             {
-                                _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney( _unitModelToGameObjectMap[c] ));
-                            });
+                                var engagementResult =  engagement.EngagementResult;
 
-                            battleResults.Displacements.ForEach(c => { _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(_unitModelToGameObjectMap[c.Unit], c.DisplacementEnd)); });
+                                var anim = new CompositeAnimation(engagement.EngagementElements.Select(element =>
+                                {
+                                    var active = getPawnModelComponent(element.ActivePawn);
+                                    var passive = getPawnModelComponent(element.PassivePawn);
+                                    return element.UsedEffect.UsageAnimationGenerator(_courseModel, active, passive);
+                                }).ToList());
+                                _soloAnimations.Push(anim);
+                                if (_soloAnimations.Count == 1)
+                                {
+                                    _soloAnimations.Peek().StartAnimation();
+                                }
 
-                            battleResults.Projectiles.ForEach(c =>
-                            {
-                                var projectile = AddProjectile(c);
-                                _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition, c.Type));
-                            });
+
+                                engagementResult.StruckUnits.ForEach(c =>
+                                {
+                                    _unitLocomotions.Push(LocomotionUtils.CreateDeathJourney(_unitModelToGameObjectMap[c]));
+                                });
+
+                                engagementResult.Displacements.ForEach(c =>
+                                {
+                                    _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(_unitModelToGameObjectMap[c.Unit], c.DisplacementEnd));
+                                });
+
+                                engagementResult.Projectiles.ForEach(c =>
+                                {
+                                    var projectile = AddProjectile(c);
+                                    _projectileLocomotions.Push(LocomotionUtils.CreateProjectileJourney(projectile, c.EndPosition, c.Type));
+                                });
+                            }
                         }
                     }
                 }
@@ -211,10 +260,11 @@ namespace Assets.Scripts.Game
 
         public void Reset()
         {
+            _soloAnimations = new Stack<IAnimation>();
             _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>();
             _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
-            _unitModelToGameObjectMap = new Dictionary<UnitModel, UnitModelComponent>();
-            _projectileModelToGameObjectMap = new Dictionary<ProjectileModel, ProjectileModelComponent>();
+            _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
+            _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
             _courseModel.Reset();
         }
     }

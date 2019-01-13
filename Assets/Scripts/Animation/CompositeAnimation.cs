@@ -28,4 +28,47 @@ namespace Assets.Scripts.Game
             _innerAnimations.ForEach(c => c.StartAnimation());
         }
     }
+
+    public class SequenceAnimation : IAnimation
+    {
+        private readonly Queue<IAnimation> _innerAnimations;
+
+        public SequenceAnimation(List<IAnimation> innerAnimations)
+        {
+            _innerAnimations = new Queue<IAnimation>(innerAnimations);
+        }
+
+        public void UpdateAnimation()
+        {
+            if (_innerAnimations.Any())
+            {
+                if (!_innerAnimations.Peek().WeAreDuringAnimation())
+                {
+                    _innerAnimations.Dequeue();
+                    if (_innerAnimations.Any())
+                    {
+                        _innerAnimations.Peek().StartAnimation();
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+            _innerAnimations.Peek().UpdateAnimation();
+        }
+
+        public bool WeAreDuringAnimation()
+        {
+            return  _innerAnimations.Any();
+        }
+
+        public void StartAnimation()
+        {
+            if (_innerAnimations.Any())
+            {
+                _innerAnimations.Peek().StartAnimation();
+            }
+        }
+    }
 }

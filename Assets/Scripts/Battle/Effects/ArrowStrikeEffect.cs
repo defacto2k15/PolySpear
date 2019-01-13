@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
@@ -28,6 +29,6 @@ namespace Assets.Scripts.Symbols
         }
 
         public bool IsDefendableEffect => true;
-        public IAnimation UsageAnimation => new EmptyAnimation();
+        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
     }
 }

@@ -21,6 +21,11 @@ namespace Assets.Scripts.Game
             _animationStarted = true;
             _animationTarget.GetComponent<PawnView>().Update();
             _animationTarget.GetComponent<PawnView>().enabled = false;
+            MyStart();
+        }
+
+        protected virtual void MyStart()
+        {
         }
 
         public virtual bool WeAreDuringAnimation()
