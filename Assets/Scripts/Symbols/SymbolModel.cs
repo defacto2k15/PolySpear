@@ -11,7 +11,7 @@ namespace Assets.Scripts.Symbols
 {
     public class SymbolModel : MonoBehaviour
     {
-        private UnitModel _owningUnit;
+        private PawnModel _owningUnit;
 
         [SerializeField]
         public SerializableIEffect SerializablePassiveEffect;

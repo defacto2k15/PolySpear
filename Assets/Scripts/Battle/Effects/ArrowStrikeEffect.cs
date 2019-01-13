@@ -6,31 +6,23 @@ using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Symbols
 {
-    public class StrikeEffect : IEffect
+    public class ArrowStrikeEffect : IEffect
     {
         public UnitModel RetriveTarget(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            var target = vision.GetUnitAt(new MyHexPosition(1, 0));
-            Assert.IsNotNull(target,"There is no target");
-            return target;
+            Assert.IsFalse(true, "Not implemented, should not be called"); //todo, ugly
+            return null;
         }
 
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
-            var unitInFront = vision.GetUnitAt(new MyHexPosition(1, 0));
-            if (unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Assert.IsFalse(true, "Not implemented, should not be called"); //todo, ugly
+            return false;
         }
 
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
-            var unitInFront = vision.GetUnitAt(new MyHexPosition(1, 0));
+            var unitInFront = vision.GetUnitAt(new MyHexPosition(0, 0));
             Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner,"There is no enemy unit in front of me");
             reciever.AddStruckUnit(unitInFront);
         }

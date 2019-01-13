@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Game;
 using Assets.Scripts.Map;
 using Assets.Scripts.Symbols;
@@ -75,7 +76,8 @@ namespace Assets.Scripts.Battle
                         var neighbourUnit = _units.GetPawnAt(pair.NeighbourPosition);
                         if (!battleResults.UnitIncapaciated(neighbourUnit))
                         {
-                            battleResults.Add(PerformSingleFight(intruderUnit, neighbourUnit, pair.NeighbourDirection, symbol => symbol.PassiveEffect, battleCircumstances));
+                            battleResults.Add(PerformSingleFight(intruderUnit, neighbourUnit, pair.NeighbourDirection, symbol => symbol.PassiveEffect,
+                                battleCircumstances));
                             if (battleResults.UnitIncapaciated(intruderUnit))
                             {
                                 return battleResults;
@@ -94,7 +96,9 @@ namespace Assets.Scripts.Battle
                         var neighbourUnit = _units.GetPawnAt(pair.NeighbourPosition);
                         if (!battleResults.UnitIncapaciated(neighbourUnit))
                         {
-                            battleResults.Add(PerformSingleFight(neighbourUnit, intruderUnit, pair.NeighbourDirection.Opposite(), symbol => symbol.PassiveEffect, battleCircumstances));
+                            battleResults.Add(PerformSingleFight(neighbourUnit, intruderUnit, pair.NeighbourDirection.Opposite(), symbol => symbol.PassiveEffect,
+                                battleCircumstances));
+                            
                             if (battleResults.UnitIncapaciated(intruderUnit))
                             {
                                 return battleResults;
@@ -106,15 +110,16 @@ namespace Assets.Scripts.Battle
             return battleResults;
         }
 
-        private BattleResults PerformSingleFight(UnitModel defender, UnitModel attacker, Orientation attackerDirectionFromDefender,
+        private BattleEngagement PerformSingleFight(UnitModel defender, UnitModel attacker, Orientation attackerDirectionFromDefender,
             Func<SymbolModel, IEffect> attackingEffectExtractor, BattleCircumstances battleCircumstances)
         {
-            var battleResults = new BattleResults();
+            var engagementResult = new BattleEngagementResult();
+            var engagement = new BattleEngagement(engagementResult);
 
-            if (attacker.Owner == defender.Owner) // no friendly fire for now
+            if (defender.Owner == attacker.Owner)
             {
-                return battleResults;
-            }
+                return engagement;
+            }        
 
             var attackerSymbolLocalDirection = attacker.Orientation.CalculateLocalDirection(attackerDirectionFromDefender.Opposite());
             var defendingSymbolLocalDirection = defender.Orientation.CalculateLocalDirection(attackerDirectionFromDefender);
@@ -127,66 +132,111 @@ namespace Assets.Scripts.Battle
                 var attackerBattlefieldVision = new BattlefieldVision(attacker, attackerSymbolLocalDirection, _units, _mapModel, battleCircumstances);
                 if (effect.IsActivated(attackerBattlefieldVision, attacker.Position))
                 {
-                    effect.Execute(attackerBattlefieldVision, attacker.Position, battleResults);
+
+                    engagement.AddEngagementElement(new EngagementElement()
+                    {
+                        ActivePawn = attacker,
+                        PassivePawn = defender,
+                        UsedEffect = effect
+                    });
+                    effect.Execute(attackerBattlefieldVision, attacker.Position, engagementResult);
                 }
-                if (!effect.IsDefendableEffect) return battleResults;
+                if (!effect.IsDefendableEffect) return engagement;
                 if (defender.Symbols.ContainsKey(defendingSymbolLocalDirection))
                 {
-                    var defenderBattlefieldVision = new BattlefieldVision(defender,defendingSymbolLocalDirection, _units, _mapModel, battleCircumstances);
+                    var defenderBattlefieldVision = new BattlefieldVision(defender, defendingSymbolLocalDirection, _units, _mapModel, battleCircumstances);
                     var defenderEffect = defender.Symbols[defendingSymbolLocalDirection].ReactEffect;
                     if (defenderEffect.IsActivated(defenderBattlefieldVision, attacker.Position))
                     {
-                        defenderEffect.Execute(defenderBattlefieldVision, attacker.Position, battleResults);
+                        engagement.AddEngagementElement(new EngagementElement()
+                        {
+                            ActivePawn = defender,
+                            PassivePawn = attacker,
+                            UsedEffect = defenderEffect
+                        });
+                        defenderEffect.Execute(defenderBattlefieldVision, attacker.Position, engagementResult);
                     }
                 }
             }
-            return battleResults;
+            return engagement;
         }
 
-        private BattleResults PerformSingleActiveFight(UnitModel attacker, Orientation orientation, BattleCircumstances battleCircumstances)
+        private BattleEngagement PerformSingleActiveFight(UnitModel attacker, Orientation orientation, BattleCircumstances battleCircumstances)
         {
-            var battleResults = new BattleResults();
+            var engagementResult = new BattleEngagementResult();
+            var engagement = new BattleEngagement(engagementResult);
+
             var attackerSymbolLocalDirection = attacker.Orientation.CalculateLocalDirection(orientation);
-            if (!attacker.Symbols.ContainsKey(attackerSymbolLocalDirection)) return battleResults;
+            if (!attacker.Symbols.ContainsKey(attackerSymbolLocalDirection)) return engagement;
 
             var symbol = attacker.Symbols[attackerSymbolLocalDirection];
             var effect = symbol.ActiveEffect;
             var attackerBattlefieldVision = new BattlefieldVision(attacker, attackerSymbolLocalDirection, _units, _mapModel, battleCircumstances);
-            if (!effect.IsActivated(attackerBattlefieldVision, attacker.Position)) return battleResults;
+            if (!effect.IsActivated(attackerBattlefieldVision, attacker.Position)) return engagement;
 
             var defender = effect.RetriveTarget(attackerBattlefieldVision, attacker.Position);
             var defendingSymbolLocalDirection = defender.Orientation.CalculateLocalDirection(orientation.Opposite());
-            effect.Execute(attackerBattlefieldVision, attacker.Position, battleResults);
+            engagement.AddEngagementElement(new EngagementElement()
+            {
+                ActivePawn = attacker,
+                PassivePawn = defender,
+                UsedEffect = effect
+            });
+            effect.Execute(attackerBattlefieldVision, attacker.Position, engagementResult);
 
-            if (!effect.IsDefendableEffect) return battleResults;
-            if (!defender.Symbols.ContainsKey(defendingSymbolLocalDirection)) return battleResults;
+            if (!effect.IsDefendableEffect) return engagement;
+            if (!defender.Symbols.ContainsKey(defendingSymbolLocalDirection)) return engagement;
 
             var defenderBattlefieldVision = new BattlefieldVision(defender, defendingSymbolLocalDirection, _units, _mapModel, battleCircumstances);
             var defenderEffect = defender.Symbols[defendingSymbolLocalDirection].ReactEffect;
             if (defenderEffect.IsActivated(defenderBattlefieldVision, attacker.Position))
             {
-                defenderEffect.Execute(defenderBattlefieldVision, attacker.Position, battleResults);
+                engagement.AddEngagementElement(new EngagementElement()
+                {
+                    ActivePawn = defender,
+                    PassivePawn = attacker,
+                    UsedEffect = defenderEffect
+                });
+                defenderEffect.Execute(defenderBattlefieldVision, attacker.Position,engagementResult);
             }
-            return battleResults;
+            return engagement;
         }
 
         public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
         {
-            Assert.IsTrue(_units.IsPawnAt(projectileHitPosition), "There is no unit at "+projectileHitPosition);
-            Assert.IsTrue(_projectiles.IsPawnAt(projectileHitPosition), "There is no projectile at "+projectileHitPosition);
+            Assert.IsTrue(_units.IsPawnAt(projectileHitPosition), "There is no unit at " + projectileHitPosition);
+            Assert.IsTrue(_projectiles.IsPawnAt(projectileHitPosition), "There is no projectile at " + projectileHitPosition);
             var unit = _units.GetPawnAt(projectileHitPosition);
             var projectile = _projectiles.GetPawnAt(projectileHitPosition);
             var projectileOrientation = projectile.Orientation;
+            var projectileEffect = projectile.HitEffect;
 
-            var battleResults = new BattleResults();
-            battleResults.AddStruckUnit(unit);
+            BattleEngagementResult engagementResult = new BattleEngagementResult();
+            var engagement = new BattleEngagement(engagementResult);
+            engagement.AddEngagementElement(new EngagementElement()
+            {
+                ActivePawn = projectile,
+                PassivePawn = unit,
+                UsedEffect = projectileEffect,
+            });
+
+            projectileEffect.Execute(new BattlefieldVision(projectile, projectileOrientation, _units, _mapModel, BattleCircumstances.ProjectileHit), projectileHitPosition, engagementResult );
             var defenderSymbolOrientation = unit.Orientation.CalculateLocalDirection(projectileOrientation.Opposite());
             if (unit.Symbols.ContainsKey(defenderSymbolOrientation))
             {
+                var reactEffect = unit.Symbols[defenderSymbolOrientation].ReactEffect;
+                engagement.AddEngagementElement(new EngagementElement()
+                {
+                    ActivePawn = unit,
+                    PassivePawn = projectile,
+                    UsedEffect = reactEffect,
+                });
                 BattlefieldVision vision = new BattlefieldVision(unit, projectileOrientation, _units, _mapModel, BattleCircumstances.ProjectileHit);
-                unit.Symbols[defenderSymbolOrientation].ReactEffect.Execute(vision, projectileHitPosition, battleResults);
+                reactEffect.Execute(vision, projectileHitPosition, engagementResult);
             }
-            return battleResults;
+            var results = new BattleResults();
+            results.Add(engagement);
+            return results;
         }
     }
 }

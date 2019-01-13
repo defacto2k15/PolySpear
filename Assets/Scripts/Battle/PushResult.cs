@@ -4,7 +4,7 @@ namespace Assets.Scripts.Battle
 {
     public class PushResult
     {
-        public UnitModel UnitPushed;
+        public PawnModel UnitPushed;
         public MyHexPosition StartPosition;
         public MyHexPosition EndPosition;
     }

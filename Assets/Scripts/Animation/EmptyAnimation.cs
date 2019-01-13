@@ -3,14 +3,22 @@ using Assets.Scripts.Units;
 
 namespace Assets.Scripts.Animation
 {
-    public class EmptyAnimation : MyAnimation
+    public class EmptyAnimation : IAnimation
     {
-        public EmptyAnimation(PawnModelComponent animationTarget) : base(animationTarget)
+        public EmptyAnimation()
         {
         }
 
-        protected override bool Finished => true;
-        protected override void Update()
+        public void UpdateAnimation()
+        {
+        }
+
+        public bool WeAreDuringAnimation()
+        {
+            return false;
+        }
+
+        public void StartAnimation()
         {
         }
     }

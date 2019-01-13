@@ -13,7 +13,7 @@ namespace Assets.Scripts.Locomotion
 
         public IAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
         {
-            return new EmptyAnimation(animationTarget);
+            return new EmptyAnimation();
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)

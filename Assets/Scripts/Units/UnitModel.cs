@@ -8,7 +8,6 @@ namespace Assets.Scripts.Units
 {
     public class UnitModel : PawnModel
     {
-        public MyPlayer Owner { get; set; }
         public Dictionary<Orientation, SymbolModel> Symbols { get; set; }
 
         public UnitModel Clone()

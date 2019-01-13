@@ -1,4 +1,6 @@
+using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -16,7 +18,7 @@ namespace Assets.Scripts.Symbols
         public bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition)
         {
             var unitInFront = vision.GetUnitAt(new MyHexPosition(1, 0));
-            if (unitInFront != null && unitInFront.Owner != vision.PossesedUnit.Owner)
+            if (unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner)
             {
                 return true;
             }
@@ -26,13 +28,14 @@ namespace Assets.Scripts.Symbols
             }
         }
 
-        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
+        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
             var unitInFront = vision.GetUnitAt(new MyHexPosition(1, 0));
-            Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedUnit.Owner,"There is no enemy unit in front of me");
+            Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner,"There is no enemy unit in front of me");
             reciever.DisplaceUnit(unitInFront, vision.ToGlobalPosition(new MyHexPosition(2,0)));
         }
 
         public bool IsDefendableEffect => true;
+        public IAnimation UsageAnimation => new EmptyAnimation();
     }
 }

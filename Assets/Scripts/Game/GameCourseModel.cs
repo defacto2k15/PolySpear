@@ -90,12 +90,12 @@ namespace Assets.Scripts.Game
             }
         }
 
-        public void OrientUnit(UnitModel unit, Orientation orientation)
+        public void OrientUnit(PawnModel unit, Orientation orientation)
         {
             Units.OrientPawn(unit.Position, orientation);
         }
 
-        public void MoveUnit(UnitModel unit, MyHexPosition newPosition)
+        public void MoveUnit(PawnModel unit, MyHexPosition newPosition)
         {
             Units.MovePawn(unit.Position, newPosition);
         }
@@ -125,10 +125,10 @@ namespace Assets.Scripts.Game
         public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
         {
             var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
-            return arbiter.PerformProjectileHitAtPlace( projectileHitPosition);
+            return arbiter.PerformProjectileHitAtPlace(projectileHitPosition);
         }
 
-        public void FinalizeKillUnit(UnitModel unit) // ugly code
+        public void FinalizeKillUnit(PawnModel unit) // ugly code
         {
             Units.RemovePawn(unit.Position);
         }
@@ -164,7 +164,7 @@ namespace Assets.Scripts.Game
             });
         }
 
-        public bool CanMoveTo(UnitModel unitMoved, MyHexPosition target)
+        public bool CanMoveTo(PawnModel unitMoved, MyHexPosition target)
         {
             if (!unitMoved.PossibleMoveTargets.Contains(target))
             {

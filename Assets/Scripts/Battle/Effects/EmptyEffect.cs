@@ -1,4 +1,6 @@
+using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -17,10 +19,12 @@ namespace Assets.Scripts.Symbols
             return false;
         }
 
-        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
+        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
         }
 
         public bool IsDefendableEffect => false;
+
+        public IAnimation UsageAnimation => new EmptyAnimation();
     }
 }

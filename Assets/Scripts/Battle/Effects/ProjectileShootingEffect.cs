@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Units;
+﻿using Assets.Scripts.Animation;
+using Assets.Scripts.Game;
+using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Battle.Effects
@@ -33,11 +35,11 @@ namespace Assets.Scripts.Battle.Effects
             return toReturn;
         }
 
-        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
+        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
             var targetUnit = ShootingTarget(vision);
             Assert.IsNotNull(targetUnit,"There is no target");
-            reciever.AddProjectile(vision.PossesedUnit.Position, vision.PossesedUnit.Orientation, targetUnit.Position, _projectileType);
+            reciever.AddProjectile(vision.PossesedPawn.Position, vision.PossesedPawn.Orientation, targetUnit.Position, _projectileType);
         }
 
         public bool IsDefendableEffect => false;
@@ -54,7 +56,7 @@ namespace Assets.Scripts.Battle.Effects
                 var otherUnitAtFront = vision.GetUnitAt(pos);
                 if (otherUnitAtFront != null)
                 {
-                    if (otherUnitAtFront.Owner != vision.PossesedUnit.Owner)
+                    if (otherUnitAtFront.Owner != vision.PossesedPawn.Owner)
                     {
                         return otherUnitAtFront;
                     }
@@ -66,5 +68,7 @@ namespace Assets.Scripts.Battle.Effects
             }
             return null;
         }
+
+        public IAnimation UsageAnimation => new EmptyAnimation();
     }
 }

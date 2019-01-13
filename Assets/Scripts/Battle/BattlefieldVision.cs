@@ -12,15 +12,15 @@ namespace Assets.Scripts.Battle
 {
     public class BattlefieldVision
     {
-        private UnitModel _posessedUnit;
+        private PawnModel _posessedPawn;
         private readonly Orientation _directionOfAttack;
         private UnitsContainer _units;
         private MapModel _map;
         private BattleCircumstances _battleCircumstances;
 
-        public BattlefieldVision(UnitModel posessedUnit, Orientation directionOfAttack, UnitsContainer units, MapModel map, BattleCircumstances battleCircumstances)
+        public BattlefieldVision(PawnModel posessedPawn, Orientation directionOfAttack, UnitsContainer units, MapModel map, BattleCircumstances battleCircumstances)
         {
-            _posessedUnit = posessedUnit;
+            _posessedPawn = posessedPawn;
             _directionOfAttack = directionOfAttack;
             _units = units;
             _map = map;
@@ -36,12 +36,12 @@ namespace Assets.Scripts.Battle
             return _units.GetPawnAt(ToGlobalPosition(localPosition));
         }
 
-        public UnitModel PossesedUnit => _posessedUnit;
+        public PawnModel PossesedPawn => _posessedPawn;
         public BattleCircumstances BattleCircumstances => _battleCircumstances;
 
         public MyHexPosition ToGlobalPosition(MyHexPosition myHexPosition)
         {
-            var transformator = new BattlefieldPointOfViewTransformator(_posessedUnit.Position, _posessedUnit.Orientation.AddRotation(_directionOfAttack));
+            var transformator = new BattlefieldPointOfViewTransformator(_posessedPawn.Position, _posessedPawn.Orientation.AddRotation(_directionOfAttack));
             return transformator.ToGlobalPosition(myHexPosition);
         }
 
