@@ -24,8 +24,8 @@ namespace Assets.Scripts
         public static float RotationSpeed => 0.1f;
         public static float MotionEpsilon => 0.001f;
         public static float MotionSpeed => 5f;
-        public static double DeathAnimationLength => 2f;
-        public static float DeathAnimationLoopLength => 0.5f;
+        public static double DeathAnimationLength => 1.6f;
+        public static float DeathAnimationLoopLength => 0.4f;
         public static float ConstantMotionSpeed => 5f;
         public static float SpinningSpeed => 1000;
         public static double EarthMagicAnimationFactor =  1 / 2f;
