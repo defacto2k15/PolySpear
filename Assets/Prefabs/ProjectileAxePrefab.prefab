@@ -37,6 +37,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4167343352327314}
   - component: {fileID: 212617932518605426}
+  - component: {fileID: 114625059870350618}
+  - component: {fileID: 114974141244625388}
   m_Layer: 0
   m_Name: ProjectileAxePrefab
   m_TagString: Untagged
@@ -71,6 +73,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &114625059870350618
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1631496344047536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d160a1db3119f42985021e4ac2af4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114974141244625388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1631496344047536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d02e7fd2945b28748b53f795e2330037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198759396749279334
 ParticleSystem:
   m_ObjectHideFlags: 1

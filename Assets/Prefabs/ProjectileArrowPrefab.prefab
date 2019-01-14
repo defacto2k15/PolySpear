@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4205874736399574}
   - component: {fileID: 212832519718426044}
+  - component: {fileID: 114118287883186622}
+  - component: {fileID: 114456375697454562}
   m_Layer: 0
   m_Name: ProjectileArrowPrefab
   m_TagString: Untagged
@@ -71,6 +73,28 @@ Transform:
   m_Father: {fileID: 4205874736399574}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114118287883186622
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1452271916139488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d02e7fd2945b28748b53f795e2330037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114456375697454562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1452271916139488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d160a1db3119f42985021e4ac2af4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198360608535712046
 ParticleSystem:
   m_ObjectHideFlags: 1
