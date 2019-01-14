@@ -13,9 +13,13 @@ namespace Assets.Scripts.Map
         public Sprite TileSpriteTeam2;
         public Sprite TileSpriteBlocked;
 
+        private TileModel _model;
+        private bool _isDisabled = false;
+
         public void Start()
         {
             MyStart();
+            _model = GetComponent<TileModel>();
         }
 
         public void MyStart()
@@ -42,6 +46,15 @@ namespace Assets.Scripts.Map
             }
 
             this.name = "Tile " + hexPosition;
+        }
+
+        public void Update()
+        {
+            if (_isDisabled != _model.IsDisabled)
+            {
+                GetComponent<SpriteRenderer>().enabled = !_model.IsDisabled;
+                _isDisabled = _model.IsDisabled;
+            }
         }
     }
 }

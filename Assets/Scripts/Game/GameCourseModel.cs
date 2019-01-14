@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
+using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -18,11 +20,17 @@ namespace Assets.Scripts.Game
         public MapModel MapModel;
         public UnitsContainer Units;
         public ProjectilesContainer Projectiles;
+        private Dictionary<MyPlayer, int> _magicLeft;
 
         public void Start()
         {
             _phrase = Phrase.Placing;
             _turn = GameTurn.FirstPlayerTurn;
+            _magicLeft = new Dictionary<MyPlayer, int>()
+            {
+                {MyPlayer.Player1, 2 },
+                {MyPlayer.Player2, 2 }
+            };
         }
 
         public void Reset()
@@ -194,6 +202,26 @@ namespace Assets.Scripts.Game
                 }
             }
             return false;
+        }
+
+        public TileModel GetTileAt(MyHexPosition position)
+        {
+            return MapModel.GetTileAt(position);
+        }
+
+        public void UseMagic(MagicType type, MyHexPosition position, MyPlayer player)
+        {
+            Assert.IsTrue(PlayerCanUseMagic(player));
+            _magicLeft[player]--;
+            if (type == MagicType.Earth)
+            {
+                MapModel.DisableAt(position);
+            }
+        }
+
+        public bool PlayerCanUseMagic(MyPlayer player)
+        {
+            return _magicLeft[player] > 0;
         }
     }
 }

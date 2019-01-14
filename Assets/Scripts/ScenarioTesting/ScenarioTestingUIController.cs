@@ -49,7 +49,7 @@ namespace Assets.Scripts.ScenarioTesting
             {
                 throw new ImpossibleMovePredictionException(unit, targetPosition, possibleTargets);
             }
-            GameCourseController.MoveTo(targetPosition,unit);
+            GameCourseController.MoveTo(targetPosition,unit, null);
         }
 
         public bool IsPositionMovable(UnitModel unit, MyHexPosition position)

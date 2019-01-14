@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Locomotion;
+using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace Assets.Scripts.Game
         private Stack<IAnimation> _soloAnimations = new Stack<IAnimation>();
         private Stack<LocomotionManager<UnitModelComponent>> _unitLocomotions;
         private Stack<LocomotionManager<ProjectileModelComponent>> _projectileLocomotions;
+        private MagicUsage _magicUsage;
 
         private Dictionary<PawnModel, UnitModelComponent> _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
         private Dictionary<PawnModel, ProjectileModelComponent> _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
@@ -138,7 +140,21 @@ namespace Assets.Scripts.Game
                         _soloAnimations.Peek().StartAnimation();
                     }
                 }
+                return;
             }
+
+            if (_magicUsage != null)
+            {
+                if (_magicUsage.MagicUsageEnded)
+                {
+                    _magicUsage = null;
+                }
+                else
+                {
+                    _magicUsage.Update();
+                    return;
+                }
+            };
 
             if (locomotions.Any())
             {
@@ -230,8 +246,13 @@ namespace Assets.Scripts.Game
             _courseModel.NextPhrase();
         }
 
-        public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit)
+        public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit, MyHexPosition magicUsePosition)
         {
+            if (magicUsePosition != null)
+            {
+                Assert.IsNull(_magicUsage);
+                _magicUsage = new MagicUsage(MagicType.Earth, magicUsePosition, _courseModel, CurrentPlayer);
+            }
             _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
         }
@@ -266,6 +287,11 @@ namespace Assets.Scripts.Game
             _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
             _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
             _courseModel.Reset();
+        }
+
+        public bool PlayerCanUseMagic()
+        {
+            return _courseModel.PlayerCanUseMagic(CurrentPlayer);
         }
     }
 

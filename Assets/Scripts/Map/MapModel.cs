@@ -12,7 +12,7 @@ namespace Assets.Scripts.Map
 
         public bool HasTileAt(MyHexPosition position)
         {
-            return Tiles.Any(c => c.Position.Equals(position));
+            return Tiles.Where(c => c.Position.Equals(position)).Any(c => !c.IsDisabled);
         }
 
         public TileModel GetTileAt(MyHexPosition position)
@@ -30,6 +30,11 @@ namespace Assets.Scripts.Map
 
         public void Reset()
         {
+        }
+
+        public void DisableAt(MyHexPosition position)
+        {
+            GetTileAt(position).IsDisabled = true;
         }
     }
 }

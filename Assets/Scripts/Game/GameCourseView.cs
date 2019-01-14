@@ -10,13 +10,20 @@ namespace Assets.Scripts.Game
     public class GameCourseView : MonoBehaviour
     {
         public GameObject MarkerPrefab;
+        public GameObject MagicMarkerPrefab;
+
         private GameObject _selector;
+        private GameObject _magicMarker;
         private GameObject _selectedUnitMarker;
         private List<GameObject> _moveTargetMarkers;
 
         public void Start()
         {
             _selector = CreateMarker("Selector", Constants.SelectorColor, Vector3.zero, "TileSelector");
+            _magicMarker = GameObject.Instantiate(MagicMarkerPrefab);
+            _magicMarker.SetActive(false);
+            _magicMarker.transform.SetParent(transform);
+            _magicMarker.name = "MagicMarker";
         }
 
         public void Reset()
@@ -96,6 +103,17 @@ namespace Assets.Scripts.Game
                 GameObject.Destroy(target);
             }
             _moveTargetMarkers = null;
+        }
+
+        public void MakeMagicMarkerInvisible()
+        {
+            _magicMarker.SetActive(false);
+        }
+
+        public void SetMagicMarker(MyHexPosition magicMarkerPosition)
+        {
+            _magicMarker.SetActive(true);
+            _magicMarker.transform.localPosition = magicMarkerPosition.GetPosition();
         }
     }
 }

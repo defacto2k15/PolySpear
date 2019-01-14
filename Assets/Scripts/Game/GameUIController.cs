@@ -15,7 +15,7 @@ namespace Assets.Scripts.Game
 
         private GameCourseView _view;
         private UnitModel _selectedUnit;
-
+        private MyHexPosition _magicMarkerPosition;
 
         public void Start()
         {
@@ -46,14 +46,54 @@ namespace Assets.Scripts.Game
                         if (unitAtClickedPlace != null && unitAtClickedPlace.Owner == CourseController.CurrentPlayer)
                         {
                             _selectedUnit = unitAtClickedPlace;
+                            _magicMarkerPosition = null;
                         }
-                        else if (_selectedUnit != null && CourseController.GetPossibleMoveTargets(_selectedUnit).Contains(position))
+                        else if (_selectedUnit != null && GetPossibleMovePositions(_selectedUnit).Contains(position))
                         {
-                            CourseController.MoveTo(position, _selectedUnit);    
+                            CourseController.MoveTo(position, _selectedUnit, _magicMarkerPosition);    
+                            _magicMarkerPosition = null;
                         }
                         else if (unitAtClickedPlace == null)
                         {
                             _selectedUnit = null;
+                            _magicMarkerPosition = null;
+                        }
+                    }
+                }
+            }
+            else
+            if (Input.GetMouseButtonDown(1))
+            {
+                if (!CourseController.PlayerCanUseMagic())
+                {
+                    _magicMarkerPosition = null;
+                }
+                else
+                {
+                    if (position == null)
+                    {
+                        _magicMarkerPosition = null;
+                    }
+                    else
+                    {
+                        if (state == GameCourseState.Interactive)
+                        {
+                            if (_magicMarkerPosition != null && _magicMarkerPosition.Equals(position))
+                            {
+                                _magicMarkerPosition = null;
+                            }
+                            else
+                            {
+                                var unitAtClickedPlace = CourseController.GetUnitAtPlace(position);
+                                if (unitAtClickedPlace == null && CourseController.GetPossibleMoveTargets(_selectedUnit).Contains(position))
+                                {
+                                    _magicMarkerPosition = position;
+                                }
+                                else
+                                {
+                                    _magicMarkerPosition = null;
+                                }
+                            }
                         }
                     }
                 }
@@ -74,7 +114,7 @@ namespace Assets.Scripts.Game
                 if (_selectedUnit != null)
                 {
                     _view.SetSelectedMarker(_selectedUnit.Position);
-                    var possibleMoveTargets = CourseController.GetPossibleMoveTargets(_selectedUnit);
+                    var possibleMoveTargets = GetPossibleMovePositions(_selectedUnit);
                     _view.SetMoveTargets(possibleMoveTargets);
                 }
                 else
@@ -82,14 +122,29 @@ namespace Assets.Scripts.Game
                     _view.RemoveSelectedMarker();
                     _view.RemoveMoveTargets();
                 }
+
+                if (_magicMarkerPosition != null)
+                {
+                    _view.SetMagicMarker(_magicMarkerPosition);
+                }
+                else
+                {
+                    _view.MakeMagicMarkerInvisible();
+                }
             }
             else
             {
+                _view.MakeMagicMarkerInvisible();
                 _view.RemoveSelectedMarker();
                 _view.RemoveMoveTargets();
                 _view.MakeSelectorInvisible();
                 _selectedUnit = null;
             }
+        }
+
+        private List<MyHexPosition> GetPossibleMovePositions(UnitModel model)
+        {
+            return CourseController.GetPossibleMoveTargets(model).Where(c => _magicMarkerPosition == null || !c.Equals(_magicMarkerPosition)).ToList();
         }
 
         private MyHexPosition UpdateSelector()
