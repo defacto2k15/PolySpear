@@ -18,7 +18,7 @@ namespace Assets.Scripts.Magic
         private IAnimation _animation;
         private bool _magicUsageEnded;
 
-        public MagicUsage(MagicType type, MyHexPosition position,  GameCourseModel model, MyPlayer player)
+        public MagicUsage(MagicType type, MyHexPosition position, GameCourseModel model, MyPlayer player, CameraShake cameraShake)
         {
             _type = type;
             _position = position;
@@ -28,7 +28,7 @@ namespace Assets.Scripts.Magic
 
             if (type == MagicType.Earth)
             {
-                _animation = new EarthMagicUsageAnimation(model.GetTileAt(position).gameObject);
+                _animation = new EarthMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake);
                 _animation.StartAnimation();
             }
         }

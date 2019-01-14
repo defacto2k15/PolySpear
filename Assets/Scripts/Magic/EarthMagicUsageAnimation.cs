@@ -11,6 +11,7 @@ namespace Assets.Scripts.Magic
     public class EarthMagicUsageAnimation : IAnimation
     {
         private GameObject _tile;
+        private readonly CameraShake _shake;
 
         private float _startTime;
         private Vector3 _oldScale;
@@ -18,9 +19,10 @@ namespace Assets.Scripts.Magic
 
         private bool _animationEnded = false;
 
-        public EarthMagicUsageAnimation(GameObject tile)
+        public EarthMagicUsageAnimation(GameObject tile, CameraShake shake)
         {
             _tile = tile;
+            _shake = shake;
         }
 
         public void UpdateAnimation()
@@ -46,6 +48,7 @@ namespace Assets.Scripts.Magic
 
         public void StartAnimation()
         {
+            _shake.StartShake(2f);
             _startTime = Time.time;
             _oldScale = _tile.transform.localScale;
             _targetScale = new Vector3(0,0,0);

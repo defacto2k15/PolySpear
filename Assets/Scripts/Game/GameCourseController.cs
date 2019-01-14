@@ -37,6 +37,7 @@ namespace Assets.Scripts.Game
 
         public GameObject UnitsParent;
         public GameObject ProjectilesParent;
+        public CameraShake CameraShake;
 
         public bool DebugShouldEndGame = true;
 
@@ -251,7 +252,7 @@ namespace Assets.Scripts.Game
             if (magicUsePosition != null)
             {
                 Assert.IsNull(_magicUsage);
-                _magicUsage = new MagicUsage(MagicType.Earth, magicUsePosition, _courseModel, CurrentPlayer);
+                _magicUsage = new MagicUsage(MagicType.Earth, magicUsePosition, _courseModel, CurrentPlayer, CameraShake);
             }
             _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
