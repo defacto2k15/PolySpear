@@ -11,9 +11,9 @@ namespace Assets.Scripts.Locomotion
             return model.PerformProjectileHitAtPlace(locomotionTarget.Model.Position);
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
+        public IAnimation CreateAnimation(GameCourseModel model, ProjectileModelComponent animationTarget)
         {
-            return new EmptyAnimation(animationTarget);
+            return new EmptyAnimation();
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)

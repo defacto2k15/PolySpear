@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Game
 {
-    public abstract class MyAnimation
+    public abstract class MyAnimation : IAnimation
     {
         private bool _animationStarted = false;
 
@@ -16,21 +16,24 @@ namespace Assets.Scripts.Game
             _animationTarget = animationTarget;
         }
 
-        public PawnModel AnimationTarget => _animationTarget.PawnModel;
-
-        public void StartAnimation()
+        public virtual void StartAnimation()
         {
             _animationStarted = true;
             _animationTarget.GetComponent<PawnView>().Update();
             _animationTarget.GetComponent<PawnView>().enabled = false;
+            MyStart();
         }
 
-        public bool WeAreDuringAnimation()
+        protected virtual void MyStart()
+        {
+        }
+
+        public virtual bool WeAreDuringAnimation()
         {
             return _animationStarted &&  !Finished;
         }
 
-        public void UpdateAnimation()
+        public virtual void UpdateAnimation()
         {
             Assert.IsTrue(_animationStarted, "Animation has not started yet");
             Update();
@@ -40,7 +43,14 @@ namespace Assets.Scripts.Game
             }
         }
 
-        protected  abstract bool Finished { get; }
+        protected abstract bool Finished { get; }
         protected abstract void Update();
+    }
+
+    public interface IAnimation
+    {
+        void UpdateAnimation();
+        bool WeAreDuringAnimation();
+        void StartAnimation();
     }
 }

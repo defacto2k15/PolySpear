@@ -14,7 +14,7 @@ namespace Assets.Scripts.Locomotion
         return GetInternalStep(model).ApplyStepToModel(model, locomotionTarget);
     }
 
-    public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
+    public IAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
     {
         return GetInternalStep(model).CreateAnimation(model, animationTarget);
     }

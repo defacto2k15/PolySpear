@@ -13,5 +13,10 @@ namespace Assets.Scripts.Units
         {
             GetComponent<SpriteRenderer>().color = color;
         }
+
+        public void Update()
+        {
+            transform.eulerAngles = new Vector3(90,0,-90);
+        }
     }
 }

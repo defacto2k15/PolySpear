@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
+using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -18,11 +20,17 @@ namespace Assets.Scripts.Game
         public MapModel MapModel;
         public UnitsContainer Units;
         public ProjectilesContainer Projectiles;
+        private Dictionary<MyPlayer, int> _magicLeft;
 
         public void Start()
         {
             _phrase = Phrase.Placing;
             _turn = GameTurn.FirstPlayerTurn;
+            _magicLeft = new Dictionary<MyPlayer, int>()
+            {
+                {MyPlayer.Player1, 2 },
+                {MyPlayer.Player2, 2 }
+            };
         }
 
         public void Reset()
@@ -90,12 +98,12 @@ namespace Assets.Scripts.Game
             }
         }
 
-        public void OrientUnit(UnitModel unit, Orientation orientation)
+        public void OrientUnit(PawnModel unit, Orientation orientation)
         {
             Units.OrientPawn(unit.Position, orientation);
         }
 
-        public void MoveUnit(UnitModel unit, MyHexPosition newPosition)
+        public void MoveUnit(PawnModel unit, MyHexPosition newPosition)
         {
             Units.MovePawn(unit.Position, newPosition);
         }
@@ -125,10 +133,10 @@ namespace Assets.Scripts.Game
         public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
         {
             var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
-            return arbiter.PerformProjectileHitAtPlace( projectileHitPosition);
+            return arbiter.PerformProjectileHitAtPlace(projectileHitPosition);
         }
 
-        public void FinalizeKillUnit(UnitModel unit) // ugly code
+        public void FinalizeKillUnit(PawnModel unit) // ugly code
         {
             Units.RemovePawn(unit.Position);
         }
@@ -164,7 +172,7 @@ namespace Assets.Scripts.Game
             });
         }
 
-        public bool CanMoveTo(UnitModel unitMoved, MyHexPosition target)
+        public bool CanMoveTo(PawnModel unitMoved, MyHexPosition target)
         {
             if (!unitMoved.PossibleMoveTargets.Contains(target))
             {
@@ -194,6 +202,26 @@ namespace Assets.Scripts.Game
                 }
             }
             return false;
+        }
+
+        public TileModel GetTileAt(MyHexPosition position)
+        {
+            return MapModel.GetTileAt(position);
+        }
+
+        public void UseMagic(MagicType type, MyHexPosition position, MyPlayer player)
+        {
+            Assert.IsTrue(PlayerCanUseMagic(player));
+            _magicLeft[player]--;
+            if (type == MagicType.Earth)
+            {
+                MapModel.DisableAt(position);
+            }
+        }
+
+        public bool PlayerCanUseMagic(MyPlayer player)
+        {
+            return _magicLeft[player] > 0;
         }
     }
 }

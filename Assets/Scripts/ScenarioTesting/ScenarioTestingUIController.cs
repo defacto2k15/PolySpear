@@ -15,8 +15,6 @@ namespace Assets.Scripts.ScenarioTesting
     {
         public GameCourseController GameCourseController;
 
-        private Stack<OptionalAnimator> _animations;
-
         public void MyStart()
         {
         }
@@ -51,7 +49,7 @@ namespace Assets.Scripts.ScenarioTesting
             {
                 throw new ImpossibleMovePredictionException(unit, targetPosition, possibleTargets);
             }
-            GameCourseController.MoveTo(targetPosition,unit);
+            GameCourseController.MoveTo(targetPosition,unit, null);
         }
 
         public bool IsPositionMovable(UnitModel unit, MyHexPosition position)

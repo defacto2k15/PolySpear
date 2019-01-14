@@ -13,7 +13,7 @@ namespace Assets.Scripts.Locomotion
             return BattleResults.Empty;
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
+        public IAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
             return new DeathAnimation(animationTarget);
         }

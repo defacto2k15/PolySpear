@@ -14,7 +14,6 @@ namespace Assets.Scripts.Animation
         public DeathAnimation(UnitModelComponent targetUnit) : base(targetUnit)
         {
             _renderers = new List<SpriteRenderer>();
-            _renderers.Add(targetUnit.GetComponent<SpriteRenderer>());
             _renderers.AddRange(targetUnit.GetComponentsInChildren<SpriteRenderer>());
             _startTime = Time.time;
         }

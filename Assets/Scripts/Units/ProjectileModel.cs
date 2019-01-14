@@ -1,13 +1,14 @@
-﻿using Assets.Scripts.Symbols;
+﻿using Assets.Scripts.Animation;
+using Assets.Scripts.Battle.Effects;
+using Assets.Scripts.Game;
+using Assets.Scripts.Symbols;
 using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
     public class ProjectileModel : PawnModel
     {
-        //[SerializeField]
-        //public SerializableIEffect ProjectileSerializableEffect;
-        //public IEffect Effect => ProjectileSerializableEffect.Value;
+        public IEffect HitEffect => new ArrowStrikeEffect();
 
         public ProjectileModel Clone()
         {
@@ -16,7 +17,7 @@ namespace Assets.Scripts.Units
                 Position = Position,
                 Orientation = Orientation,
                 IsUnitAlive = IsUnitAlive,
-                //ProjectileSerializableEffect = ProjectileSerializableEffect
+                Owner = Owner,
             };
         }
     }

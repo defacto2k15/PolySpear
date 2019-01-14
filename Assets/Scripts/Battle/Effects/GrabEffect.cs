@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Assets.Scripts.Animation;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -27,7 +29,7 @@ namespace Assets.Scripts.Battle.Effects
             return RetriveGrabbedUnit(vision) != null;
         }
 
-        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
+        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
             var grabbedUnit = RetriveGrabbedUnit(vision);
             Assert.IsNotNull(grabbedUnit,"There is no target");
@@ -48,7 +50,7 @@ namespace Assets.Scripts.Battle.Effects
                 var otherUnitAtFront = vision.GetUnitAt(pos);
                 if (otherUnitAtFront != null)
                 {
-                    if (otherUnitAtFront.Owner != vision.PossesedUnit.Owner)
+                    if (otherUnitAtFront.Owner != vision.PossesedPawn.Owner)
                     {
                         return otherUnitAtFront;
                     }
@@ -61,5 +63,7 @@ namespace Assets.Scripts.Battle.Effects
             return null;
             
         }
+
+        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
     }
 }

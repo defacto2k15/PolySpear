@@ -20,9 +20,9 @@ namespace Assets.Scripts.Locomotion
             return model.PerformBattleAtPlace(locomotionTarget.Model.Position, _battleCircumstances);
         }
 
-        public MyAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
+        public IAnimation CreateAnimation(GameCourseModel model, UnitModelComponent animationTarget)
         {
-            return new EmptyAnimation(animationTarget);
+            return new EmptyAnimation();
         }
 
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)

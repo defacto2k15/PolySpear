@@ -1,4 +1,7 @@
+using System;
+using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -17,14 +20,16 @@ namespace Assets.Scripts.Symbols
             return true;
         }
 
-        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleResults reciever)
+        public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
-            if (reciever.UnitWasStruck(vision.PossesedUnit))
-            {
-                reciever.UnStrike(vision.PossesedUnit);
-            }
+            Assert.IsTrue(vision.PossesedPawn is UnitModel);   // TODO !!! UGLY !!
+                if (reciever.UnitWasStruck((UnitModel) vision.PossesedPawn))
+                {
+                    reciever.UnStrike((UnitModel) vision.PossesedPawn);
+                }
         }
 
         public bool IsDefendableEffect => false;
+        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
     }
 }
