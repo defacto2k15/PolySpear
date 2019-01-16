@@ -4,6 +4,7 @@ using System.Linq;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Locomotion
@@ -58,7 +59,7 @@ namespace Assets.Scripts.Locomotion
 
     public static class LocomotionUtils
     {
-        public static LocomotionManager<UnitModelComponent> CreateMovementJourney(UnitModelComponent unit, MyHexPosition target) 
+        public static LocomotionManager<UnitModelComponent> CreateMovementJourney(GameCourseModel model, UnitModelComponent unit, MyHexPosition target) 
         {
             Assert.IsFalse(unit.Model.Position.Equals(target), "Unit is arleady at target");
 
@@ -87,10 +88,38 @@ namespace Assets.Scripts.Locomotion
                 To = target
             });
             journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Step));
+
+            HandleMoveRepeats(model, journeySteps, new JourneyBattle(BattleCircumstances.Step),  target, target - unit.Model.Position);
+
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 
-        public static LocomotionManager<UnitModelComponent> CreatePushJourney(UnitModelComponent unit, MyHexPosition target)
+            //todo THIS IS VERY VERY BIG LOAN AT TECHNICAL BANK! DO NOT CONTINUE USING. REPAY FIRST.  TL1 (Technical loan 1)
+        private static void HandleMoveRepeats(GameCourseModel model, Queue<IJourneyStep<UnitModelComponent>> journeySteps,
+            IJourneyStep<UnitModelComponent> stepAfterRepeat,
+            MyHexPosition target, MyHexPosition delta)
+        {
+            if (model.IsRepeatField(target))
+            {
+                var nextField = target + delta;
+
+                if ((!model.HasTileAt(nextField)) || model.HasUnitAt(nextField))
+                {
+                    journeySteps.Enqueue(new JourneyDeath());
+                }
+                else
+                {
+                    journeySteps.Enqueue(new JourneyMotion()
+                    {
+                        To = nextField
+                    });
+                    journeySteps.Enqueue(stepAfterRepeat);
+                }
+                HandleMoveRepeats(model, journeySteps, stepAfterRepeat, nextField, delta);
+            }
+        }
+
+        public static LocomotionManager<UnitModelComponent> CreatePushJourney(GameCourseModel model, UnitModelComponent unit, MyHexPosition target)
         {
             var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
             journeySteps.Enqueue(new JourneyDisplacement()
@@ -98,6 +127,8 @@ namespace Assets.Scripts.Locomotion
                 To = target
             });
             journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
+
+            HandleMoveRepeats(model, journeySteps, new JourneyPassiveOnlyBattle(),  target, target - unit.Model.Position);
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 

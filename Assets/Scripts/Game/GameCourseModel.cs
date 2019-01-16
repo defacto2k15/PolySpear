@@ -204,6 +204,11 @@ namespace Assets.Scripts.Game
             return false;
         }
 
+        public bool CanUseMagicAt(MyHexPosition position)
+        {
+            return MapModel.HasTileAt(position) && !Units.IsPawnAt(position);
+        }
+
         public TileModel GetTileAt(MyHexPosition position)
         {
             return MapModel.GetTileAt(position);
@@ -213,15 +218,34 @@ namespace Assets.Scripts.Game
         {
             Assert.IsTrue(PlayerCanUseMagic(player));
             _magicLeft[player]--;
-            if (type == MagicType.Earth)
+            if (type == MagicType.Earth) //todo polymorphism
             {
                 MapModel.DisableAt(position);
+            }
+            else
+            {
+                MapModel.AddResidentMagic(position, type);
             }
         }
 
         public bool PlayerCanUseMagic(MyPlayer player)
         {
             return _magicLeft[player] > 0;
+        }
+
+        public MagicType GetPlayerMagicType(MyPlayer player)
+        {
+            //todo not hardcoded
+            return new Dictionary<MyPlayer, MagicType>()
+            {
+                {MyPlayer.Player1, MagicType.Earth },
+                {MyPlayer.Player2, MagicType.Wind }
+            }[player];
+        }
+
+        public bool IsRepeatField(MyHexPosition target) //todo technical loan TL1
+        {
+            return MapModel.IsRepeatField(target);
         }
     }
 }

@@ -57,6 +57,11 @@ namespace Assets.Scripts.ScenarioTesting
             var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit);
             return possibleTargets.Any(c => c.Equals(position));
         }
+
+        public void TestApplyWindMagic(MyHexPosition position)  //todo TL1
+        {
+            GameCourseController.TestApplyWindMagic(position);
+        }
     }
 
     public class ImpossibleMovePredictionException : Exception

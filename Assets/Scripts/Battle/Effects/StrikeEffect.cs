@@ -43,11 +43,17 @@ namespace Assets.Scripts.Symbols
         public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (model, pawn1, pawn2)
             =>
         {
+            //TODO VERY BIG UGLY
+
+            var unit = pawn1 as UnitModelComponent;
+            Assert.IsNotNull(unit);
             var startPos = pawn1.transform.localPosition;
             return new SequenceAnimation(new List<IAnimation>()
             {
-                new UnitMotionAnimation(pawn1, Vector3.Lerp(pawn1.PawnModel.Position.GetPosition(), pawn2.PawnModel.Position.GetPosition(), 0.2f)),
-                new UnitMotionAnimation(pawn1, Vector3.Lerp(pawn2.PawnModel.Position.GetPosition(), pawn1.PawnModel.Position.GetPosition(), 0.8f), startPos)
+                new UnitStrikeAnimation(unit,pawn1.PawnModel.Position.GetPosition(),
+                    Vector3.Lerp(pawn1.PawnModel.Position.GetPosition(), pawn2.PawnModel.Position.GetPosition(), 0.2f), true),
+                new UnitStrikeAnimation(unit, Vector3.Lerp(pawn2.PawnModel.Position.GetPosition(),
+                    pawn1.PawnModel.Position.GetPosition(), 0.8f), startPos, false)
             });
         };
     }

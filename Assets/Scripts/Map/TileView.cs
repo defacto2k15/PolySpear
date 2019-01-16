@@ -18,8 +18,8 @@ namespace Assets.Scripts.Map
 
         public void Start()
         {
-            MyStart();
             _model = GetComponent<TileModel>();
+            MyStart();
         }
 
         public void MyStart()
@@ -46,6 +46,16 @@ namespace Assets.Scripts.Map
             }
 
             this.name = "Tile " + hexPosition;
+
+            _model.MagicWindAppliedEvent += () => //todo TL1
+            {
+                GetComponent<SpriteRenderer>().color = Color.red;
+            };
+
+            _model.ResetEvent += () =>
+            {
+                GetComponent<SpriteRenderer>().color = Color.white; //todo TL1
+            };
         }
 
         public void Update()
