@@ -49,7 +49,7 @@ namespace Assets.Scripts.Map
 
             _model.MagicWindAppliedEvent += () => //todo TL1
             {
-                GetComponent<SpriteRenderer>().color = Color.red;
+                GetComponent<SpriteRenderer>().color = Color.blue;
             };
 
             _model.ResetEvent += () =>

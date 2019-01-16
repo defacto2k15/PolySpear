@@ -415,8 +415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c8e9e7726e41a4c89d1c06ddfc6a8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackClip: {fileID: 8300000, guid: a8a01b9e289d72e47b4a785f0fdbe89e, type: 3}
-  DeathClip: {fileID: 8300000, guid: 33d5ada321727d84ba56b1e2a6cf2ddc, type: 3}
+  AttackClip: {fileID: 8300000, guid: 01e6e1cc41389134496afd303ac80aa0, type: 3}
+  DeathClip: {fileID: 8300000, guid: 172d1acbf0452ca4b89040c0ab756c4a, type: 3}
   MoveClip: {fileID: 8300000, guid: 01b019ae8aebe0545b11fa3c4aafb45d, type: 3}
 --- !u!114 &114704491677295026
 MonoBehaviour:
