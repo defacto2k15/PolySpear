@@ -40,6 +40,10 @@ namespace Assets.Scripts.ScenarioTesting
                         startState.State.Orientation, startState.OwningPlayer);
                     _createdUnits.Add(newUnit);
                 }
+                foreach (var position in _scenario.StartWindMagicPositions)
+                {
+                    _controller.TestApplyWindMagic(position);
+                }
                 _controller.FinalizeStart();
             }
             else

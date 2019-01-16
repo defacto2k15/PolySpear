@@ -16,6 +16,7 @@ namespace Assets.ScenarioTesting
         public string TestDescription;
         public bool TestEnabled = true;
         public List<UnitStartDefinition> StartStates;
+        public List<MyHexPosition> StartWindMagicPositions;  //todo TL1
         public List<ScenarioMovement> Movements;
         public List<ScenarioPrediction> Predictions;
 

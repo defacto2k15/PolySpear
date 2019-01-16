@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: MagicWindMoveOnePosition
+  m_EditorClassIdentifier: 
+  FileName_DO_NOT_CHANGE_BY_HAND: MagicWindMoveOnePosition
+  TestDescription: When i step into wind the step is repeated
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1768008085121668, guid: f83bb9d095ede954eb827b2933702362,
+      type: 2}
+    State:
+      Position:
+        U: 2
+        V: 1
+      Orientation: 1
+    OwningPlayer: 0
+  StartWindMagicPositions:
+  - U: 3
+    V: 2
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 3
+      V: 2
+  Predictions:
+  - UnitIndex: 0
+    Type: 0
+    PredictedState:
+      Position:
+        U: 4
+        V: 3
+      Orientation: 1
+    SelectorPosition:
+      U: 0
+      V: 0

@@ -12,6 +12,20 @@ namespace Assets.Scripts.Map
         [SerializeField] public MyHexPosition Position;
         [SerializeField] public bool IsDisabled = false;
 
+        public event Action MagicWindAppliedEvent;
+        public event Action ResetEvent;
+
+        public void ApplyWindMagic()
+        {
+            MagicWindAppliedEvent?.Invoke();
+        }
+
+        public void MyReset()
+        {
+            IsDisabled = false;
+            ResetEvent?.Invoke();
+        }
+
         public TileModel Clone()
         {
             return new TileModel()
