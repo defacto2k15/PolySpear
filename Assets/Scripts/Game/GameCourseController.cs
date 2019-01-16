@@ -6,6 +6,7 @@ using Assets.Scripts.Animation;
 using Assets.Scripts.Locomotion;
 using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -38,6 +39,8 @@ namespace Assets.Scripts.Game
         public GameObject UnitsParent;
         public GameObject ProjectilesParent;
         public CameraShake CameraShake;
+        public MasterSound MasterSound;
+        private InitialGameStateCreator _initialGameStateCreator;
 
         public bool DebugShouldEndGame = true;
 
@@ -46,6 +49,8 @@ namespace Assets.Scripts.Game
             _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>();
             _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
             _courseModel = GetComponent<GameCourseModel>();
+
+            _initialGameStateCreator = GetComponent<InitialGameStateCreator>();
         }
 
         public GameCourseState CourseState
@@ -233,15 +238,11 @@ namespace Assets.Scripts.Game
 
         public void PlaceUnits() // temporary
         {
-            // todo prawdziwa faza wystawiania
-            AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
-            AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
-            AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
+            //// todo prawdziwa faza wystawiania
+            _initialGameStateCreator.InitializePlayer1Units(this);
             _courseModel.NextTurn();
             // todo wstawianie drugiego
-            AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
-            AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
-            AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
+            _initialGameStateCreator.InitializePlayer2Units(this);
             _courseModel.Phrase = Phrase.Play;
             _courseModel.NextTurn();
             _courseModel.NextPhrase();
@@ -253,7 +254,7 @@ namespace Assets.Scripts.Game
             if (magicUsePosition != null)
             {
                 Assert.IsNull(_magicUsage);
-                _magicUsage = new MagicUsage(magicType, magicUsePosition, _courseModel, CurrentPlayer, CameraShake);
+                _magicUsage = new MagicUsage(magicType, magicUsePosition, _courseModel, CurrentPlayer, CameraShake, MasterSound);
             }
             _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_courseModel, _unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();

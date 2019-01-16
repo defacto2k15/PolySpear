@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Magic
@@ -18,7 +19,7 @@ namespace Assets.Scripts.Magic
         private IAnimation _animation;
         private bool _magicUsageEnded;
 
-        public MagicUsage(MagicType type, MyHexPosition position, GameCourseModel model, MyPlayer player, CameraShake cameraShake)
+        public MagicUsage(MagicType type, MyHexPosition position, GameCourseModel model, MyPlayer player, CameraShake cameraShake, MasterSound masterSound)
         {
             _type = type;
             _position = position;
@@ -28,11 +29,11 @@ namespace Assets.Scripts.Magic
 
             if (type == MagicType.Earth) //todo ugly, should not be if, rather should be polymorphism
             {
-                _animation = new EarthMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake);
+                _animation = new EarthMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake, masterSound);
             }
             else
             {
-                _animation = new WindMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake);
+                _animation = new WindMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake, masterSound);
             }
             _animation.StartAnimation();
         }

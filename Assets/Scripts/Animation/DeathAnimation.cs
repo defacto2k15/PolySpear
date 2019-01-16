@@ -33,6 +33,10 @@ namespace Assets.Scripts.Animation
             _model.OnDeath();
         }
 
+        protected override void MyFinish()
+        {
+        }
+
         protected override bool Finished => _startTime + Constants.DeathAnimationLength < Time.time;
     }
 }
