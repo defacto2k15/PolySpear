@@ -276,14 +276,14 @@ namespace Assets.Scripts.Game
 
         public MyPlayer CurrentPlayer => _courseModel.Turn.Player;
 
-        public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit)
+        public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit, MyHexPosition magicSelector)
         {
-            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).ToList();
+            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, magicSelector, CurrentPlayer)).ToList();
         }
 
         public List<MyHexPosition> GetPossibleMagicTargets(UnitModel unit)
         {
-            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).Where(c => _courseModel.CanUseMagicAt(c)).ToList();
+            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, null, CurrentPlayer)).Where(c => _courseModel.CanUseMagicAt(c)).ToList();
         }
 
         public void NextPhrase()  //temporary, for testing

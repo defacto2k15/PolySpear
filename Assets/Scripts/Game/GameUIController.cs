@@ -85,7 +85,7 @@ namespace Assets.Scripts.Game
                             else
                             {
                                 var unitAtClickedPlace = CourseController.GetUnitAtPlace(position);
-                                if (unitAtClickedPlace == null && GetPossibleMagicPositions(_selectedUnit).Contains(position))
+                                if (unitAtClickedPlace == null && _selectedUnit != null && GetPossibleMagicPositions(_selectedUnit).Contains(position))
                                 {
                                     _magicMarkerPosition = position;
                                 }
@@ -144,7 +144,7 @@ namespace Assets.Scripts.Game
 
         private List<MyHexPosition> GetPossibleMovePositions(UnitModel model)
         {
-            return CourseController.GetPossibleMoveTargets(model).Where(c => _magicMarkerPosition == null || !c.Equals(_magicMarkerPosition)).ToList();
+            return CourseController.GetPossibleMoveTargets(model, _magicMarkerPosition).ToList();
         }
 
         private List<MyHexPosition> GetPossibleMagicPositions(UnitModel model)

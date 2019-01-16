@@ -44,7 +44,7 @@ namespace Assets.Scripts.ScenarioTesting
 
         public void Move(UnitModel unit, MyHexPosition targetPosition)
         {
-            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit);
+            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit, null);
             if (!possibleTargets.Contains(targetPosition))
             {
                 throw new ImpossibleMovePredictionException(unit, targetPosition, possibleTargets);
@@ -54,7 +54,7 @@ namespace Assets.Scripts.ScenarioTesting
 
         public bool IsPositionMovable(UnitModel unit, MyHexPosition position)
         {
-            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit);
+            var possibleTargets = GameCourseController.GetPossibleMoveTargets(unit, null);
             return possibleTargets.Any(c => c.Equals(position));
         }
 

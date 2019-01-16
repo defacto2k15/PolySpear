@@ -27,5 +27,10 @@ namespace Assets.Scripts.Locomotion
         {
             return false;
         }
+
+        public List<IJourneyStep<ProjectileModelComponent>> GenerateFinalSteps(GameCourseModel model, ProjectileModelComponent locomotionTarget)
+        {
+            return new List<IJourneyStep<ProjectileModelComponent>>();
+        }
     }
 }

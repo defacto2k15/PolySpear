@@ -25,7 +25,7 @@ namespace Assets.Scripts.Symbols
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
             var unitInFront = vision.GetUnitAt(new MyHexPosition(0, 0));
-            Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner,"There is no enemy unit in front of me");
+            Assert.IsTrue(unitInFront != null,"There is no enemy unit in front of me");
             reciever.AddStruckUnit(unitInFront);
         }
 

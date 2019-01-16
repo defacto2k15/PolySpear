@@ -4114,8 +4114,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TestingScreenView: {fileID: 1616942785}
   Controller: {fileID: 2029522718}
-  SingleScenario: {fileID: 11400000, guid: c0f647156843bcd448f75aba40431d70, type: 2}
-  RunOnlySingleScenario: 1
+  SingleScenario: {fileID: 11400000, guid: 47aa49f625b742a4b9d55609bdca58b0, type: 2}
+  RunOnlySingleScenario: 0
   ShouldShowAnimations: 1
 --- !u!114 &2029522720
 MonoBehaviour:
@@ -4157,38 +4157,62 @@ MonoBehaviour:
       U: 0
       V: 0
     Orientation: 0
-    UnitPrefab: {fileID: 1971217509518276, guid: 8f2b5ec605e1a324ab68f1dadcdeac91,
+    UnitPrefab: {fileID: 1435225672037532, guid: 22b37ac1d10858d4ea1a83ab85c3d29b,
+      type: 2}
+  - Position:
+      U: 1
+      V: 1
+    Orientation: 0
+    UnitPrefab: {fileID: 1650092817416768, guid: 5d3530276197a9244a438028c51babe0,
       type: 2}
   - Position:
       U: 1
       V: 2
     Orientation: 0
-    UnitPrefab: {fileID: 1194863082384322, guid: 2f9b8637c4e018748a401e6106c9ce11,
+    UnitPrefab: {fileID: 1425714247483514, guid: d41b8b29cc91e6742acf382818390a67,
+      type: 2}
+  - Position:
+      U: 2
+      V: 3
+    Orientation: 0
+    UnitPrefab: {fileID: 1266345837289160, guid: c915d4bd32dc3384e90005cdc8f56157,
       type: 2}
   - Position:
       U: 2
       V: 4
     Orientation: 0
-    UnitPrefab: {fileID: 1993296647057554, guid: d212cc0fe0fd0e547865b45274961a90,
+    UnitPrefab: {fileID: 1441492278965330, guid: 34227177b4ac927478032b17acf1b0d5,
       type: 2}
   Player2Units:
   - Position:
       U: 4
+      V: 0
+    Orientation: 3
+    UnitPrefab: {fileID: 1692455959793720, guid: 7c070c6fb5f9fe34aad49f8f05564968,
+      type: 2}
+  - Position:
+      U: 4
       V: 1
     Orientation: 3
-    UnitPrefab: {fileID: 1925818458664710, guid: 91df31bed37ea0f4aa4d0c4c506461e0,
+    UnitPrefab: {fileID: 1070622019552810, guid: 2e647e4c9a4fb8747a2c468eba507cc5,
       type: 2}
   - Position:
       U: 5
       V: 2
     Orientation: 3
-    UnitPrefab: {fileID: 1671819279958726, guid: 3fa7a16d74906bf40a2046e17b98c36e,
+    UnitPrefab: {fileID: 1386156538183500, guid: 9ed55e63ef13cf9498ec20f9a26856ef,
       type: 2}
   - Position:
       U: 5
       V: 3
     Orientation: 3
-    UnitPrefab: {fileID: 1933511993929318, guid: 62daf6ab83c17e342bac973839e9336e,
+    UnitPrefab: {fileID: 1559590430396230, guid: c6387b5b673b1cb498dff4c31fc814d9,
+      type: 2}
+  - Position:
+      U: 6
+      V: 4
+    Orientation: 3
+    UnitPrefab: {fileID: 1656868587075534, guid: 8a9b967c04e524e4ea6fc32769da57b2,
       type: 2}
 --- !u!1 &2061622055
 GameObject:

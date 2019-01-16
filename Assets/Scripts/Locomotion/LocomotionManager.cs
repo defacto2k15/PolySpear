@@ -40,6 +40,11 @@ namespace Assets.Scripts.Locomotion
             {
                 _currentAnimation = _currentStep.CreateAnimation(model, _locomotionTarget);
                 _currentAnimation.StartAnimation();
+
+                if (!_journeySteps.Any())
+                {
+                    _currentStep.GenerateFinalSteps(model, _locomotionTarget).ForEach(c => _journeySteps.Enqueue(c));
+                }
             }
             return steps;
         }
@@ -89,34 +94,21 @@ namespace Assets.Scripts.Locomotion
             });
             journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Step));
 
-            HandleMoveRepeats(model, journeySteps, new JourneyBattle(BattleCircumstances.Step),  target, target - unit.Model.Position);
+            var delta = target - unit.Model.Position;
+            journeySteps.Enqueue(new JourneyStepRepeat()
+            {
+                Delta = delta,
+                NextStepsGenerator = (to) => new List<IJourneyStep<UnitModelComponent>>()
+                {
+                    new JourneyMotion()
+                    {
+                        To = to 
+                    },
+                    (new JourneyBattle(BattleCircumstances.Step))
+                }
+            });
 
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
-        }
-
-            //todo THIS IS VERY VERY BIG LOAN AT TECHNICAL BANK! DO NOT CONTINUE USING. REPAY FIRST.  TL1 (Technical loan 1)
-        private static void HandleMoveRepeats(GameCourseModel model, Queue<IJourneyStep<UnitModelComponent>> journeySteps,
-            IJourneyStep<UnitModelComponent> stepAfterRepeat,
-            MyHexPosition target, MyHexPosition delta)
-        {
-            if (model.IsRepeatField(target))
-            {
-                var nextField = target + delta;
-
-                if ((!model.HasTileAt(nextField)) || model.HasUnitAt(nextField))
-                {
-                    journeySteps.Enqueue(new JourneyDeath());
-                }
-                else
-                {
-                    journeySteps.Enqueue(new JourneyMotion()
-                    {
-                        To = nextField
-                    });
-                    journeySteps.Enqueue(stepAfterRepeat);
-                }
-                HandleMoveRepeats(model, journeySteps, stepAfterRepeat, nextField, delta);
-            }
         }
 
         public static LocomotionManager<UnitModelComponent> CreatePushJourney(GameCourseModel model, UnitModelComponent unit, MyHexPosition target)
@@ -128,7 +120,19 @@ namespace Assets.Scripts.Locomotion
             });
             journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
 
-            HandleMoveRepeats(model, journeySteps, new JourneyPassiveOnlyBattle(),  target, target - unit.Model.Position);
+            var delta = target - unit.Model.Position;
+            journeySteps.Enqueue(new JourneyStepRepeat()
+            {
+                Delta = delta,
+                NextStepsGenerator = (to) => new List<IJourneyStep<UnitModelComponent>>()
+                {
+                    new JourneyMotion()
+                    {
+                        To = to 
+                    },
+                    (new JourneyPassiveOnlyBattle())
+                }
+            });
             return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
         }
 

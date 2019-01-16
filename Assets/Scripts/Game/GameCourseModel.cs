@@ -172,7 +172,7 @@ namespace Assets.Scripts.Game
             });
         }
 
-        public bool CanMoveTo(PawnModel unitMoved, MyHexPosition target)
+        public bool CanMoveTo(PawnModel unitMoved, MyHexPosition target, MyHexPosition magicSelector, MyPlayer player)
         {
             if (!unitMoved.PossibleMoveTargets.Contains(target))
             {
@@ -180,6 +180,15 @@ namespace Assets.Scripts.Game
             }
             else if (IsTileMovable(target) ) //empty!
             {
+                if (magicSelector == null)
+                {
+                    return true;
+                }
+                if (GetPlayerMagicType(player) != MagicType.Wind)
+                {
+                    return !magicSelector.Equals(target);
+                }
+
                 return true;
             }
             else
