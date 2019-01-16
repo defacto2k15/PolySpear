@@ -7,9 +7,11 @@ namespace Assets.Scripts.Game
     public class RotationAnimation : MyAnimation
     {
         private readonly Orientation _targetOrientation;
+        private UnitModel _model;
 
         public RotationAnimation(UnitModelComponent targetUnit, Orientation targetOrientation) :base(targetUnit)
         {
+            _model = targetUnit.Model;
             _targetOrientation = targetOrientation;
         }
 
@@ -20,6 +22,11 @@ namespace Assets.Scripts.Game
             var qStart = Quaternion.Euler(_animationTarget.transform.localEulerAngles.x, _targetOrientation.FlatRotation(), _animationTarget.transform.localEulerAngles.z);
             var qFinal = _animationTarget.transform.localRotation;
             _animationTarget.transform.localRotation =  Quaternion.Lerp(qStart, qFinal, Time.deltaTime * 1/Constants.RotationSpeed);
+        }
+
+        protected override void MyStart()
+        {
+            _model.OnStep();
         }
     }
 }

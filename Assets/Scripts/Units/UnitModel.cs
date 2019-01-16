@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Scripts.Game;
@@ -9,6 +10,14 @@ namespace Assets.Scripts.Units
     public class UnitModel : PawnModel
     {
         public Dictionary<Orientation, SymbolModel> Symbols { get; set; }
+
+        public event Action OnStepEvent;
+        public event Action OnDeathEvent;
+        public event Action OnAttackEvent;
+
+        public void OnDeath() => OnDeathEvent?.Invoke();
+        public void OnStep() => OnStepEvent?.Invoke();
+        public void OnAttack() => OnAttackEvent?.Invoke();
 
         public UnitModel Clone()
         {
