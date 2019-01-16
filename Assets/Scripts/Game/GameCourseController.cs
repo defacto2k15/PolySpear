@@ -216,7 +216,7 @@ namespace Assets.Scripts.Game
 
                                 engagementResult.Displacements.ForEach(c =>
                                 {
-                                    _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(_unitModelToGameObjectMap[c.Unit], c.DisplacementEnd));
+                                    _unitLocomotions.Push(LocomotionUtils.CreatePushJourney(_courseModel, _unitModelToGameObjectMap[c.Unit], c.DisplacementEnd));
                                 });
 
                                 engagementResult.Projectiles.ForEach(c =>
@@ -249,12 +249,13 @@ namespace Assets.Scripts.Game
 
         public void MoveTo(MyHexPosition selectorPosition, UnitModel selectedUnit, MyHexPosition magicUsePosition)
         {
+            var magicType = _courseModel.GetPlayerMagicType(CurrentPlayer);
             if (magicUsePosition != null)
             {
                 Assert.IsNull(_magicUsage);
-                _magicUsage = new MagicUsage(MagicType.Earth, magicUsePosition, _courseModel, CurrentPlayer, CameraShake);
+                _magicUsage = new MagicUsage(magicType, magicUsePosition, _courseModel, CurrentPlayer, CameraShake);
             }
-            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_unitModelToGameObjectMap[selectedUnit], selectorPosition));
+            _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_courseModel, _unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
         }
 
@@ -275,6 +276,11 @@ namespace Assets.Scripts.Game
             return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).ToList();
         }
 
+        public List<MyHexPosition> GetPossibleMagicTargets(UnitModel unit)
+        {
+            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).Where(c => _courseModel.CanUseMagicAt(c)).ToList();
+        }
+
         public void NextPhrase()  //temporary, for testing
         {
             _courseModel.NextPhrase();
@@ -293,6 +299,11 @@ namespace Assets.Scripts.Game
         public bool PlayerCanUseMagic()
         {
             return _courseModel.PlayerCanUseMagic(CurrentPlayer);
+        }
+
+        public void TestApplyWindMagic(MyHexPosition position)
+        {
+            _courseModel.UseMagic(MagicType.Wind, position, CurrentPlayer);
         }
     }
 

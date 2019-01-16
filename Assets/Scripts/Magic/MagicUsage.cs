@@ -26,11 +26,15 @@ namespace Assets.Scripts.Magic
             _model = model;
             _magicUsageEnded = false;
 
-            if (type == MagicType.Earth)
+            if (type == MagicType.Earth) //todo ugly, should not be if, rather should be polymorphism
             {
                 _animation = new EarthMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake);
-                _animation.StartAnimation();
             }
+            else
+            {
+                _animation = new WindMagicUsageAnimation(model.GetTileAt(position).gameObject, cameraShake);
+            }
+            _animation.StartAnimation();
         }
 
         public bool MagicUsageEnded => _magicUsageEnded;
