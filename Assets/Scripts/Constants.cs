@@ -28,6 +28,16 @@ namespace Assets.Scripts
         public static float DeathAnimationLoopLength => 0.4f;
         public static float ConstantMotionSpeed => 5f;
         public static float SpinningSpeed => 1000;
+        public static float StrikeMotionSpeed => 10f;
+
         public static double EarthMagicAnimationFactor =  1 / 2f;
+
+        public static float UnitStruckAnimationDuration = 1f;
+        public static float UnitStruckRedStart = 0.35f;
+        public static float UnitStruckRedDuration = 0.1f;
+
+        public static float UnitDefenseAnimationDuration = 1f;
+        public static float UnitDefenseGoldStart = 0.1f;
+        public static float UnitDefenseGoldDuration = 0.4f;
     }
 }

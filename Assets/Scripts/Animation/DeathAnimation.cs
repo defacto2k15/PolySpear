@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -22,15 +23,17 @@ namespace Assets.Scripts.Animation
 
         protected override void Update()
         {
-            Color clr = Color.red;
             bool flip = (Mathf.Repeat(Time.time, Constants.DeathAnimationLoopLength) < Constants.DeathAnimationLoopLength / 1.6f);
             _renderers.ForEach(c => c.flipY = flip);
-            _renderers.ForEach(c => c.color = new Color((flip?0.5f:0.75f),0,0,(flip ? 0.995f : 0.99f)));
         }
 
         protected override void MyStart()
         {
             _model.OnDeath();
+        }
+
+        protected override void MyFinish()
+        {
         }
 
         protected override bool Finished => _startTime + Constants.DeathAnimationLength < Time.time;

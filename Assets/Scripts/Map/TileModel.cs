@@ -14,6 +14,7 @@ namespace Assets.Scripts.Map
 
         public event Action MagicWindAppliedEvent;
         public event Action ResetEvent;
+        public bool done = false;
 
         public void ApplyWindMagic()
         {

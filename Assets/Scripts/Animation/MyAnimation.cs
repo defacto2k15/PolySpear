@@ -28,6 +28,10 @@ namespace Assets.Scripts.Game
         {
         }
 
+        protected virtual void MyFinish()
+        {
+        }
+
         public virtual bool WeAreDuringAnimation()
         {
             return _animationStarted &&  !Finished;
@@ -39,6 +43,7 @@ namespace Assets.Scripts.Game
             Update();
             if (Finished)
             {
+                MyFinish();
                 _animationTarget.GetComponent<PawnView>().enabled = true;
             }
         }

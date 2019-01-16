@@ -6,6 +6,7 @@ using Assets.Scripts.Animation;
 using Assets.Scripts.Locomotion;
 using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,17 +15,8 @@ namespace Assets.Scripts.Game
 {
     public class GameCourseController : MonoBehaviour
     {
-        public GameObject SpearmanPrefab; 
-        public GameObject Elf1Prefab; 
-        public GameObject Elf2Prefab; 
-        public GameObject Elf3Prefab; 
-        public GameObject Orc1Prefab; 
-        public GameObject Orc2Prefab; 
-        public GameObject Orc3Prefab; 
-
         public GameObject ArrowPrefab;
         public GameObject AxePrefab;
-        public GameObject ProjectilePrefab; //uogolnienie
 
         private GameCourseModel _courseModel;
         private Stack<IAnimation> _soloAnimations = new Stack<IAnimation>();
@@ -38,6 +30,8 @@ namespace Assets.Scripts.Game
         public GameObject UnitsParent;
         public GameObject ProjectilesParent;
         public CameraShake CameraShake;
+        public MasterSound MasterSound;
+        private InitialGameStateCreator _initialGameStateCreator;
 
         public bool DebugShouldEndGame = true;
 
@@ -46,6 +40,8 @@ namespace Assets.Scripts.Game
             _unitLocomotions = new Stack<LocomotionManager<UnitModelComponent>>();
             _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
             _courseModel = GetComponent<GameCourseModel>();
+
+            _initialGameStateCreator = GetComponent<InitialGameStateCreator>();
         }
 
         public GameCourseState CourseState
@@ -60,7 +56,7 @@ namespace Assets.Scripts.Game
                 {
                     return GameCourseState.Finished;
                 }
-                if (_unitLocomotions.Any() || _projectileLocomotions.Any())
+                if (_unitLocomotions.Any() || _projectileLocomotions.Any() || _soloAnimations.Any())
                 {
                     return GameCourseState.NonInteractive;
                 }
@@ -114,7 +110,7 @@ namespace Assets.Scripts.Game
             return unitModelComponent;
         }
 
-        private PawnModelComponent getPawnModelComponent(PawnModel model)
+        private PawnModelComponent GetPawnModelComponent(PawnModel model)
         {
             if (_unitModelToGameObjectMap.ContainsKey(model))
             {
@@ -196,14 +192,18 @@ namespace Assets.Scripts.Game
                             {
                                 var engagementResult =  engagement.EngagementResult;
 
-                                var anim = new CompositeAnimation(engagement.EngagementElements.Select(element =>
+                                var innerAnimations = engagement.EngagementElements.Select(element =>
                                 {
-                                    var active = getPawnModelComponent(element.ActivePawn);
-                                    var passive = getPawnModelComponent(element.PassivePawn);
-                                    return element.UsedEffect.UsageAnimationGenerator(_courseModel, active, passive);
-                                }).ToList());
+                                    var active = GetPawnModelComponent(element.ActivePawn);
+                                    var passive = GetPawnModelComponent(element.PassivePawn);
+                                    return element.EngagementVisibleConsequence.EngagementAnimation(_courseModel, MasterSound, active, passive);
+                                }).ToList();
+                                innerAnimations.AddRange(engagementResult.StruckUnits.Select(c => new UnitStruckAnimation( _unitModelToGameObjectMap[c])));
+
+                                var anim = new CompositeAnimation(innerAnimations);
+
                                 _soloAnimations.Push(anim);
-                                if (_soloAnimations.Count == 1)
+                                if (_soloAnimations.Count >= 1)
                                 {
                                     _soloAnimations.Peek().StartAnimation();
                                 }
@@ -233,15 +233,11 @@ namespace Assets.Scripts.Game
 
         public void PlaceUnits() // temporary
         {
-            // todo prawdziwa faza wystawiania
-            AddUnit(new MyHexPosition(0, 0), MyPlayer.Player1, Orientation.N, Elf1Prefab);
-            AddUnit(new MyHexPosition(1, 2), MyPlayer.Player1, Orientation.N, Elf2Prefab);
-            AddUnit(new MyHexPosition(2, 4), MyPlayer.Player1, Orientation.N, Elf3Prefab);
+            //// todo prawdziwa faza wystawiania
+            _initialGameStateCreator.InitializePlayer1Units(this);
             _courseModel.NextTurn();
             // todo wstawianie drugiego
-            AddUnit(new MyHexPosition(4, 1), MyPlayer.Player2, Orientation.S, Orc1Prefab);
-            AddUnit(new MyHexPosition(5, 2), MyPlayer.Player2, Orientation.S, Orc2Prefab);
-            AddUnit(new MyHexPosition(5, 3), MyPlayer.Player2, Orientation.S, Orc3Prefab);
+            _initialGameStateCreator.InitializePlayer2Units(this);
             _courseModel.Phrase = Phrase.Play;
             _courseModel.NextTurn();
             _courseModel.NextPhrase();
@@ -253,10 +249,11 @@ namespace Assets.Scripts.Game
             if (magicUsePosition != null)
             {
                 Assert.IsNull(_magicUsage);
-                _magicUsage = new MagicUsage(magicType, magicUsePosition, _courseModel, CurrentPlayer, CameraShake);
+                _magicUsage = new MagicUsage(magicType, magicUsePosition, _courseModel, CurrentPlayer, CameraShake, MasterSound);
             }
             _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_courseModel, _unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
+            _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
         }
 
         public bool TileIsClickable(MyHexPosition hexPosition)
@@ -271,14 +268,56 @@ namespace Assets.Scripts.Game
 
         public MyPlayer CurrentPlayer => _courseModel.Turn.Player;
 
-        public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit)
+        private class PossibleMoveTargetsQueryKey //todo TL4
         {
-            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).ToList();
+            private UnitModel _model;
+            private MyHexPosition _position;
+
+            public PossibleMoveTargetsQueryKey(UnitModel model, MyHexPosition position)
+            {
+                _model = model;
+                _position = position;
+            }
+
+            protected bool Equals(PossibleMoveTargetsQueryKey other)
+            {
+                return Equals(_model, other._model) && Equals(_position, other._position);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((PossibleMoveTargetsQueryKey) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((_model != null ? _model.GetHashCode() : 0) * 397) ^ (_position != null ? _position.GetHashCode() : 0);
+                }
+            }
+        }
+        
+        private Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>> _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
+
+        public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit, MyHexPosition magicSelector)
+        {
+            var key = new PossibleMoveTargetsQueryKey(unit, magicSelector) ;
+            if (_possibleMoveTargetsCache.ContainsKey(key))
+            {
+                return _possibleMoveTargetsCache[key];
+            }
+            var toReturn = unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, magicSelector, CurrentPlayer)).ToList();
+            _possibleMoveTargetsCache[key] = toReturn;
+            return toReturn;
         }
 
         public List<MyHexPosition> GetPossibleMagicTargets(UnitModel unit)
         {
-            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c)).Where(c => _courseModel.CanUseMagicAt(c)).ToList();
+            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, null, CurrentPlayer)).Where(c => _courseModel.CanUseMagicAt(c)).ToList();
         }
 
         public void NextPhrase()  //temporary, for testing
@@ -293,6 +332,7 @@ namespace Assets.Scripts.Game
             _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
             _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
             _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
+            _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
             _courseModel.Reset();
         }
 

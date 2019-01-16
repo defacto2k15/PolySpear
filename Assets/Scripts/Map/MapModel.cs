@@ -55,5 +55,10 @@ namespace Assets.Scripts.Map
         {
             return _residentMagicMap.ContainsKey(target) && _residentMagicMap[target] == MagicType.Wind;
         }
+
+        public bool HasProjectileableTileAt(MyHexPosition position)
+        {
+            return Tiles.Any(c => c.Position.Equals(position));
+        }
     }
 }

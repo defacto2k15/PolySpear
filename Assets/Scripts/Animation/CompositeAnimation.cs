@@ -54,8 +54,8 @@ namespace Assets.Scripts.Game
                         return;
                     }
                 }
-            }
             _innerAnimations.Peek().UpdateAnimation();
+            }
         }
 
         public bool WeAreDuringAnimation()

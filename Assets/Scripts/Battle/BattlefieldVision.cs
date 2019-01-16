@@ -49,6 +49,11 @@ namespace Assets.Scripts.Battle
         {
             return _map.HasTileAt(pos);
         }
+
+        public bool HasProjectileAbleTileAt(MyHexPosition pos)
+        {
+            return _map.HasProjectileableTileAt(pos);
+        }
     }
 
     public class BattlefieldPointOfViewTransformator

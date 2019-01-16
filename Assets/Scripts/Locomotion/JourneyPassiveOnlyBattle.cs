@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Animation;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
@@ -21,5 +22,10 @@ namespace Assets.Scripts.Locomotion
         {
             return false;
         } 
+
+        public List<IJourneyStep<UnitModelComponent>> GenerateFinalSteps(GameCourseModel model, UnitModelComponent locomotionTarget)
+        {
+            return new List<IJourneyStep<UnitModelComponent>>();
+        }
     }
 }

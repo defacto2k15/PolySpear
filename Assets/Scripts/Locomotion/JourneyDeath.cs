@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Animation;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Animation;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 using UnityEngine;
@@ -21,6 +22,11 @@ namespace Assets.Scripts.Locomotion
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
         {
             return true;
-        } 
+        }
+
+        public List<IJourneyStep<UnitModelComponent>> GenerateFinalSteps(GameCourseModel model, UnitModelComponent locomotionTarget)
+        {
+            return new List<IJourneyStep<UnitModelComponent>>();
+        }
     }
 }

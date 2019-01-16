@@ -2,6 +2,7 @@ using System;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -24,11 +25,11 @@ namespace Assets.Scripts.Symbols
         public void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever)
         {
             var unitInFront = vision.GetUnitAt(new MyHexPosition(0, 0));
-            Assert.IsTrue(unitInFront != null && unitInFront.Owner != vision.PossesedPawn.Owner,"There is no enemy unit in front of me");
+            Assert.IsTrue(unitInFront != null,"There is no enemy unit in front of me");
             reciever.AddStruckUnit(unitInFront);
         }
 
         public bool IsDefendableEffect => true;
-        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
+        public Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,a1,b,c) => new EmptyAnimation();
     }
 }

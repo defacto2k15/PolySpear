@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Assets.Scripts.Game;
 using Assets.Scripts.Units;
 
@@ -21,6 +22,11 @@ namespace Assets.Scripts.Locomotion
         public bool ShouldRemoveUnitAfterStep(GameCourseModel model)
         {
             return false;
+        }
+
+        public List<IJourneyStep<ProjectileModelComponent>> GenerateFinalSteps(GameCourseModel model, ProjectileModelComponent locomotionTarget)
+        {
+            return new List<IJourneyStep<ProjectileModelComponent>>();
         }
     }
 }

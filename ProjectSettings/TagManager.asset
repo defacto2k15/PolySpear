@@ -54,6 +54,9 @@ TagManager:
   - name: UnitsBase
     uniqueID: 1289110223
     locked: 0
+  - name: MagicEffects
+    uniqueID: 604327527
+    locked: 0
   - name: TileMarker
     uniqueID: 1578523415
     locked: 0

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 
 namespace Assets.Scripts.Units
 {
@@ -14,6 +15,6 @@ namespace Assets.Scripts.Units
         bool IsActivated(BattlefieldVision vision, MyHexPosition activatingPosition);
         void Execute(BattlefieldVision vision, MyHexPosition activatingPosition, BattleEngagementResult reciever);
         bool IsDefendableEffect { get; }
-        Func<GameCourseModel,PawnModelComponent,PawnModelComponent, IAnimation> UsageAnimationGenerator { get; } //todo doubious elegance
+        Func<GameCourseModel, MasterSound, PawnModelComponent,PawnModelComponent, IAnimation> UsageAnimationGenerator { get; } //todo doubious elegance
     }
 }

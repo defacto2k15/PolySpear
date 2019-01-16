@@ -59,7 +59,10 @@ namespace Assets.Scripts.Units
                 _flagChild = GetComponentInChildren<UnitFlagView>();
                 _unitModel = GetComponent<UnitModelComponent>().Model;
             }
-            _flagChild.SetFlagColor( Constants.PlayersFlagColors[_unitModel.Owner]);
+            if (_flagChild != null)
+            {
+                _flagChild.SetFlagColor(Constants.PlayersFlagColors[_unitModel.Owner]);
+            }
         }
     }
 }

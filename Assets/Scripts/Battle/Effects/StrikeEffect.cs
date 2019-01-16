@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -40,7 +41,7 @@ namespace Assets.Scripts.Symbols
 
         public bool IsDefendableEffect => true;
 
-        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (model, pawn1, pawn2)
+        public Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (model,sound, pawn1, pawn2)
             =>
         {
             //TODO VERY BIG UGLY

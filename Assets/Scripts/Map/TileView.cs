@@ -47,16 +47,27 @@ namespace Assets.Scripts.Map
 
             this.name = "Tile " + hexPosition;
 
-            _model.MagicWindAppliedEvent += () => //todo TL1
+            try
             {
-                GetComponent<SpriteRenderer>().color = Color.red;
-            };
+                _model.MagicWindAppliedEvent += () => //todo TL1
+                {
+                    foreach (Transform childTransform in transform)
+                    {
+                        childTransform.gameObject.SetActive(true);
+                    }
+                };
 
-            _model.ResetEvent += () =>
+                _model.ResetEvent += () =>
+                {
+                    GetComponent<SpriteRenderer>().color = Color.white; //todo TL1
+                };
+            }
+            catch (Exception e)
             {
-                GetComponent<SpriteRenderer>().color = Color.white; //todo TL1
-            };
+                Debug.LogError(e);
+            }
         }
+    
 
         public void Update()
         {
