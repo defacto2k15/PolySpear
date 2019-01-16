@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -71,6 +72,6 @@ namespace Assets.Scripts.Battle.Effects
             return null;
         }
 
-        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (model, pawn1, pawn2)  => new EmptyAnimation();
+        public Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (model,sound, pawn1, pawn2)  => new EmptyAnimation();
     }
 }

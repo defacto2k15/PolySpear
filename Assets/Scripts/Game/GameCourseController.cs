@@ -65,7 +65,7 @@ namespace Assets.Scripts.Game
                 {
                     return GameCourseState.Finished;
                 }
-                if (_unitLocomotions.Any() || _projectileLocomotions.Any())
+                if (_unitLocomotions.Any() || _projectileLocomotions.Any() || _soloAnimations.Any())
                 {
                     return GameCourseState.NonInteractive;
                 }
@@ -119,7 +119,7 @@ namespace Assets.Scripts.Game
             return unitModelComponent;
         }
 
-        private PawnModelComponent getPawnModelComponent(PawnModel model)
+        private PawnModelComponent GetPawnModelComponent(PawnModel model)
         {
             if (_unitModelToGameObjectMap.ContainsKey(model))
             {
@@ -201,14 +201,18 @@ namespace Assets.Scripts.Game
                             {
                                 var engagementResult =  engagement.EngagementResult;
 
-                                var anim = new CompositeAnimation(engagement.EngagementElements.Select(element =>
+                                var innerAnimations = engagement.EngagementElements.Select(element =>
                                 {
-                                    var active = getPawnModelComponent(element.ActivePawn);
-                                    var passive = getPawnModelComponent(element.PassivePawn);
-                                    return element.UsedEffect.UsageAnimationGenerator(_courseModel, active, passive);
-                                }).ToList());
+                                    var active = GetPawnModelComponent(element.ActivePawn);
+                                    var passive = GetPawnModelComponent(element.PassivePawn);
+                                    return element.EngagementVisibleConsequence.EngagementAnimation(_courseModel, MasterSound, active, passive);
+                                }).ToList();
+                                innerAnimations.AddRange(engagementResult.StruckUnits.Select(c => new UnitStruckAnimation( _unitModelToGameObjectMap[c])));
+
+                                var anim = new CompositeAnimation(innerAnimations);
+
                                 _soloAnimations.Push(anim);
-                                if (_soloAnimations.Count == 1)
+                                if (_soloAnimations.Count >= 1)
                                 {
                                     _soloAnimations.Peek().StartAnimation();
                                 }

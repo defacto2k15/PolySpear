@@ -12,9 +12,11 @@ namespace Assets.Scripts.Sound
         public AudioSource IncidentalAudioSource;
         public AudioClip WindMagicApplyClip;
         public AudioClip EarthMagicApplyClip;
+        public AudioClip DefenseClip;
 
         public void PlayWindMagicApplySound() => PlayClip(WindMagicApplyClip);
         public void PlayEarthMagicApplySound() => PlayClip(EarthMagicApplyClip);
+        public void PlayDefenseSound() => PlayClip(DefenseClip);
 
         private void PlayClip(AudioClip clip)
         {

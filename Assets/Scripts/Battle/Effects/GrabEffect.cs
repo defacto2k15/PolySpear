@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -64,6 +65,6 @@ namespace Assets.Scripts.Battle.Effects
             
         }
 
-        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
+        public Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,a1,b,c) => new EmptyAnimation();
     }
 }

@@ -2,6 +2,7 @@ using System;
 using Assets.Scripts.Animation;
 using Assets.Scripts.Battle;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using Assets.Scripts.Units;
 using UnityEngine.Assertions;
 
@@ -29,6 +30,6 @@ namespace Assets.Scripts.Symbols
         }
 
         public bool IsDefendableEffect => true;
-        public Func<GameCourseModel, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,b,c) => new EmptyAnimation();
+        public Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> UsageAnimationGenerator => (a,a1,b,c) => new EmptyAnimation();
     }
 }

@@ -14,17 +14,26 @@ namespace Assets.Scripts.Game
         {
             _model = targetUnit.Model;
             _targetPosition = targetPosition;
+            var at = _animationTarget.transform.localPosition;
             _isAttackMotion = isAttackMotion;
             _startPosition = startPosition;
-            _startPosition = targetUnit.PawnModel.Position.GetPosition();
         }
 
-        protected override bool Finished => Vector3.Distance(_targetPosition, _animationTarget.transform.localPosition) < Constants.MotionEpsilon;
+        protected override bool Finished 
+        {
+            get
+            {
+                var dist = Vector3.Distance(_targetPosition,
+                    _animationTarget.transform.localPosition);
+                var r = dist < Constants.MotionEpsilon;
+                return r;
+            }
+        } 
 
         protected override void Update()
         {
             _animationTarget.transform.localPosition = Vector3.Lerp(_animationTarget.transform.localPosition, _targetPosition,
-                Time.deltaTime * Constants.MotionSpeed);
+                Time.deltaTime * Constants.StrikeMotionSpeed);
         }
 
         protected override void MyStart()

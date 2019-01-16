@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Game;
+using Assets.Scripts.Sound;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -143,6 +144,18 @@ namespace Assets.Scripts.Units
     {
         public PawnModel ActivePawn;
         public PawnModel PassivePawn;
-        public IEffect UsedEffect;
+        public EngagementVisibleConsequence EngagementVisibleConsequence;
+    }
+
+    public class EngagementVisibleConsequence
+    {
+        private readonly Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> _effectUsageAnimationGenerator;
+
+        public EngagementVisibleConsequence(Func<GameCourseModel, MasterSound, PawnModelComponent, PawnModelComponent, IAnimation> effectUsageAnimationGenerator)
+        {
+            _effectUsageAnimationGenerator = effectUsageAnimationGenerator;
+        }
+
+        public IAnimation EngagementAnimation(GameCourseModel courseMode, MasterSound sound, PawnModelComponent active, PawnModelComponent passive) => _effectUsageAnimationGenerator(courseMode,sound, active, passive);
     }
 }
