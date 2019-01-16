@@ -3,28 +3,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.Game
 {
-    public class UnitMotionAnimation : MyAnimation
+    public class UnitStrikeAnimation : MyAnimation
     {
         private UnitModel _model;
         private readonly Vector3 _targetPosition;
+        private readonly bool _isAttackMotion;
         private readonly Vector3 _startPosition;
 
-        public UnitMotionAnimation(UnitModelComponent targetUnit, MyHexPosition targetPosition) :base(targetUnit)
+        public UnitStrikeAnimation(UnitModelComponent targetUnit, Vector3 startPosition, Vector3 targetPosition, bool isAttackMotion) :base(targetUnit)
         {
             _model = targetUnit.Model;
-            _targetPosition = targetPosition.GetPosition();
-            _startPosition = targetUnit.PawnModel.Position.GetPosition();
-        }
-
-        public UnitMotionAnimation(PawnModelComponent targetUnit, Vector3 targetPosition) :base(targetUnit)
-        {
             _targetPosition = targetPosition;
-            _startPosition = targetUnit.PawnModel.Position.GetPosition();
-        }
-
-        public UnitMotionAnimation(PawnModelComponent targetUnit, Vector3 startPosition, Vector3 targetPosition) :base(targetUnit)
-        {
-            _targetPosition = targetPosition;
+            _isAttackMotion = isAttackMotion;
             _startPosition = startPosition;
             _startPosition = targetUnit.PawnModel.Position.GetPosition();
         }
@@ -40,7 +30,10 @@ namespace Assets.Scripts.Game
         protected override void MyStart()
         {
             _animationTarget.transform.localPosition = _startPosition;
-            _model.OnStep();
+            if (_isAttackMotion)
+            {
+                _model.OnAttack();
+            }
         }
     }
 }
