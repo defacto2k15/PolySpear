@@ -15,17 +15,8 @@ namespace Assets.Scripts.Game
 {
     public class GameCourseController : MonoBehaviour
     {
-        public GameObject SpearmanPrefab; 
-        public GameObject Elf1Prefab; 
-        public GameObject Elf2Prefab; 
-        public GameObject Elf3Prefab; 
-        public GameObject Orc1Prefab; 
-        public GameObject Orc2Prefab; 
-        public GameObject Orc3Prefab; 
-
         public GameObject ArrowPrefab;
         public GameObject AxePrefab;
-        public GameObject ProjectilePrefab; //uogolnienie
 
         private GameCourseModel _courseModel;
         private Stack<IAnimation> _soloAnimations = new Stack<IAnimation>();
@@ -262,6 +253,7 @@ namespace Assets.Scripts.Game
             }
             _unitLocomotions.Push(LocomotionUtils.CreateMovementJourney(_courseModel, _unitModelToGameObjectMap[selectedUnit], selectorPosition));
             _courseModel.NextTurn();
+            _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
         }
 
         public bool TileIsClickable(MyHexPosition hexPosition)
@@ -276,9 +268,51 @@ namespace Assets.Scripts.Game
 
         public MyPlayer CurrentPlayer => _courseModel.Turn.Player;
 
+        private class PossibleMoveTargetsQueryKey //todo TL4
+        {
+            private UnitModel _model;
+            private MyHexPosition _position;
+
+            public PossibleMoveTargetsQueryKey(UnitModel model, MyHexPosition position)
+            {
+                _model = model;
+                _position = position;
+            }
+
+            protected bool Equals(PossibleMoveTargetsQueryKey other)
+            {
+                return Equals(_model, other._model) && Equals(_position, other._position);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != this.GetType()) return false;
+                return Equals((PossibleMoveTargetsQueryKey) obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((_model != null ? _model.GetHashCode() : 0) * 397) ^ (_position != null ? _position.GetHashCode() : 0);
+                }
+            }
+        }
+        
+        private Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>> _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
+
         public List<MyHexPosition> GetPossibleMoveTargets(UnitModel unit, MyHexPosition magicSelector)
         {
-            return unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, magicSelector, CurrentPlayer)).ToList();
+            var key = new PossibleMoveTargetsQueryKey(unit, magicSelector) ;
+            if (_possibleMoveTargetsCache.ContainsKey(key))
+            {
+                return _possibleMoveTargetsCache[key];
+            }
+            var toReturn = unit.PossibleMoveTargets.Where(c => _courseModel.CanMoveTo(unit, c, magicSelector, CurrentPlayer)).ToList();
+            _possibleMoveTargetsCache[key] = toReturn;
+            return toReturn;
         }
 
         public List<MyHexPosition> GetPossibleMagicTargets(UnitModel unit)
@@ -298,6 +332,7 @@ namespace Assets.Scripts.Game
             _projectileLocomotions = new Stack<LocomotionManager<ProjectileModelComponent>>();
             _unitModelToGameObjectMap = new Dictionary<PawnModel, UnitModelComponent>();
             _projectileModelToGameObjectMap = new Dictionary<PawnModel, ProjectileModelComponent>();
+            _possibleMoveTargetsCache = new Dictionary<PossibleMoveTargetsQueryKey, List<MyHexPosition>>();
             _courseModel.Reset();
         }
 

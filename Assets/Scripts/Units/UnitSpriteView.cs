@@ -11,7 +11,7 @@ namespace Assets.Scripts.Units
     {
         public void Update()
         {
-            transform.eulerAngles = new Vector3(90,0,-90);
+            transform.eulerAngles = new Vector3(90,0,180);
         }
     }
 }
