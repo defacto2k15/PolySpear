@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: MoveWithRotation
+  m_EditorClassIdentifier: 
+  FileName_DO_NOT_CHANGE_BY_HAND: MoveWithRotation
+  TestDescription: We move unit with rotation
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
+      type: 2}
+    State:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    OwningPlayer: 0
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 1
+      V: 1
+  Predictions:
+  - UnitIndex: 0
+    Type: 0
+    PredictedState:
+      Position:
+        U: 1
+        V: 1
+      Orientation: 1
+    SelectorPosition:
+      U: 0
+      V: 0

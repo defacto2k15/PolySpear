@@ -1,61 +1,42 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Symbols;
 using Assets.Scripts.Units;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Game
 {
-    public class UnitsContainer : MonoBehaviour
+    public class UnitsContainer : PawnsContainer<UnitModel>
     {
-        private Dictionary<MyHexPosition, GameObject> _units = new Dictionary<MyHexPosition, GameObject>();
-        public GameObject UnitPrefab;
-        public GameObject SpearSymbolPrefab;
-
-        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
         {
-            var unit = Instantiate(UnitPrefab);
-            unit.GetComponent<UnitModel>().Orientation = orientation;
-            unit.GetComponent<UnitModel>().Position = position;
-            unit.GetComponent<UnitModel>().Owner = player;
+            var unit = new UnitModel
+            {
+                Orientation = orientation,
+                Position = position,
+                Owner = player
+            };
 
-            var symbol = Instantiate(SpearSymbolPrefab);
-            symbol.transform.SetParent(unit.transform);
-            unit.GetComponent<UnitModel>().Symbols[Orientation.N] = symbol.GetComponent<ISymbolModel>();
-            _units[position] = unit;
+            base.AddPawn(position, unit);
+            return unit;
         }
 
-        public bool HasUnitAt(MyHexPosition position)
+        public bool HasAnyUnits(MyPlayer player)
         {
-            return _units.ContainsKey(position);
+            return _pawns.Values.Any(c => c.Owner == player);
         }
 
-        public UnitModel GetUnitAt(MyHexPosition position)
+        public List<UnitModel> GetUnitsOfPlayer(MyPlayer player)
         {
-            return _units[position].GetComponent<UnitModel>();
+            return _pawns.Values.Where(c => c.Owner == player).ToList();
         }
 
-        public void MoveUnit(MyHexPosition oldPosition, MyHexPosition newPosition)
+        public UnitsContainer Clone()
         {
-            Assert.IsTrue(HasUnitAt(oldPosition));
-            var unit = _units[oldPosition];
-            _units.Remove(oldPosition);
-            _units[newPosition] = unit;
-            unit.GetComponent<UnitModel>().Position = newPosition;
-        }
-
-        public void OrientUnit(MyHexPosition unitPosition, Orientation orientation)
-        {
-            Assert.IsTrue(HasUnitAt(unitPosition));
-            var unit = _units[unitPosition];
-            unit.GetComponent<UnitModel>().Orientation = orientation;
-        }
-
-        public void RemoveUnit(MyHexPosition position)
-        {
-            Assert.IsTrue(_units.ContainsKey(position));
-            GameObject.Destroy(_units[position]);
-            _units.Remove(position);
+            return new UnitsContainer()
+            {
+                _pawns = _pawns.ToDictionary(c => c.Key, c => c.Value.Clone())
+            };
         }
     }
 }

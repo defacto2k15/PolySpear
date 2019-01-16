@@ -4,17 +4,31 @@ using System.Linq;
 using System.Text;
 using Assets.Scripts.Game;
 using Assets.Scripts.Symbols;
-using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
-    public class UnitModel : MonoBehaviour
+    public class UnitModel : PawnModel
     {
-        public MyPlayer Owner;
-        public MyHexPosition Position;
-        public Orientation Orientation;
-        public Dictionary<Orientation, ISymbolModel> Symbols = new Dictionary<Orientation, ISymbolModel>();  
+        public Dictionary<Orientation, SymbolModel> Symbols { get; set; }
 
-        public List<MyHexPosition> PossibleMoveTargets => Position.Neighbors.ToList();
+        public event Action OnStepEvent;
+        public event Action OnDeathEvent;
+        public event Action OnAttackEvent;
+
+        public void OnDeath() => OnDeathEvent?.Invoke();
+        public void OnStep() => OnStepEvent?.Invoke();
+        public void OnAttack() => OnAttackEvent?.Invoke();
+
+        public UnitModel Clone()
+        {
+            return new UnitModel()
+            {
+                Owner = Owner,
+                Position = Position,
+                Orientation = Orientation,
+                Symbols = Symbols.ToDictionary(c => c.Key, c => c.Value),
+                IsUnitAlive = IsUnitAlive
+            };
+        }
     }
 }

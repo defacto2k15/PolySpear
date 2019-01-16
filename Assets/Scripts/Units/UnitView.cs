@@ -6,18 +6,48 @@ using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
-    public class UnitView : MonoBehaviour
+    public class UnitView : PawnView
     {
-        private UnitModel _model;
-        private GameObject _flagChild;
+        private UnitModel _unitModel;
+        private UnitFlagView _flagChild;
 
-        public void Start()
+        public AudioClip AttackClip;
+        public AudioClip DeathClip;
+        public AudioClip MoveClip;
+
+        protected override void MyStart()
         {
-            _flagChild = transform.GetChild(0).gameObject;
-            _model = GetComponent<UnitModel>();
+            _flagChild = GetComponentInChildren<UnitFlagView>();
+            _unitModel = GetComponent<UnitModelComponent>().Model;
+
+            var audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                Debug.LogWarning("W43 No audio source on unit");
+            }
+            else
+            {
+                _unitModel.OnStepEvent += () =>
+                {
+                    audioSource.clip = MoveClip;
+                    audioSource.Play();
+                };
+
+                _unitModel.OnAttackEvent += () =>
+                {
+                    audioSource.clip = AttackClip;
+                    audioSource.Play();
+                };
+
+                _unitModel.OnDeathEvent += () =>
+                {
+                    audioSource.clip = DeathClip;
+                    audioSource.Play();
+                };
+            }
         }
 
-        public void Update()
+        protected override void MyUpdate()
         {
             UpdateView(); // very wasteful, but works!
         }
@@ -26,12 +56,13 @@ namespace Assets.Scripts.Units
         {
             if (_flagChild == null) // todo more elegant solution
             {
-                _flagChild = transform.GetChild(0).gameObject;
-                _model = GetComponent<UnitModel>();
+                _flagChild = GetComponentInChildren<UnitFlagView>();
+                _unitModel = GetComponent<UnitModelComponent>().Model;
             }
-            _flagChild.GetComponent<SpriteRenderer>().color = Constants.PlayersFlagColors[_model.Owner];
-            transform.localPosition = _model.Position.GetPosition();
-            transform.eulerAngles = new Vector3(90,_model.Orientation.FlatRotation,0);
+            if (_flagChild != null)
+            {
+                _flagChild.SetFlagColor(Constants.PlayersFlagColors[_unitModel.Owner]);
+            }
         }
     }
 }

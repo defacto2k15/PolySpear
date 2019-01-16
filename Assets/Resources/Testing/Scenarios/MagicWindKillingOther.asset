@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: MagicWindKillingOther
+  m_EditorClassIdentifier: 
+  FileName_DO_NOT_CHANGE_BY_HAND: MagicWindMoveOnePosition
+  TestDescription: one wind place is just after second wind place
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
+      type: 2}
+    State:
+      Position:
+        U: 2
+        V: 1
+      Orientation: 1
+    OwningPlayer: 0
+  - UnitPrefab: {fileID: 1971217509518276, guid: 99e1ead6536e84e4cb7abc4f08a3f695,
+      type: 2}
+    State:
+      Position:
+        U: 4
+        V: 3
+      Orientation: 1
+    OwningPlayer: 1
+  StartWindMagicPositions:
+  - U: 3
+    V: 2
+  Movements:
+  - UnitIndex: 0
+    NewPosition:
+      U: 3
+      V: 2
+  Predictions:
+  - UnitIndex: 1
+    Type: 1
+    PredictedState:
+      Position:
+        U: 5
+        V: 4
+      Orientation: 1
+    SelectorPosition:
+      U: 0
+      V: 0

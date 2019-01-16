@@ -31,13 +31,11 @@ namespace Assets.Scripts.Map
                 {
                     _view.MakeSelectorInisible();
                 }
-                Debug.Log("Paiting at: " + hexPosition);
             }
             else
             {
                 _view.MakeSelectorInisible();
             }
-            var ay = 2;
         }
 
         private MyHexPosition getMouseHex()

@@ -10,5 +10,31 @@ namespace Assets.Scripts.Map
     {
         [SerializeField] public TileRole Role;
         [SerializeField] public MyHexPosition Position;
+        [SerializeField] public bool IsDisabled = false;
+
+        public event Action MagicWindAppliedEvent;
+        public event Action ResetEvent;
+        public bool done = false;
+
+        public void ApplyWindMagic()
+        {
+            MagicWindAppliedEvent?.Invoke();
+        }
+
+        public void MyReset()
+        {
+            IsDisabled = false;
+            ResetEvent?.Invoke();
+        }
+
+        public TileModel Clone()
+        {
+            return new TileModel()
+            {
+                Role = Role,
+                Position =  Position,
+                IsDisabled = IsDisabled
+            };
+        }
     }
 }

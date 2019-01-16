@@ -1,131 +1,187 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Assets.Scripts.Battle;
+using Assets.Scripts.Game;
 using Assets.Scripts.Units;
+using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Assets.Scripts.Animation
+namespace Assets.Scripts.Locomotion
 {
-    public class LocomotionManager
+    public class LocomotionManager<T> where T : PawnModelComponent
     {
-        private UnitModel _modelBeingMoved;
-        private Queue<JourneyStep> _journeySteps;
+        private T _locomotionTarget;
+        private Queue<IJourneyStep<T>> _journeySteps;
+        private IJourneyStep<T> _currentStep;
+        private IAnimation _currentAnimation;
 
-        public bool WeAreDuringLocomotion()
+        public LocomotionManager(T locomotionTarget, Queue<IJourneyStep<T>> journeySteps)
         {
-            return _modelBeingMoved != null;
+            _locomotionTarget = locomotionTarget;
+            _journeySteps = journeySteps;
         }
 
-        public void StartJourney(UnitModel unit, MyHexPosition target)
+        public JourneyStepPairs<T> AdvanceJourney(GameCourseModel model)
         {
-            Assert.IsFalse(WeAreDuringLocomotion(), "There is arleady one unit during travel");
-            Assert.IsFalse(unit.Position.Equals(target), "Unit is arleady at target");
-            _modelBeingMoved = unit;
+            Assert.IsTrue(_journeySteps.Any() || _currentStep != null, "There are no more steps to do");
+            IJourneyStep<T> nextStep = null;
+            if (_journeySteps.Any())
+            {
+                nextStep = _journeySteps.Dequeue();
+            }
+            var steps = new JourneyStepPairs<T>()
+            {
+                PreviousStep = _currentStep,
+                NextStep = nextStep
+            };
+            _currentStep = nextStep;
+            if (_currentStep != null)
+            {
+                _currentAnimation = _currentStep.CreateAnimation(model, _locomotionTarget);
+                _currentAnimation.StartAnimation();
+
+                if (!_journeySteps.Any())
+                {
+                    _currentStep.GenerateFinalSteps(model, _locomotionTarget).ForEach(c => _journeySteps.Enqueue(c));
+                }
+            }
+            return steps;
+        }
+
+        public bool LocomotionFinished => !_journeySteps.Any() &&  _currentStep == null ;
+
+        public T LocomotionTarget => _locomotionTarget;
+
+        public bool DuringAnimation => _currentAnimation != null && _currentAnimation.WeAreDuringAnimation();
+
+        public void UpdateAnimation()
+        {
+            Assert.IsTrue(_currentAnimation.WeAreDuringAnimation(), "We should be during animation, but it is finished");
+            _currentAnimation.UpdateAnimation();
+        }
+    }
+
+    public static class LocomotionUtils
+    {
+        public static LocomotionManager<UnitModelComponent> CreateMovementJourney(GameCourseModel model, UnitModelComponent unit, MyHexPosition target) 
+        {
+            Assert.IsFalse(unit.Model.Position.Equals(target), "Unit is arleady at target");
 
             // todo, now it supports movement by only one hex, should be more
             Orientation targetOrientation = Orientation.N;
             for (int i = 0; i < 6; i++)
             {
-                if (target.Equals(unit.Position.Neighbors[i]))
+                if (target.Equals(unit.Model.Position.Neighbors[i]))
                 {
-                    targetOrientation = unit.Position.NeighborDirections[i];
+                    targetOrientation = unit.Model.Position.NeighborDirections[i];
                 }
             }
 
-            List<Orientation> transitionalOrientations = Orientation.GetOrientationsToTarget(unit.Orientation, targetOrientation);
-            _journeySteps = new Queue<JourneyStep>();
+            List<Orientation> transitionalOrientations = OrientationUtils.GetOrientationsToTarget(unit.Model.Orientation, targetOrientation);
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
             foreach (var orientation in transitionalOrientations)
             {
-                _journeySteps.Enqueue(new JourneyStep(new JourneyDirector()
+                journeySteps.Enqueue(new JourneyDirector()
                 {
                     To = orientation
-                }));
-                _journeySteps.Enqueue(new JourneyStep());
+                });
             }
-            _journeySteps.Enqueue(new JourneyStep(new JourneyMotion()
+                journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Director));
+            journeySteps.Enqueue(new JourneyMotion()
             {
                 To = target
-            }));
-            _journeySteps.Enqueue(new JourneyStep());
-        }
+            });
+            journeySteps.Enqueue(new JourneyBattle(BattleCircumstances.Step));
 
-
-        public JourneyStep NextStep()
-        {
-            Assert.IsTrue(_journeySteps.Any(), "There are no more steps to do");
-            var nextStep = _journeySteps.Dequeue();
-            return nextStep;
-        }
-
-        public bool AnyMoreSteps => _journeySteps.Any();
-
-        public UnitModel LocomotionTarget
-        {
-            get
+            var delta = target - unit.Model.Position;
+            journeySteps.Enqueue(new JourneyStepRepeat()
             {
-                Assert.IsTrue(WeAreDuringLocomotion(), "We are not during journey");
-                return _modelBeingMoved;
-            }
-        }
-    }
-
-    public enum JourneyStepType
-    {
-        Motion, Director, Action
-    }
-        public class JourneyStep // todo maybe polymorphism??
-        {
-            private JourneyMotion _motion;
-            private JourneyDirector _director;
-            private JourneyStepType _stepType;
-
-            public JourneyStep()
-            {
-                _stepType = JourneyStepType.Action;
-            }
-
-            public JourneyStep(JourneyMotion motion)
-            {
-                _stepType = JourneyStepType.Motion;
-                _motion = motion;
-            }
-
-            public JourneyStep(JourneyDirector director)
-            {
-                _stepType = JourneyStepType.Director;
-                _director = director;
-            }
-
-            public JourneyMotion Motion 
-            {
-                get
+                Delta = delta,
+                NextStepsGenerator = (to) => new List<IJourneyStep<UnitModelComponent>>()
                 {
-                    Assert.IsNotNull(_motion);
-                    return _motion;
-                }   
-            }
+                    new JourneyMotion()
+                    {
+                        To = to 
+                    },
+                    (new JourneyBattle(BattleCircumstances.Step))
+                }
+            });
 
-            public JourneyDirector Director
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
+        }
+
+        public static LocomotionManager<UnitModelComponent> CreatePushJourney(GameCourseModel model, UnitModelComponent unit, MyHexPosition target)
+        {
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
+            journeySteps.Enqueue(new JourneyDisplacement()
             {
-                get
+                To = target
+            });
+            journeySteps.Enqueue(new JourneyPassiveOnlyBattle());
+
+            var delta = target - unit.Model.Position;
+            journeySteps.Enqueue(new JourneyStepRepeat()
+            {
+                Delta = delta,
+                NextStepsGenerator = (to) => new List<IJourneyStep<UnitModelComponent>>()
                 {
-                    Assert.IsNotNull(_director);
-                    return _director;
+                    new JourneyMotion()
+                    {
+                        To = to 
+                    },
+                    (new JourneyPassiveOnlyBattle())
+                }
+            });
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
+        }
+
+
+        public static LocomotionManager<UnitModelComponent> CreateDeathJourney(UnitModelComponent unit)
+        {
+            var journeySteps = new Queue<IJourneyStep<UnitModelComponent>>();
+            journeySteps.Enqueue( new JourneyDeath());
+            return new LocomotionManager<UnitModelComponent>(unit, journeySteps);
+        }
+
+        public static LocomotionManager<ProjectileModelComponent> CreateProjectileJourney(ProjectileModelComponent projectile,
+            MyHexPosition endPosition, ProjectileType projectileType)
+        {
+            var startPosition = projectile.Model.Position;
+            int offsetU = endPosition.U - startPosition.U;
+            int offsetV = endPosition.V - startPosition.V;
+
+            var journeySteps = new Queue<IJourneyStep<ProjectileModelComponent>>();
+
+            Assert.IsTrue((offsetU != 0 && offsetV == 0) || (offsetU == 0 && offsetV != 0) || (offsetU == offsetV),
+                $"Move is not horizontal nor diagonal: startPosition {startPosition} endPosition {endPosition}");
+            var stepsCount = Math.Max(Math.Abs(offsetU), Math.Abs(offsetV));
+
+            // horizontal movement
+            for (int i = 1; i <= stepsCount; i++)
+            {
+                var fromPosition = startPosition +new MyHexPosition( (i-1) * Math.Sign(offsetU), (i-1) * Math.Sign(offsetV));
+                var toPosition = startPosition + new MyHexPosition( i * Math.Sign(offsetU), i * Math.Sign(offsetV));
+
+                if (projectileType == ProjectileType.Axe) //hack! beware! technical debt!
+                {
+                    journeySteps.Enqueue(new SpinningAxeJourneyMotion()
+                    {
+                        From = fromPosition,
+                        To = toPosition
+                    });
+                }
+                else
+                {
+                    journeySteps.Enqueue(new ProjectileJourneyMotion()
+                    {
+                        From = fromPosition,
+                        To = toPosition
+                    });
                 }
             }
-
-            public JourneyStepType StepType => _stepType;
+            journeySteps.Enqueue(new ProjectileJourneyHit());
+            return new LocomotionManager<ProjectileModelComponent>(projectile, journeySteps);
         }
-
-        public class JourneyMotion
-        {
-            public MyHexPosition To;
-        }
-
-        public class JourneyDirector // obrot
-        {
-            public Orientation To;
-        }
+    }
 }

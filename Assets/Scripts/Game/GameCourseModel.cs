@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Scripts.Animation;
+using Assets.Scripts.Battle;
+using Assets.Scripts.Magic;
 using Assets.Scripts.Map;
 using Assets.Scripts.Units;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Assets.Scripts.Game
 {
@@ -15,12 +19,26 @@ namespace Assets.Scripts.Game
 
         public MapModel MapModel;
         public UnitsContainer Units;
-
+        public ProjectilesContainer Projectiles;
+        private Dictionary<MyPlayer, int> _magicLeft;
 
         public void Start()
         {
             _phrase = Phrase.Placing;
             _turn = GameTurn.FirstPlayerTurn;
+            _magicLeft = new Dictionary<MyPlayer, int>()
+            {
+                {MyPlayer.Player1, 2 },
+                {MyPlayer.Player2, 2 }
+            };
+        }
+
+        public void Reset()
+        {
+            Start();
+            MapModel.Reset();
+            Units.Reset();
+            Projectiles.Reset();
         }
 
         public Phrase Phrase
@@ -35,9 +53,14 @@ namespace Assets.Scripts.Game
             set { _turn = value; }
         }
 
-        public void AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
+        public UnitModel AddUnit(MyHexPosition position, MyPlayer player, Orientation orientation)
         {
-            Units.AddUnit(position, player, orientation);
+            return Units.AddUnit(position, player, orientation);
+        }
+
+        public ProjectileModel AddProjectile(MyHexPosition startPosition, Orientation orientation)
+        {
+            return Projectiles.AddProjectile(startPosition, orientation);
         }
 
         public bool HasTileAt(MyHexPosition hexPosition)
@@ -47,9 +70,9 @@ namespace Assets.Scripts.Game
 
         public UnitModel GetUnitAt(MyHexPosition position)
         {
-            if (Units.HasUnitAt(position))
+            if (Units.IsPawnAt(position))
             {
-                return Units.GetUnitAt(position);
+                return Units.GetPawnAt(position);
             }
             else
             {
@@ -59,7 +82,7 @@ namespace Assets.Scripts.Game
 
         public bool IsTileMovable(MyHexPosition position)
         {
-            return MapModel.HasTileAt(position) && !Units.HasUnitAt(position);
+            return MapModel.HasTileAt(position) && !Units.IsPawnAt(position);
         }
 
         public void NextTurn()
@@ -75,77 +98,163 @@ namespace Assets.Scripts.Game
             }
         }
 
-        public void OrientUnit(UnitModel unit, Orientation orientation)
+        public void OrientUnit(PawnModel unit, Orientation orientation)
         {
-            Units.OrientUnit(unit.Position, orientation);
+            Units.OrientPawn(unit.Position, orientation);
         }
 
-        public void MoveUnit(UnitModel unit, MyHexPosition newPosition)
+        public void MoveUnit(PawnModel unit, MyHexPosition newPosition)
         {
-            Units.MoveUnit(unit.Position, newPosition);
+            Units.MovePawn(unit.Position, newPosition);
+        }
+
+        public void MoveProjectile(ProjectileModel projectile, MyHexPosition newPosition)
+        {
+            Projectiles.MovePawn(projectile.Position, newPosition);
         }
 
         public bool HasUnitAt(MyHexPosition position)
         {
-            return Units.HasUnitAt(position);
+            return Units.IsPawnAt(position);
         }
 
-        public void PerformBattle(MyHexPosition battleActivatorPosition)
+        public BattleResults PerformBattleAtPlace(MyHexPosition battleActivatorPosition, BattleCircumstances battleCircumstances)
         {
-            //todo: maybe some kind of battle manager?
-            // need to uogólnić walkę z pasywnymi i z aktywnymi
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
+            return arbiter.PerformBattleAtPlace(battleActivatorPosition, battleCircumstances);
+        }
 
-            var attackingUnit = Units.GetUnitAt(battleActivatorPosition);
+        public BattleResults PerformPassiveOnlyBattleAtPlace(MyHexPosition battleActivatorPosition, BattleCircumstances battleCircumstances)
+        {
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
+            return arbiter.PerformPassiveBattleAtPlace(battleActivatorPosition, battleCircumstances);
+        }
 
-            //1: Passive effects
-            foreach (var pair in battleActivatorPosition.NeighboursWithDirections)
+        public BattleResults PerformProjectileHitAtPlace(MyHexPosition projectileHitPosition)
+        {
+            var arbiter = new BattleArbiter(Units, Projectiles, MapModel);
+            return arbiter.PerformProjectileHitAtPlace(projectileHitPosition);
+        }
+
+        public void FinalizeKillUnit(PawnModel unit) // ugly code
+        {
+            Units.RemovePawn(unit.Position);
+        }
+
+        public bool IsFinished()
+        {
+            return PlayerLost(MyPlayer.Player1) || PlayerLost(MyPlayer.Player2);
+        }
+
+        public MyPlayer GetWinner()
+        {
+            Assert.IsTrue(IsFinished());
+            if (PlayerLost(MyPlayer.Player1))
             {
-                if (MapModel.HasTileAt(pair.NeighbourPosition)) // is valid position
-                {
-                    if (Units.HasUnitAt(pair.NeighbourPosition))
-                    {
-                        var neighbourUnit = Units.GetUnitAt(pair.NeighbourPosition).GetComponent<UnitModel>();
-                        var passiveSymbolLocalDirection = neighbourUnit.Orientation.CalculateLocalDirection(pair.NeighbourDirection.Opposite);
-                        if (neighbourUnit.Symbols.ContainsKey(passiveSymbolLocalDirection))
-                        {
-                            var symbol = neighbourUnit.Symbols[passiveSymbolLocalDirection];
-                            var effectReciever = new EffectReciever();
-                            symbol.PassiveEffect.Execute(effectReciever);
+                return MyPlayer.Player2;
+            }
+            else
+            {
+                return MyPlayer.Player1;
+            }
+        }
 
-                            if (effectReciever.WasKilled)
-                            {
-                                Units.RemoveUnit(battleActivatorPosition);
-                                return;
-                            }
-                        }
-                    }
+        private bool PlayerLost(MyPlayer player)
+        {
+            return !Units.HasAnyUnits(player) || UnitsOfPlayerCannotMove(player);
+        }
+
+        private bool UnitsOfPlayerCannotMove(MyPlayer player)
+        {
+            return Units.GetUnitsOfPlayer(player).All(c =>
+            {
+                return c.PossibleMoveTargets.All(k => !MapModel.HasTileAt(k) || Units.IsPawnAt(k));
+            });
+        }
+
+        public bool CanMoveTo(PawnModel unitMoved, MyHexPosition target, MyHexPosition magicSelector, MyPlayer player)
+        {
+            if (!unitMoved.PossibleMoveTargets.Contains(target))
+            {
+                return false;
+            }
+            else if (IsTileMovable(target) ) //empty!
+            {
+                if (magicSelector == null)
+                {
+                    return true;
+                }
+                if (GetPlayerMagicType(player) != MagicType.Wind)
+                {
+                    return !magicSelector.Equals(target);
+                }
+
+                return true;
+            }
+            else
+            {
+                if (Units.IsPawnAt(target))
+                {
+                    var tempUnitsContainer = Units.Clone();
+                    var tempProjectilesContainer = Projectiles.Clone();
+                    var tempMapModel = MapModel.Clone();
+
+                    var newOrientation = unitMoved.Position.NeighboursWithDirections.Where(c => c.NeighbourPosition.Equals(target))
+                        .Select(c => c.NeighbourDirection).First();
+
+                    var tempUnitModel = tempUnitsContainer.GetPawnAt(unitMoved.Position);
+                    tempUnitsContainer.OrientPawn(tempUnitModel.Position, newOrientation);
+
+                    var arbiter = new BattleArbiter(tempUnitsContainer, tempProjectilesContainer, tempMapModel);
+                    var battleResults = arbiter.PerformBattleAtPlace(unitMoved.Position, BattleCircumstances.Director);
+                    return battleResults.PositionWasFreed(target);
                 }
             }
+            return false;
+        }
 
-            //2: Active effects!
-            foreach (var pair in battleActivatorPosition.NeighboursWithDirections)
+        public bool CanUseMagicAt(MyHexPosition position)
+        {
+            return MapModel.HasTileAt(position) && !Units.IsPawnAt(position);
+        }
+
+        public TileModel GetTileAt(MyHexPosition position)
+        {
+            return MapModel.GetTileAt(position);
+        }
+
+        public void UseMagic(MagicType type, MyHexPosition position, MyPlayer player)
+        {
+            Assert.IsTrue(PlayerCanUseMagic(player));
+            _magicLeft[player]--;
+            if (type == MagicType.Earth) //todo polymorphism
             {
-                if (MapModel.HasTileAt(pair.NeighbourPosition)) // is valid position
-                {
-                    if (Units.HasUnitAt(pair.NeighbourPosition))
-                    {
-                        var neighbourUnit = Units.GetUnitAt(pair.NeighbourPosition).GetComponent<UnitModel>();
-                        var attackingSymbolLocalDirection = attackingUnit.Orientation.CalculateLocalDirection(pair.NeighbourDirection);
-                        if (attackingUnit.Symbols.ContainsKey(attackingSymbolLocalDirection))
-                        {
-                            var symbol = neighbourUnit.Symbols[attackingSymbolLocalDirection];
-                            var effectReciever = new EffectReciever();
-                            symbol.ActiveEffect.Execute(effectReciever);
-
-                            if (effectReciever.WasKilled)
-                            {
-                                Units.RemoveUnit(pair.NeighbourPosition);
-                                return;
-                            }
-                        }
-                    }
-                }
+                MapModel.DisableAt(position);
             }
+            else
+            {
+                MapModel.AddResidentMagic(position, type);
+            }
+        }
+
+        public bool PlayerCanUseMagic(MyPlayer player)
+        {
+            return _magicLeft[player] > 0;
+        }
+
+        public MagicType GetPlayerMagicType(MyPlayer player)
+        {
+            //todo not hardcoded
+            return new Dictionary<MyPlayer, MagicType>()
+            {
+                {MyPlayer.Player1, MagicType.Earth },
+                {MyPlayer.Player2, MagicType.Wind }
+            }[player];
+        }
+
+        public bool IsRepeatField(MyHexPosition target) //todo technical loan TL1
+        {
+            return MapModel.IsRepeatField(target);
         }
     }
 }

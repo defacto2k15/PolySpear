@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703d0e689da68cb48adf96cf85385f72, type: 3}
+  m_Name: CannotMoveIntoTakenFieldIfWeCantKill
+  m_EditorClassIdentifier: 
+  FileName_DO_NOT_CHANGE_BY_HAND: CanMoveIntoTakenFieldIfWeKill
+  TestDescription: If neighbour field is taken, we cannot take it when we cannot kill
+    its occupant
+  TestEnabled: 1
+  StartStates:
+  - UnitPrefab: {fileID: 1925818458664710, guid: 258757ce01f4e6a488915ced61afc998,
+      type: 2}
+    State:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    OwningPlayer: 0
+  - UnitPrefab: {fileID: 1911331921871210, guid: 2d4800b2b7078c74cb37e3c1c643f1f9,
+      type: 2}
+    State:
+      Position:
+        U: 1
+        V: 1
+      Orientation: 4
+    OwningPlayer: 1
+  Movements: []
+  Predictions:
+  - UnitIndex: 0
+    Type: 3
+    PredictedState:
+      Position:
+        U: 0
+        V: 0
+      Orientation: 0
+    SelectorPosition:
+      U: 1
+      V: 1
