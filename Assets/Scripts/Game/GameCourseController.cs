@@ -52,13 +52,13 @@ namespace Assets.Scripts.Game
                 {
                     return GameCourseState.Starting;
                 }
-                if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished() && DebugShouldEndGame)
-                {
-                    return GameCourseState.Finished;
-                }
                 if (_unitLocomotions.Any() || _projectileLocomotions.Any() || _soloAnimations.Any())
                 {
                     return GameCourseState.NonInteractive;
+                }
+                if (_courseModel.Phrase == Phrase.Play && _courseModel.IsFinished() && DebugShouldEndGame)
+                {
+                    return GameCourseState.Finished;
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace Assets.Scripts.Game
 
         public void MyUpdate()
         {
-            if (DebugShouldEndGame && _courseModel.Phrase == Phrase.Play && _courseModel.IsFinished()) //todo maybe Phrase.GameEnded?
+            if (CourseState == GameCourseState.Finished)
             {
                 return;
             }
@@ -345,6 +345,8 @@ namespace Assets.Scripts.Game
         {
             _courseModel.UseMagic(MagicType.Wind, position, CurrentPlayer);
         }
+
+        public MyPlayer WinningPlayer => _courseModel.GetWinner();
     }
 
     public enum GameCourseState

@@ -11,6 +11,7 @@ namespace Assets.Scripts.Game
     {
         public GameObject MarkerPrefab;
         public GameObject MagicMarkerPrefab;
+        public EndgameModalScript EndgameModal;
 
         private GameObject _selector;
         private GameObject _magicMarker;
@@ -114,6 +115,15 @@ namespace Assets.Scripts.Game
         {
             _magicMarker.SetActive(true);
             _magicMarker.transform.localPosition = magicMarkerPosition.GetPosition();
+        }
+
+        public void SetWinningPlayer(MyPlayer player)
+        {
+            if (!EndgameModal.gameObject.activeInHierarchy)
+            {
+                EndgameModal.gameObject.SetActive(true);
+                EndgameModal.SetWinningPlayer(player);
+            }
         }
     }
 }

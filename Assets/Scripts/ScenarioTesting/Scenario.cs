@@ -22,6 +22,7 @@ namespace Assets.ScenarioTesting
 
         public void OnEnable()
         {
+#if UNITY_EDITOR 
             var path = AssetDatabase.GetAssetPath(this);
             if (path != null)
             {
@@ -31,6 +32,7 @@ namespace Assets.ScenarioTesting
                     FileName_DO_NOT_CHANGE_BY_HAND = filename;
                 }
             }
+#endif
         }
     } 
 

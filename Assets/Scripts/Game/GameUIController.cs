@@ -11,7 +11,6 @@ namespace Assets.Scripts.Game
     public class GameUIController : MonoBehaviour
     {
         public GameCourseController CourseController;
-        public EndGameScreenView EndGameScreenView;
 
         private GameCourseView _view;
         private UnitModel _selectedUnit;
@@ -24,11 +23,21 @@ namespace Assets.Scripts.Game
 
         public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+
             CourseController.MyUpdate();
             GameCourseState state = CourseController.CourseState;
             if (state == GameCourseState.Starting)
             {
                 CourseController.PlaceUnits();
+            }
+
+            if (state == GameCourseState.Finished)
+            {
+                _view.SetWinningPlayer(CourseController.WinningPlayer);
             }
 
             var position = UpdateSelector();
