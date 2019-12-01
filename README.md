@@ -1,4 +1,4 @@
-# Polyspear
+# PolySpear
 ![](readmeImages/map.png)
 
 **Gra turowa, umiejscowiona na planszy heksagonalnej. W której dwóch graczy naprzemiennie przesuwa jednostki w celu zabicia drużyny przeciwnej.**
