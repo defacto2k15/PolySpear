@@ -35,4 +35,17 @@ Efekty aktywne aktywowane zostają podczas ruchu dwukrotnie: pierwszy raz w mome
 
 Gracze naprzemiennie wykonują swoje tury, aż jedna ze stron nie będzie miała jednostek. Strona ta przegrywa, a jej przeciwnik odnosi zwycięstwo.
 
-
+###### Zaimplementowane efekty ######
++ ![](readmeImages/Symbol_Spear.png) **Włócznia** w stanie akrywnym i pasywnym zabija każdą jednostkę znajdującą się na przyległym boku.
++ ![](readmeImages/Symbol_Sword.png) **Miecz** w stanie aktywnym zabija każdą jednostkę na przyległym boku. 
++ ![](readmeImages/Symbol_Shield.png) **Tarcza** blokuje obrażenie (zniszczenie jednostki) od strony tarczy. 
++ ![](readmeImages/Symbol_Arrow.png) **Łuk** w stanie aktywnym wystrzeliwuje pocisk który porusza się w linii prostej i po natrafieniu na wroga nieosłoniętego tarczą zabija go i kończy swój “lot”.
++ ![](readmeImages/Symbol_Axe.png) **Topór** w stanie aktywnym wystrzeliwuje pocisk który porusza się w linii prostej **na odległość najwyżej dwóch pól** i po natrafieniu na wroga nieosłoniętego tarczą zabija go i kończy swój “lot”.
++ ![](readmeImages/Symbol_Push.png) **Odepchnięcie** ignorując tarcze, aktywnie *odpycha* (przesuwa w kierunku naprzeciwległy od jednostki aktywnej) wrogie jednostki. Jeżeli taka jednostka natrafi na dowolne zajęte pole lub kraniec mapy, to umiera.
++ ![](readmeImages/Symbol_Hook.png) **Hak** - jeżeli 
++ + wroga jednostka znajduje się w odległości od dwóch do trzech pól
++ + pola między nią a postacią aktywną są puste
++  to postać zostaje przesunięta do pola sąsiedniego w stosunku do jednostki aktywnej. Pozwolić to może do "nadziania" wrogiej jednostki na np włócznie.
+  
+###### Magia ######
+todo opisać
